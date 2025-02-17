@@ -13,29 +13,46 @@
             color: white;
             font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
             text-align: center;
         }
 
+        .header-image {
+            margin-top: 20px;
+        }
+
         .content {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         img {
             margin: 10px;
         }
-
-        .header-image {
-            margin-bottom: 20px;
-        }
     </style>
 </head>
 <body>
+    <div class="header-image">
+        <img src="https://imgur.com/QH009vp.png" width="150" alt="Imagem">
+    </div>
+
     <div class="content">
-        <img class="header-image" src="https://imgur.com/QH009vp.png" width="100" alt="Imagem">
-        <span class="highlight">ישוע הוא האדון</span><br><br>
-        
+        <span class="highlight" style="font-size: 30px;">ישוע הוא האדון</span>
+    </div>
+
+    <div class="links">
         <a href="https://youtube.com/channel/UC32ixU5dDqK7NU1-IA46OYw">
             <img src="https://imgur.com/psWXj0w.png" width="30" alt="YouTube">
         </a>
