@@ -47,9 +47,9 @@
         function copyToClipboard() {
             const text = "https://daigou7.github.io/Daigou/";
             navigator.clipboard.writeText(text).then(function() {
-                alert("Link copiado para a área de transferência!");
+                alert("✅");
             }).catch(function() {
-                alert("Erro ao copiar o link.");
+                alert("❌");
             });
         }
     </script>
