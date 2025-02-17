@@ -1,2 +1,1 @@
-[center][color=#ffd700][size=200]ישוע הוא האדון[/size][/color]
-[url=https://youtube.com/channel/UC32ixU5dDqK7NU1-IA46OYw][img width=30]https://imgur.com/psWXj0w.png[/img][/url][url=https://steamcommunity.com/id/Daigou7/][img width=30]https://imgur.com/N92w6JN.png[/img][/url][url=https://myanimelist.net/profile/Daigou][img width=30]https://i.imgur.com/jWbk2Ey.png[/img][/url][url=https://www.xbox.com/pt-BR/play/user/Daig0u][img width=30]https://imgur.com/EhlQH8D.png[/img][/url][url=https://www.roblox.com/users/2836930880/profile][img width=30]https://imgur.com/dswEtvH.png[/img][/url][url=https://x.com/Daigou7_][img width=30]https://imgur.com/SXvxL0P.png[/img][/url][url=https://ayo.so/Daigou][img width=30]https://imgur.com/rM2aMKT.png[/img][/url][/center]
+
