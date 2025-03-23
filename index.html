@@ -43,6 +43,18 @@
         .highlight {
             font-size: 30px;
         }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -57,7 +69,24 @@
         <a href="https://myanimelist.net/profile/Daigou" target="_blank">
             <img src="https://i.imgur.com/jWbk2Ey.png" width="30" alt="MyAnimeList">
         </a>
+        <a href="javascript:void(0);" onclick="copyBTC()">
+            <img src="https://imgur.com/dvR0GB6.png" width="30" alt="Bitcoin">
         </a>
     </div>
+
+    <div id="notification" class="notification">copied successfully ✓</div>
+
+    <script>
+        function copyBTC() {
+            const btcAddress = "bc1qhv05qa3rfuj2grs9vk7q9kn2e20uj3jln7lxa3";
+            navigator.clipboard.writeText(btcAddress).then(() => {
+                const notification = document.getElementById("notification");
+                notification.style.display = "block";
+                setTimeout(() => {
+                    notification.style.display = "none";
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>
