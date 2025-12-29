@@ -20,7 +20,7 @@
             perspective: 1000px;
         }
 
-        /* Efeito de Vórtice de Fundo (Simulando a imagem enviada) */
+        /* Efeito de Vórtice de Fundo */
         .vortex {
             position: absolute;
             width: 200%;
@@ -39,15 +39,15 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Cartão de Apresentação Estilo Steam */
+        /* Cartão de Apresentação */
         .profile-card {
             background: rgba(5, 5, 5, 0.85);
             border: 1px solid #222;
-            border-top: 2px solid #8b0000; /* Linha de destaque vermelha */
+            border-top: 3px solid #f7c4c8; /* Linha Rosa Claro */
             padding: 40px;
             text-align: center;
             backdrop-filter: blur(10px);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 1), 0 0 20px rgba(139, 0, 0, 0.1);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 1), 0 0 20px rgba(247, 196, 200, 0.2);
             max-width: 400px;
             width: 90%;
             position: relative;
@@ -57,20 +57,22 @@
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            border: 1px solid rgba(139, 0, 0, 0.3);
+            border: 1px solid rgba(247, 196, 200, 0.3);
             pointer-events: none;
             margin: 5px;
         }
 
+        /* GIF da Kaguya com Aura Rosa e Cores Originais */
         .kaguya-img {
             width: 140px;
-            filter: grayscale(1) contrast(1.2) drop-shadow(0 0 10px rgba(139, 0, 0, 0.5));
+            filter: drop-shadow(0 0 15px rgba(247, 196, 200, 0.6)); /* Aura Rosa #f7c4c8 */
             transition: 0.5s;
             margin-bottom: 20px;
+            /* Removido o grayscale(1) para as cores voltarem ao normal */
         }
 
         .profile-card:hover .kaguya-img {
-            filter: grayscale(0) contrast(1.1);
+            filter: drop-shadow(0 0 25px rgba(247, 196, 200, 0.8));
             transform: scale(1.05);
         }
 
@@ -91,12 +93,12 @@
         }
 
         .highlight {
-            color: #8b0000;
+            color: #d4af37; /* Dourado */
             font-weight: bold;
-            text-shadow: 0 0 10px rgba(139, 0, 0, 0.6);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
         }
 
-        /* Ícones Góticos/Metalizados */
+        /* Ícones com cores originais */
         .social-links {
             display: flex;
             justify-content: center;
@@ -106,70 +108,10 @@
 
         .social-links a img {
             width: 24px;
-            filter: invert(1) opacity(0.5);
+            filter: none;
             transition: 0.3s;
         }
 
         .social-links a:hover img {
-            filter: invert(30%) sepia(100%) saturate(500%) hue-rotate(-10deg);
-            opacity: 1;
-            transform: translateY(-3px);
-        }
-
-        /* Notificação */
-        #notification {
-            position: fixed;
-            bottom: 20px;
-            font-size: 10px;
-            color: #8b0000;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: none;
-            border: 1px solid #8b0000;
-            padding: 5px 15px;
-            background: #000;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="vortex"></div>
-
-    <div class="profile-card">
-        <div class="welcome">System.Identity.Verified</div>
-        
-        <img src="https://imgur.com/pHJtwPT.gif" class="kaguya-img" alt="Kaguya">
-        
-        <p class="main-text">
-            My body, my soul, and my spirit belong to <br>
-            <span class="highlight">Jesus Christ of Nazareth ☦</span><br>
-            <span style="font-size: 12px; color: #444;">Buy Bitcoin ₿ – Economic Freedom.</span>
-        </p>
-
-        <div class="social-links">
-            <a href="https://steamcommunity.com/id/Daigou7/" target="_blank">
-                <img src="https://imgur.com/N92w6JN.png" alt="Steam">
-            </a>
-            <a href="https://myanimelist.net/profile/Daigou" target="_blank">
-                <img src="https://i.imgur.com/jWbk2Ey.png" alt="MAL">
-            </a>
-            <a href="javascript:void(0);" onclick="copyBTC()">
-                <img src="https://imgur.com/dvR0GB6.png" alt="BTC">
-            </a>
-        </div>
-    </div>
-
-    <div id="notification">Address Copied to Vault</div>
-
-    <script>
-        function copyBTC() {
-            const btcAddress = "bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws";
-            navigator.clipboard.writeText(btcAddress).then(() => {
-                const note = document.getElementById("notification");
-                note.style.display = "block";
-                setTimeout(() => { note.style.display = "none"; }, 2000);
-            });
-        }
-    </script>
-</body>
-</html>
+            transform: translateY(-5px) scale(1.1);
+            filter: drop-shadow(0
