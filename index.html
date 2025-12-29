@@ -3,134 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daigou</title>
-    <link rel="icon" href="https://imgur.com/4NDoDX3.png" type="image/png">
+    <title>Daigou | Profile</title>
     <style>
+        /* Reset e Base OLED */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #000000; /* Preto Absoluto para OLED */
-            color: #e0e0e0;
-            font-family: 'Times New Roman', Times, serif; /* Fonte mais clássica/gótica */
+            background-color: #000;
+            color: #fff;
+            font-family: 'Garamond', serif;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            overflow: hidden;
+            perspective: 1000px;
         }
 
-        .container {
-            border: 1px double #4a0000; /* Borda dupla estilo vitoriano */
-            padding: 50px 30px;
+        /* Efeito de Vórtice de Fundo (Simulando a imagem enviada) */
+        .vortex {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(from 0deg, 
+                #000 0deg 20deg, 
+                #111 20deg 40deg);
+            opacity: 0.3;
+            animation: rotateVortex 60s linear infinite;
+            z-index: -1;
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 60%);
+        }
+
+        @keyframes rotateVortex {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Cartão de Apresentação Estilo Steam */
+        .profile-card {
+            background: rgba(5, 5, 5, 0.85);
+            border: 1px solid #222;
+            border-top: 2px solid #8b0000; /* Linha de destaque vermelha */
+            padding: 40px;
             text-align: center;
-            max-width: 450px;
-            box-shadow: 0 0 15px rgba(139, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 1), 0 0 20px rgba(139, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            position: relative;
         }
 
-        .header-image img {
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
-            margin-bottom: 15px;
+        .profile-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            pointer-events: none;
+            margin: 5px;
         }
 
-        .welcome-text {
-            font-size: 22px;
-            letter-spacing: 3px;
+        .kaguya-img {
+            width: 140px;
+            filter: grayscale(1) contrast(1.2) drop-shadow(0 0 10px rgba(139, 0, 0, 0.5));
+            transition: 0.5s;
+            margin-bottom: 20px;
+        }
+
+        .profile-card:hover .kaguya-img {
+            filter: grayscale(0) contrast(1.1);
+            transform: scale(1.05);
+        }
+
+        .welcome {
+            font-size: 10px;
             text-transform: uppercase;
-            color: #ffffff;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #333;
-            display: inline-block;
-            padding-bottom: 5px;
+            letter-spacing: 5px;
+            color: #666;
+            margin-bottom: 10px;
         }
 
-        .tiny-text {
-            font-size: 14px;
-            line-height: 1.8;
-            color: #888;
+        .main-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #bbb;
+            margin-bottom: 20px;
             font-style: italic;
         }
 
-        .highlight-gold {
-            color: #aa9439; /* Dourado envelhecido */
-            display: block;
-            margin-top: 10px;
-            font-weight: normal;
+        .highlight {
+            color: #8b0000;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.6);
         }
 
-        .links {
-            margin-top: 35px;
+        /* Ícones Góticos/Metalizados */
+        .social-links {
             display: flex;
             justify-content: center;
-            gap: 25px;
+            gap: 20px;
+            margin-top: 25px;
         }
 
-        /* Efeito Gótico nos Ícones */
-        .links img {
-            filter: grayscale(100%) brightness(0.8) contrast(1.2);
-            transition: all 0.4s ease;
-            cursor: pointer;
-            opacity: 0.6;
+        .social-links a img {
+            width: 24px;
+            filter: invert(1) opacity(0.5);
+            transition: 0.3s;
         }
 
-        .links img:hover {
-            filter: grayscale(0%) brightness(1) contrast(1);
+        .social-links a:hover img {
+            filter: invert(30%) sepia(100%) saturate(500%) hue-rotate(-10deg);
             opacity: 1;
-            transform: scale(1.2) rotate(5deg);
+            transform: translateY(-3px);
         }
 
-        .notification {
+        /* Notificação */
+        #notification {
             position: fixed;
-            bottom: 30px;
-            background: #111;
+            bottom: 20px;
+            font-size: 10px;
             color: #8b0000;
-            border: 1px solid #4a0000;
-            padding: 8px 20px;
-            font-size: 12px;
-            letter-spacing: 1px;
-            display: none;
             text-transform: uppercase;
+            letter-spacing: 2px;
+            display: none;
+            border: 1px solid #8b0000;
+            padding: 5px 15px;
+            background: #000;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header-image">
-            <img src="https://imgur.com/pHJtwPT.gif" width="130" alt="Kaguya">
-        </div>
+
+    <div class="vortex"></div>
+
+    <div class="profile-card">
+        <div class="welcome">System.Identity.Verified</div>
         
-        <div class="welcome-text">Welcome.</div>
+        <img src="https://imgur.com/pHJtwPT.gif" class="kaguya-img" alt="Kaguya">
         
-        <p class="tiny-text">
+        <p class="main-text">
             My body, my soul, and my spirit belong to <br>
-            <span class="highlight-gold">Jesus Christ of Nazareth ☦</span>
-            <span style="font-size: 11px; color: #444; display: block; margin-top: 5px;">
-                Buy Bitcoin ₿ – A shield of economic freedom.
-            </span>
+            <span class="highlight">Jesus Christ of Nazareth ☦</span><br>
+            <span style="font-size: 12px; color: #444;">Buy Bitcoin ₿ – Economic Freedom.</span>
         </p>
 
-        <div class="links">
+        <div class="social-links">
             <a href="https://steamcommunity.com/id/Daigou7/" target="_blank">
-                <img src="https://imgur.com/N92w6JN.png" width="28" alt="Steam">
+                <img src="https://imgur.com/N92w6JN.png" alt="Steam">
             </a>
             <a href="https://myanimelist.net/profile/Daigou" target="_blank">
-                <img src="https://i.imgur.com/jWbk2Ey.png" width="28" alt="MAL">
+                <img src="https://i.imgur.com/jWbk2Ey.png" alt="MAL">
             </a>
             <a href="javascript:void(0);" onclick="copyBTC()">
-                <img src="https://imgur.com/dvR0GB6.png" width="28" alt="Bitcoin">
+                <img src="https://imgur.com/dvR0GB6.png" alt="BTC">
             </a>
         </div>
     </div>
 
-    <div id="notification" class="notification">Address Copied.</div>
+    <div id="notification">Address Copied to Vault</div>
 
     <script>
         function copyBTC() {
             const btcAddress = "bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws";
             navigator.clipboard.writeText(btcAddress).then(() => {
-                const notification = document.getElementById("notification");
-                notification.style.display = "block";
-                setTimeout(() => {
-                    notification.style.display = "none";
-                }, 2000);
+                const note = document.getElementById("notification");
+                note.style.display = "block";
+                setTimeout(() => { note.style.display = "none"; }, 2000);
             });
         }
     </script>
