@@ -1,112 +1,138 @@
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        /* Degradê que remete ao clima dramático do anime */
-        background: radial-gradient(circle, #1a0a0a 0%, #000000 100%);
-        color: #f0f0f0;
-        font-family: 'Georgia', serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden;
-    }
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daigou</title>
+    <link rel="icon" href="https://imgur.com/4NDoDX3.png" type="image/png">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000; /* Preto Absoluto para OLED */
+            color: #e0e0e0;
+            font-family: 'Times New Roman', Times, serif; /* Fonte mais clássica/gótica */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-    .container {
-        background: rgba(255, 255, 255, 0.03);
-        padding: 40px;
-        border-radius: 15px;
-        border: 1px solid #8b0000; /* Vermelho escuro */
-        box-shadow: 0 0 20px rgba(139, 0, 0, 0.2);
-        backdrop-filter: blur(5px);
-        max-width: 500px;
-        transition: transform 0.3s ease;
-    }
+        .container {
+            border: 1px double #4a0000; /* Borda dupla estilo vitoriano */
+            padding: 50px 30px;
+            text-align: center;
+            max-width: 450px;
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.1);
+        }
 
-    .container:hover {
-        transform: scale(1.02);
-        border-color: #ff4d4d; /* Acende no hover */
-    }
+        .header-image img {
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+            margin-bottom: 15px;
+        }
 
-    .header-image img {
-        border-radius: 50%;
-        border: 3px solid #8b0000;
-        padding: 5px;
-        background: black;
-        box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-    }
+        .welcome-text {
+            font-size: 22px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #ffffff;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
 
-    .tiny-text {
-        line-height: 1.6;
-        letter-spacing: 1px;
-    }
+        .tiny-text {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #888;
+            font-style: italic;
+        }
 
-    .welcome-title {
-        color: #ff4d4d;
-        font-size: 24px;
-        margin-bottom: 10px;
-        text-transform: uppercase;
-        font-weight: bold;
-    }
+        .highlight-gold {
+            color: #aa9439; /* Dourado envelhecido */
+            display: block;
+            margin-top: 10px;
+            font-weight: normal;
+        }
 
-    .links {
-        margin-top: 30px;
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-    }
+        .links {
+            margin-top: 35px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
 
-    .links img {
-        filter: grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(600%);
-        transition: 0.3s;
-        cursor: pointer;
-    }
+        /* Efeito Gótico nos Ícones */
+        .links img {
+            filter: grayscale(100%) brightness(0.8) contrast(1.2);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            opacity: 0.6;
+        }
 
-    .links img:hover {
-        filter: none;
-        transform: translateY(-5px);
-    }
+        .links img:hover {
+            filter: grayscale(0%) brightness(1) contrast(1);
+            opacity: 1;
+            transform: scale(1.2) rotate(5deg);
+        }
 
-    .notification {
-        position: fixed;
-        bottom: 20px;
-        background: #8b0000;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 20px;
-        font-family: sans-serif;
-        display: none;
-        border: 1px solid gold;
-    }
-</style>
-
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            background: #111;
+            color: #8b0000;
+            border: 1px solid #4a0000;
+            padding: 8px 20px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            display: none;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
 <body>
     <div class="container">
         <div class="header-image">
-            <img src="https://imgur.com/pHJtwPT.gif" width="120" alt="Kaguya">
+            <img src="https://imgur.com/pHJtwPT.gif" width="130" alt="Kaguya">
         </div>
         
-        <div class="welcome-title">Okaerinasai.</div>
+        <div class="welcome-text">Welcome.</div>
         
         <p class="tiny-text">
             My body, my soul, and my spirit belong to <br>
-            <strong style="color: gold;">Jesus Christ of Nazareth ☦</strong><br>
-            <small>Buy Bitcoin ₿ – A shield of economic freedom.</small>
+            <span class="highlight-gold">Jesus Christ of Nazareth ☦</span>
+            <span style="font-size: 11px; color: #444; display: block; margin-top: 5px;">
+                Buy Bitcoin ₿ – A shield of economic freedom.
+            </span>
         </p>
 
         <div class="links">
             <a href="https://steamcommunity.com/id/Daigou7/" target="_blank">
-                <img src="https://imgur.com/N92w6JN.png" width="35" alt="Steam">
+                <img src="https://imgur.com/N92w6JN.png" width="28" alt="Steam">
             </a>
             <a href="https://myanimelist.net/profile/Daigou" target="_blank">
-                <img src="https://i.imgur.com/jWbk2Ey.png" width="35" alt="MAL">
+                <img src="https://i.imgur.com/jWbk2Ey.png" width="28" alt="MAL">
             </a>
             <a href="javascript:void(0);" onclick="copyBTC()">
-                <img src="https://imgur.com/dvR0GB6.png" width="35" alt="Bitcoin">
+                <img src="https://imgur.com/dvR0GB6.png" width="28" alt="Bitcoin">
             </a>
         </div>
     </div>
 
-    <div id="notification" class="notification">Address copied to clipboard! ✓</div>
+    <div id="notification" class="notification">Address Copied.</div>
+
+    <script>
+        function copyBTC() {
+            const btcAddress = "bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws";
+            navigator.clipboard.writeText(btcAddress).then(() => {
+                const notification = document.getElementById("notification");
+                notification.style.display = "block";
+                setTimeout(() => {
+                    notification.style.display = "none";
+                }, 2000);
+            });
+        }
+    </script>
 </body>
+</html>
