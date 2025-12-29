@@ -1,96 +1,112 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daigou</title>
-    <link rel="icon" href="https://imgur.com/4NDoDX3.png" type="image/png">
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: black;
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        /* Degradê que remete ao clima dramático do anime */
+        background: radial-gradient(circle, #1a0a0a 0%, #000000 100%);
+        color: #f0f0f0;
+        font-family: 'Georgia', serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
 
-        .header-image {
-            margin-bottom: 20px;
-        }
+    .container {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 40px;
+        border-radius: 15px;
+        border: 1px solid #8b0000; /* Vermelho escuro */
+        box-shadow: 0 0 20px rgba(139, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+        max-width: 500px;
+        transition: transform 0.3s ease;
+    }
 
-        .content {
-            display: block;
-        }
+    .container:hover {
+        transform: scale(1.02);
+        border-color: #ff4d4d; /* Acende no hover */
+    }
 
-        .links {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px;
-        }
+    .header-image img {
+        border-radius: 50%;
+        border: 3px solid #8b0000;
+        padding: 5px;
+        background: black;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+    }
 
-        img {
-            margin: 10px;
-        }
+    .tiny-text {
+        line-height: 1.6;
+        letter-spacing: 1px;
+    }
 
-        .highlight {
-            font-size: 30px;
-        }
+    .welcome-title {
+        color: #ff4d4d;
+        font-size: 24px;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
 
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-size: 14px;
-            display: none;
-        }
-    </style>
-</head>
+    .links {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .links img {
+        filter: grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(600%);
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .links img:hover {
+        filter: none;
+        transform: translateY(-5px);
+    }
+
+    .notification {
+        position: fixed;
+        bottom: 20px;
+        background: #8b0000;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-family: sans-serif;
+        display: none;
+        border: 1px solid gold;
+    }
+</style>
+
 <body>
-<div class="header-image">
-    <img src="https://imgur.com/pHJtwPT.gif" width="150" alt="Imagem">
-    <p class="tiny-text">
-        Welcome.<br>
-        My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br>
-        Buy Bitcoin ₿ – A shield of economic freedom.
-    </p>
-</div>
-    <div class="links">
-        <a href="https://steamcommunity.com/id/Daigou7/" target="_blank">
-            <img src="https://imgur.com/N92w6JN.png" width="30" alt="Steam">
-        </a>
-        <a href="https://myanimelist.net/profile/Daigou" target="_blank">
-            <img src="https://i.imgur.com/jWbk2Ey.png" width="30" alt="MyAnimeList">
-        </a>
-        <a href="javascript:void(0);" onclick="copyBTC()">
-            <img src="https://imgur.com/dvR0GB6.png" width="30" alt="Bitcoin">
-        </a>
+    <div class="container">
+        <div class="header-image">
+            <img src="https://imgur.com/pHJtwPT.gif" width="120" alt="Kaguya">
+        </div>
+        
+        <div class="welcome-title">Okaerinasai.</div>
+        
+        <p class="tiny-text">
+            My body, my soul, and my spirit belong to <br>
+            <strong style="color: gold;">Jesus Christ of Nazareth ☦</strong><br>
+            <small>Buy Bitcoin ₿ – A shield of economic freedom.</small>
+        </p>
+
+        <div class="links">
+            <a href="https://steamcommunity.com/id/Daigou7/" target="_blank">
+                <img src="https://imgur.com/N92w6JN.png" width="35" alt="Steam">
+            </a>
+            <a href="https://myanimelist.net/profile/Daigou" target="_blank">
+                <img src="https://i.imgur.com/jWbk2Ey.png" width="35" alt="MAL">
+            </a>
+            <a href="javascript:void(0);" onclick="copyBTC()">
+                <img src="https://imgur.com/dvR0GB6.png" width="35" alt="Bitcoin">
+            </a>
+        </div>
     </div>
 
-    <div id="notification" class="notification">copied successfully ✓</div>
-
-    <script>
-        function copyBTC() {
-            const btcAddress = "bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws";
-            navigator.clipboard.writeText(btcAddress).then(() => {
-                const notification = document.getElementById("notification");
-                notification.style.display = "block";
-                setTimeout(() => {
-                    notification.style.display = "none";
-                }, 2000);
-            });
-        }
-    </script>
+    <div id="notification" class="notification">Address copied to clipboard! ✓</div>
 </body>
-</html>
