@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daigou | Profile</title>
+    <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #000 url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #f7d1d7;
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .vortex {
+            position: fixed; top: 50%; left: 50%;
+            width: 250vmax; height: 250vmax;
+            background: repeating-conic-gradient(from 0deg, #000 0deg 15deg, #1a0d0f 15deg 30deg);
+            opacity: 0.4;
+            animation: rotateVortex 80s linear infinite;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 60%);
+            pointer-events: none;
+        }
+
+        @keyframes rotateVortex {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .steam-header {
+            width: 940px;
+            background: rgba(23, 26, 33, 0.7);
+            backdrop-filter: blur(10px);
+            height: 55px;
+            margin-top: 20px;
+            border-radius: 15px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 28px; }
+        .nav-text { font-size: 13px; color: #f7d1d7; }
+
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .btn-install { 
+            background: #f7d1d7; color: #000 !important; 
+            padding: 5px 12px; text-decoration: none; 
+            border-radius: 4px; font-weight: bold; font-size: 11px;
+            transition: 0.3s;
+        }
+        .btn-install:hover { background: #ffffff; box-shadow: 0 0 10px #f7d1d7; }
+        .top-avatar { width: 32px; height: 32px; border-radius: 3px; border: 1px solid #f7d1d7; }
+
+        .profile-container {
+            width: 940px;
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+            z-index: 10;
+        }
+
+        .avatar-main { width: 160px; height: 160px; border-radius: 10px; filter: drop-shadow(0 0 10px rgba(247, 209, 215, 0.3)); }
+        .profile-name { font-size: 26px; font-weight: bold; margin-top: 10px; }
+        
+        .bio-icons { display: flex; gap: 15px; margin: 15px 0; }
+        .bio-icons a { text-decoration: none; border: none; }
+        .bio-icons img { width: 28px; filter: drop-shadow(0 0 5px #f7d1d7); transition: 0.3s; }
+        .bio-icons img:hover { transform: scale(1.2); }
+
+        .status-text { font-size: 18px; color: #57cbde; }
+        .online-time { font-size: 12px; color: #898989; margin-bottom: 30px; }
+
+        .section-label { color: #67c1f5; font-size: 12px; text-transform: uppercase; display: block; margin-top: 20px; margin-bottom: 10px; }
+
+        .game-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 5px; }
+        .game-card { width: 60px; height: 85px; text-decoration: none; outline: none; display: block; }
+        .game-card.square { height: 60px; }
+        .game-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; transition: 0.3s; border: 1px solid rgba(247, 209, 215, 0.1); }
+        .game-card:hover img { transform: scale(1.1); box-shadow: 0 0 12px rgba(247, 209, 215, 0.5); border-color: #f7d1d7; }
+
+        #notification {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #f7d1d7; color: #000; padding: 10px 20px; border-radius: 5px;
+            display: none; font-weight: bold; z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="vortex"></div>
+
+    <header class="steam-header">
+        <div class="header-left">
+            <img src="https://imgur.com/btg3Zph.png" class="logo-img">
+            <span class="nav-text">Welcome to my site!</span>
+        </div>
+        <div class="header-right">
+            <a href="https://i.imgur.com/Nj8yJES.gif" class="btn-install" target="_blank">Install Kaguya</a>
+            <img src="https://imgur.com/pHJtwPT.gif" class="top-avatar">
+        </div>
+    </header>
+
+    <div class="profile-container">
+        <div>
+            <img src="https://imgur.com/pHJtwPT.gif" class="avatar-main">
+            <div class="profile-name">Daigou ☦</div>
+            <p style="font-style: italic; opacity: 0.8; margin-top: 5px;">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦</p>
+            
+            <div class="bio-icons">
+                <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png"></a>
+                <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png"></a>
+                <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
+            </div>
+        </div>
+
+        <div>
+            <div class="status-text">Currently Offline</div>
+            <div class="online-time">Last Online 700 years ago</div>
+
+            <span class="section-label">Waifus</span>
+            <div class="game-grid">
+                <a href="https://anilist.co/character/120649/" target="_blank" class="game-card square"><img src="https://imgur.com/9Z8MRSu.png" title="Kaguya Shinomiya"></a>
+                <a href="https://anilist.co/character/34470/" target="_blank" class="game-card square"><img src="https://imgur.com/YALUeUn.png" title="Makise Kurisu"></a>
+                <a href="https://anilist.co/character/144594/" target="_blank" class="game-card square"><img src="https://imgur.com/7L27P94.png" title="Kobeni Higashiyama"></a>
+                <a href="https://anilist.co/character/88572/" target="_blank" class="game-card square"><img src="https://imgur.com/iOmt3Xb.png" title="Emilia"></a>
+            </div>
+
+            <span class="section-label">Favorite Games</span>
+            <div class="game-grid">
+                <a href="https://store.steampowered.com/app/570940/" target="_blank" class="game-card square"><img src="https://imgur.com/lcMd96p.png" title="Dark Souls Remastered"></a>
+                <a href="https://minecraft.net" target="_blank" class="game-card square"><img src="https://imgur.com/ctWNET1.png" title="Minecraft"></a>
+                <a href="https://store.steampowered.com/app/17390/" target="_blank" class="game-card square"><img src="https://imgur.com/J4g8PTZ.png" title="Spore"></a>
+                <a href="https://yanderesimulator.com/download/" target="_blank" class="game-card square"><img src="https://imgur.com/hdifxRI.png" title="Yandere Simulator"></a>
+            </div>
+
+            <span class="section-label">Favorite Anime</span>
+            <div class="game-grid">
+                <a href="https://anilist.co/anime/9253/" target="_blank" class="game-card"><img src="https://imgur.com/P1HogUg.png" title="Steins;Gate"></a>
+                <a href="https://anilist.co/anime/21355/" target="_blank" class="game-card"><img src="https://imgur.com/d9zFEZu.png" title="Re:Zero"></a>
+                <a href="https://anilist.co/anime/30/" target="_blank" class="game-card"><img src="https://imgur.com/njmKBUI.png" title="Neon Genesis Evangelion"></a>
+                <a href="https://anilist.co/anime/21507/" target="_blank" class="game-card"><img src="https://imgur.com/PIox0ID.png" title="Mob Psycho 100"></a>
+                <a href="https://anilist.co/anime/6/" target="_blank" class="game-card"><img src="https://imgur.com/6Q38gYG.png" title="Trigun"></a>
+                <a href="https://anilist.co/anime/9756/" target="_blank" class="game-card"><img src="https://imgur.com/KNJervC.png" title="Madoka Magica"></a>
+                <a href="https://anilist.co/anime/17074/" target="_blank" class="game-card"><img src="https://imgur.com/JbDnQBm.png" title="Monogatari Series"></a>
+                <a href="https://anilist.co/anime/21471/" target="_blank" class="game-card"><img src="https://imgur.com/Iwn43dp.png" title="Saiki Kusuo no Ψ-nan"></a>
+                <a href="https://anilist.co/anime/20832/" target="_blank" class="game-card"><img src="https://imgur.com/SqG1E4O.png" title="Overlord"></a>
+                <a href="https://anilist.co/anime/108710/" target="_blank" class="game-card"><img src="https://imgur.com/IOfxGtx.png" title="Dorohedoro"></a>
+            </div>
+
+            <span class="section-label">Favorite Manga</span>
+            <div class="game-grid">
+                <a href="https://anilist.co/manga/30002/" target="_blank" class="game-card"><img src="https://imgur.com/S2itjEq.png" title="Berserk"></a>
+                <a href="https://anilist.co/manga/31706/" target="_blank" class="game-card"><img src="https://imgur.com/eUcGVum.png" title="Steel Ball Run"></a>
+                <a href="https://anilist.co/manga/30642/" target="_blank" class="game-card"><img src="https://imgur.com/AVBfjQX.png" title="Vinland Saga"></a>
+                <a href="https://anilist.co/manga/86635/" target="_blank" class="game-card"><img src="https://imgur.com/xrB46Ft.png" title="Kaguya-sama"></a>
+                <a href="https://anilist.co/manga/30026/" target="_blank" class="game-card"><img src="https://imgur.com/vwLIPx2.png" title="Hunter x Hunter"></a>
+                <a href="https://anilist.co/manga/30656/" target="_blank" class="game-card"><img src="https://imgur.com/nC9QYtI.png" title="Vagabond"></a>
+                <a href="https://anilist.co/manga/30336/" target="_blank" class="game-card"><img src="https://imgur.com/e36y1NW.png" title="GTO"></a>
+                <a href="https://anilist.co/manga/54705/" target="_blank" class="game-card"><img src="https://imgur.com/gGZA0zR.png" title="Aku no Hana"></a>
+                <a href="https://anilist.co/manga/30936/" target="_blank" class="game-card"><img src="https://imgur.com/wi5ru2O.png" title="Homunculus"></a>
+                <a href="https://anilist.co/manga/37375/" target="_blank" class="game-card"><img src="https://imgur.com/Zg6JTrd.png" title="Kokou no Hito"></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification">Address Copied to Vault</div>
+
+    <script>
+        function copyBTC() {
+            const btcAddress = "bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws";
+            navigator.clipboard.writeText(btcAddress).then(() => {
+                const note = document.getElementById("notification");
+                note.style.display = "block";
+                setTimeout(() => { note.style.display = "none"; }, 2500);
+            });
+        }
+    </script>
+</body>
+</html>
