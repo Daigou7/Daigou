@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Kaguya World 1.6.0</title>
+    <title>Kaguya World 1.6.1</title>
     <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
         body { margin: 0; padding: 0; background: #5c94fc; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
@@ -66,77 +66,28 @@
             let platW = 600 + Math.random() * 500;
             let platH = 250 + Math.random() * 200;
             let platY = canvas.height - platH;
-            platforms.push({ x: x, y: platY, width: platW, height: platH + 500 });
-
-            let itemX = x + 100 + Math.random() * (platW - 200);
-            let itemChance = Math.random() * 100;
-            let item = { x: itemX, y: platY - 80, type: '💸', value: 1, isHeal: false };
-            if (itemChance < 5) { item.type = '💎'; item.value = 5000; }
-            else if (itemChance < 15) { item.type = '💘'; item.isHeal = true; }
-            else if (itemChance < 40) { item.type = '💵'; item.value = 100; }
-            collectibles.push(item);
-
+            platforms.push({ x: x, y: platY, width: platW, height: 1000 });
+            collectibles.push({ x: x + platW/2, y: platY - 80, type: '💸', value: 1 });
             if (Math.random() > 0.4) {
-                enemies.push({
-                    x: x + 150, y: platY - 70, width: 70, height: 70,
-                    speed: 4, emoji: ["🐢", "🦔", "🦀", "🕷️", "🦖"][Math.floor(Math.random()*5)],
-                    range: platW - 200, startX: x + 150
-                });
+                enemies.push({ x: x + 150, y: platY - 70, width: 70, height: 70, speed: 4, emoji: "🐢", range: platW - 200, startX: x + 150 });
             }
         }
     }
-
     spawnProcedural(3000, 9000);
 
     function drawSMWPlatform(p) {
-        // Parte Marrom (Dirt) com padrão
-        ctx.fillStyle = "#a85020";
-        ctx.fillRect(p.x, p.y + 30, p.width, p.height);
-        
-        // Padrão de "pedras" no marrom
-        ctx.fillStyle = "#8a401a";
-        for(let i = 0; i < p.width; i += 60) {
-            for(let j = 40; j < 200; j += 60) {
-                if((i+j) % 120 === 0) ctx.fillRect(p.x + i, p.y + j, 15, 15);
-            }
-        }
-
-        // Borda preta separando grama da terra
-        ctx.fillStyle = "#000000";
-        ctx.fillRect(p.x, p.y + 30, p.width, 5);
-
-        // Grama (Verde escuro de fundo)
-        ctx.fillStyle = "#189828";
-        ctx.fillRect(p.x, p.y, p.width, 30);
-
-        // Brilho da grama (Verde claro superior)
-        ctx.fillStyle = "#48f878";
-        ctx.fillRect(p.x, p.y, p.width, 10);
-
-        // Detalhes da grama (pontinhos)
-        ctx.fillStyle = "#007020";
-        for(let i = 0; i < p.width; i += 40) {
-            ctx.fillRect(p.x + i, p.y + 15, 8, 8);
-        }
+        ctx.fillStyle = "#a85020"; ctx.fillRect(p.x, p.y + 30, p.width, p.height);
+        ctx.fillStyle = "#000"; ctx.fillRect(p.x, p.y + 30, p.width, 4);
+        ctx.fillStyle = "#189828"; ctx.fillRect(p.x, p.y, p.width, 30);
+        ctx.fillStyle = "#48f878"; ctx.fillRect(p.x, p.y, p.width, 8);
     }
 
     function colCheck(p, plat) {
         if (p.x + p.width > plat.x && p.x < plat.x + plat.width &&
             p.y + p.height > plat.y && p.y < plat.y + plat.height) {
-            
             let overlapTop = (p.y + p.height) - plat.y;
-            let overlapBottom = (plat.y + plat.height) - p.y;
-            let overlapLeft = (p.x + p.width) - plat.x;
-            let overlapRight = (plat.x + plat.width) - p.x;
-
-            let minOverlap = Math.min(overlapTop, overlapBottom, overlapLeft, overlapRight);
-
-            if (minOverlap === overlapTop && p.velY >= 0) {
+            if (overlapTop < 50 && p.velY >= 0) {
                 p.y = plat.y - p.height; p.velY = 0; p.grounded = true; p.jumping = false; p.canDoubleJump = false;
-            } else if (minOverlap === overlapLeft) {
-                p.x = plat.x - p.width; p.velX = 0;
-            } else if (minOverlap === overlapRight) {
-                p.x = plat.x + plat.width; p.velX = 0;
             }
         }
     }
@@ -148,53 +99,41 @@
 
         player.velY += gravity;
         player.grounded = false;
-
         platforms.forEach(p => colCheck(player, p));
 
         player.x += player.velX;
         player.y += player.velY;
 
         if (player.x + 3000 > lastGeneratedX) { spawnProcedural(lastGeneratedX, lastGeneratedX + 6000); lastGeneratedX += 6000; }
-        
-        // Câmera mais fluida
-        let targetCamX = player.x - canvas.width/4;
-        cameraX += (targetCamX - cameraX) * 0.1;
+        cameraX += (player.x - canvas.width/4 - cameraX) * 0.1;
 
         ctx.save();
         ctx.translate(-cameraX, 0);
 
         platforms.forEach(p => drawSMWPlatform(p));
 
-        collectibles.forEach((c, i) => {
-            ctx.font = "55px Arial";
-            let bounce = Math.sin(Date.now()/200) * 10;
-            ctx.fillText(c.type, c.x, c.y + bounce);
-            if (Math.abs(player.x + player.width/2 - c.x) < 80 && Math.abs(player.y + player.height/2 - c.y) < 120) {
-                c.isHeal ? player.hp = Math.min(100, player.hp + 25) : money += c.value;
-                document.getElementById("moneyText").innerText = "MONEY = " + money.toLocaleString('pt-BR');
-                document.getElementById("hpFill").style.width = player.hp + "%";
-                collectibles.splice(i, 1);
-            }
-        });
-
         enemies.forEach(en => {
             en.x += en.speed;
             if (en.x > en.startX + en.range || en.x < en.startX) en.speed *= -1;
-            ctx.font = "70px Arial";
-            ctx.fillText(en.emoji, en.x, en.y + 60);
-            if (Math.abs(player.x + player.width/2 - (en.x + 35)) < 95 && Math.abs(player.y + player.height/2 - (en.y + 30)) < 110) takeDamage(20);
+            ctx.font = "70px Arial"; ctx.fillText(en.emoji, en.x, en.y + 60);
+            if (Math.abs(player.x + player.width/2 - (en.x + 35)) < 80 && Math.abs(player.y + player.height/2 - (en.y + 30)) < 100) takeDamage(20);
         });
 
-        if (player.y > canvas.height + 600) { takeDamage(100); player.y = 0; player.velY = 0; }
-
+        // --- LÓGICA DE DESENHO CORRIGIDA (SEM FLICKER) ---
+        // Só muda para imgJump se ela realmente estiver no ar (não grounded)
         let currentImg = (!player.grounded) ? imgJump : imgIdle;
-        let scaleX = (player.facing === "left") ? -1 : 1;
-        if (currentImg === imgJump) scaleX *= -1; 
-
+        
         ctx.save();
         if (player.invincible && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.3;
+        
         ctx.translate(player.x + player.width/2, player.y + player.height/2);
-        ctx.scale(scaleX, 1);
+        
+        // Decide a escala final
+        let finalScaleX = (player.facing === "left") ? -1 : 1;
+        // Se o sprite de pulo for invertido em relação ao idle, descomente a linha abaixo:
+        // if (currentImg === imgJump) finalScaleX *= -1; 
+        
+        ctx.scale(finalScaleX, 1);
         ctx.drawImage(currentImg, -player.width/2, -player.height/2, player.width, player.height);
         ctx.restore();
         ctx.restore();
@@ -203,7 +142,7 @@
     function takeDamage(amount) {
         if (!player.invincible) {
             player.hp -= amount;
-            if (player.hp <= 0) { player.lives--; player.hp = 100; if (player.lives <= 0) { alert("Game Over!"); location.reload(); } }
+            if (player.hp <= 0) { player.lives--; player.hp = 100; if (player.lives <= 0) location.reload(); }
             document.getElementById("lifeText").innerText = "LIFES = " + player.lives;
             document.getElementById("hpFill").style.width = player.hp + "%";
             player.invincible = true;
@@ -212,7 +151,6 @@
     }
 
     function loop() { ctx.clearRect(0, 0, canvas.width, canvas.height); update(); requestAnimationFrame(loop); }
-    
     window.addEventListener("keydown", (e) => {
         if (!keys[e.keyCode] && (e.keyCode === 38 || e.keyCode === 32 || e.keyCode === 87)) {
             if (player.grounded) { player.velY = -26; player.grounded = false; player.canDoubleJump = true; }
