@@ -6,7 +6,6 @@
     <title>Daigou | Profile</title>
     <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
-        /* Importando fonte fofa */
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,7 +14,7 @@
             background: #000 url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;
             background-size: cover;
             color: #f7d1d7;
-            font-family: 'Quicksand', sans-serif; /* Fonte mais fofa/pastel */
+            font-family: 'Quicksand', sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -24,17 +23,16 @@
             position: relative;
         }
 
-        /* Efeito de sobreposição Vortex Rosa/Preto */
-        .vortex-overlay {
-            position: fixed;
-            top: 50%; left: 50%;
-            width: 200vmax; height: 200vmax;
+        /* Vortex de fundo do código original */
+        .vortex {
+            position: fixed; top: 50%; left: 50%;
+            width: 250vmax; height: 250vmax;
             background: repeating-conic-gradient(from 0deg, #000 0deg 15deg, #1a0d0f 15deg 30deg);
-            opacity: 0.3;
-            animation: rotateVortex 100s linear infinite;
+            opacity: 0.4;
+            animation: rotateVortex 80s linear infinite;
             transform: translate(-50%, -50%);
             z-index: -1;
-            mask-image: radial-gradient(circle, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 70%);
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 60%);
             pointer-events: none;
         }
 
@@ -43,99 +41,104 @@
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        /* Barra Superior Estilizada (Menor e Arredondada) */
+        /* Header compactado e estiloso */
         .steam-header {
-            width: 90%;
-            max-width: 940px;
-            background: rgba(23, 26, 33, 0.8);
+            width: 940px;
+            background: rgba(23, 26, 33, 0.7);
             backdrop-filter: blur(10px);
-            height: 60px; /* Reduzido */
-            margin-top: 15px;
-            border-radius: 30px; /* Mais estiloso */
-            padding: 0 25px;
+            height: 55px;
+            margin-top: 20px;
+            border-radius: 15px;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid rgba(247, 209, 215, 0.2);
             z-index: 100;
         }
 
         .header-left { display: flex; align-items: center; gap: 15px; }
-        .logo-img { height: 30px; }
-        .nav-text { font-size: 13px; color: #f7d1d7; letter-spacing: 1px; }
+        .logo-img { height: 28px; }
+        .nav-text { font-size: 13px; color: #f7d1d7; }
 
         .header-right { display: flex; align-items: center; gap: 15px; }
         .btn-install { 
             background: #f7d1d7; color: #000 !important; 
-            padding: 6px 15px; text-decoration: none; 
-            border-radius: 20px; font-weight: bold; font-size: 11px;
-            transition: 0.3s;
+            padding: 5px 12px; text-decoration: none; 
+            border-radius: 4px; font-weight: bold; font-size: 11px;
         }
-        .btn-install:hover { transform: scale(1.05); box-shadow: 0 0 10px #f7d1d7; }
-        .top-avatar { width: 35px; height: 35px; border-radius: 50%; border: 1px solid #f7d1d7; }
+        .top-avatar { width: 32px; height: 32px; border-radius: 3px; border: 1px solid #f7d1d7; }
 
-        /* Container Principal sem os quadrados secos */
+        /* Container sem "quadrados" secos */
         .profile-container {
-            width: 90%;
-            max-width: 940px;
+            width: 940px;
             margin-top: 30px;
             display: grid;
-            grid-template-columns: 1fr 280px;
+            grid-template-columns: 1fr 300px;
             gap: 40px;
             z-index: 10;
         }
 
-        /* Avatar Principal */
-        .avatar-main { width: 160px; height: 160px; border-radius: 20px; filter: drop-shadow(0 0 15px rgba(247, 209, 215, 0.4)); }
-
-        .profile-info { margin-top: 10px; }
-        .profile-name { font-size: 28px; font-weight: bold; text-shadow: 0 0 10px rgba(247, 209, 215, 0.5); }
+        .avatar-main { width: 160px; height: 160px; border-radius: 10px; filter: drop-shadow(0 0 10px rgba(247, 209, 215, 0.3)); }
+        .profile-name { font-size: 26px; font-weight: bold; margin-top: 10px; }
         
-        /* Ícones da Bio apenas */
         .bio-icons { display: flex; gap: 15px; margin: 15px 0; }
-        .bio-icons a img { width: 28px; transition: 0.3s; filter: drop-shadow(0 0 5px #f7d1d7); }
-        .bio-icons a:hover img { transform: translateY(-3px); }
+        .bio-icons img { width: 28px; filter: drop-shadow(0 0 5px #f7d1d7); transition: 0.3s; }
+        .bio-icons img:hover { transform: scale(1.2); }
 
-        /* Seção Waifu */
-        .waifu-box { margin-top: 30px; }
-        .section-title { color: #f7d1d7; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; display: block; }
-        .waifu-img { 
-            width: 100%; max-width: 500px; border-radius: 15px; 
-            border: 1px solid rgba(247, 209, 215, 0.3);
-            transition: 0.5s;
+        /* Aba Waifu - Layout do seu desenho */
+        .waifu-section {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
         }
-        .waifu-img:hover { border-color: #f7d1d7; box-shadow: 0 0 20px rgba(247, 209, 215, 0.2); }
 
-        /* Coluna Direita Status */
-        .status-text { font-size: 18px; color: #57cbde; margin-bottom: 5px; }
+        .waifu-visual { text-align: center; }
+        .waifu-img { 
+            width: 180px; height: 180px; 
+            border-radius: 15px; 
+            object-fit: cover;
+            border: 1px solid rgba(247, 209, 215, 0.3);
+        }
+        .waifu-label { color: #67c1f5; font-size: 12px; text-transform: uppercase; display: block; margin-bottom: 5px; }
+
+        .waifu-bio {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e2c0c5;
+            flex: 1;
+        }
+
+        /* Sidebar Direita */
+        .status-text { font-size: 18px; color: #57cbde; }
         .online-time { font-size: 12px; color: #898989; margin-bottom: 30px; }
 
-        /* Jogos Favoritos com cantos arredondados */
-        .game-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+        .game-grid { display: flex; flex-wrap: wrap; gap: 10px; }
         .game-card { 
-            width: 55px; height: 55px; 
-            border-radius: 12px; /* Quadrado arredondado */
-            overflow: hidden;
-            transition: 0.3s;
+            width: 60px; height: 60px; 
+            border-radius: 12px; 
+            overflow: hidden; 
             border: 1px solid rgba(247, 209, 215, 0.1);
         }
         .game-card img { width: 100%; height: 100%; object-fit: cover; }
-        .game-card:hover { transform: scale(1.15); border-color: #f7d1d7; }
 
         #notification {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: #f7d1d7; color: #000; padding: 10px 25px; border-radius: 20px;
+            background: #f7d1d7; color: #000; padding: 10px 20px; border-radius: 5px;
             display: none; font-weight: bold; z-index: 1000;
         }
     </style>
 </head>
 <body>
 
-    <div class="vortex-overlay"></div>
+    <div class="vortex"></div>
 
     <header class="steam-header">
         <div class="header-left">
-            <img src="https://imgur.com/WLJ0VG5.png" class="logo-img" alt="Logo">
+            <img src="https://imgur.com/btg3Zph.png" class="logo-img">
             <span class="nav-text">Welcome to my site!</span>
         </div>
         <div class="header-right">
@@ -145,44 +148,40 @@
     </header>
 
     <div class="profile-container">
-        <div class="main-content">
+        <div>
             <img src="https://imgur.com/pHJtwPT.gif" class="avatar-main">
-            <div class="profile-info">
-                <div class="profile-name">Daigou ‡</div>
-                <p style="font-style: italic; color: #e2c0c5; margin-top: 5px;">Jesus Christ of Nazareth ☦</p>
-                
-                <div class="bio-icons">
-                    <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png" alt="Steam"></a>
-                    <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png" alt="MAL"></a>
-                    <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png" alt="BTC"></a>
-                </div>
+            <div class="profile-name">Daigou ☦</div>
+            <p style="font-style: italic; opacity: 0.8;">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦</p>
+            
+            <div class="bio-icons">
+                <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png"></a>
+                <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png"></a>
+                <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
             </div>
 
-            <div class="waifu-box">
-                <span class="section-title">Waifu</span>
-                <img src="https://imgur.com/w3hHP2D.png" class="waifu-img">
-                <p style="margin-top: 10px; font-size: 20px; color: #f7d1d7;">Kaguya Shinomiya</p>
+            <div class="waifu-section">
+                <div class="waifu-visual">
+                    <span class="waifu-label">Waifu</span>
+                    <img src="https://imgur.com/w3hHP2D.png" class="waifu-img">
+                    <p style="margin-top: 5px; font-weight: bold;">Kaguya Shinomiya</p>
+                </div>
+                <div class="waifu-bio">
+                    <b style="color:#f7d1d7">Kaguya Bio:</b><br>
+                    Vice-presidente do conselho estudantil da Academia Shuchiin. Uma herdeira do conglomerado Shinomiya, Kaguya é mestre em quase todas as áreas, desde artes até artes marciais. Apesar de sua inteligência genial, ela é socialmente isolada e está presa em uma "guerra de amor" cerebral para fazer Miyuki Shirogane se confessar primeiro.
+                </div>
             </div>
         </div>
 
-        <div class="sidebar">
+        <div>
             <div class="status-text">Currently Offline</div>
             <div class="online-time">Last Online 700 years ago</div>
 
-            <span class="section-title">Favorite Games</span>
-            <div class="game-grid">
-                <a href="https://store.steampowered.com/app/570940/DARK_SOULS_REMASTERED/" target="_blank" class="game-card">
-                    <img src="https://imgur.com/lcMd96p.png" title="Dark Souls Remastered">
-                </a>
-                <a href="https://minecraft.net" target="_blank" class="game-card">
-                    <img src="https://imgur.com/ctWNET1.png" title="Minecraft">
-                </a>
-                <a href="https://store.steampowered.com/app/17390/SPORE" target="_blank" class="game-card">
-                    <img src="https://imgur.com/J4g8PTZ.png" title="Spore">
-                </a>
-                <a href="https://yanderesimulator.com/download/" target="_blank" class="game-card">
-                    <img src="https://imgur.com/hdifxRI.png" title="Yandere Simulator">
-                </a>
+            <span style="color:#67c1f5; font-size: 12px; text-transform: uppercase;">Favorite Games</span>
+            <div class="game-grid" style="margin-top:10px;">
+                <a href="https://store.steampowered.com/app/570940/DARK_SOULS_REMASTERED/" target="_blank" class="game-card"><img src="https://imgur.com/lcMd96p.png"></a>
+                <a href="https://minecraft.net" target="_blank" class="game-card"><img src="https://imgur.com/ctWNET1.png"></a>
+                <a href="https://store.steampowered.com/app/17390/SPORE" target="_blank" class="game-card"><img src="https://imgur.com/J4g8PTZ.png"></a>
+                <a href="https://yanderesimulator.com/download/" target="_blank" class="game-card"><img src="https://imgur.com/hdifxRI.png"></a>
             </div>
         </div>
     </div>
