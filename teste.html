@@ -1,21 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Minecraft</title>
+    <title>Kaguyacraft build 0.0.3</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', Courier, monospace; }
-        #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 20px; pointer-events: none; z-index: 10; font-weight: 100; }
-        #hotbar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; background: rgba(0,0,0,0.6); padding: 5px; border: 4px solid #333; }
-        .slot { width: 50px; height: 50px; border: 4px solid #888; margin: 2px; display: flex; justify-content: center; align-items: center; background-size: cover; image-rendering: pixelated; }
-        .slot.selected { border-color: white; box-shadow: 0 0 10px white; }
-        #debug { position: absolute; top: 10px; left: 10px; color: white; font-size: 12px; text-shadow: 1px 1px black; }
+        body { margin: 0; overflow: hidden; background: #80a0ff; font-family: sans-serif; }
+        #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 20px; pointer-events: none; z-index: 10; }
+        #hand { position: absolute; bottom: -20px; right: 15%; width: 200px; pointer-events: none; }
+        #ui { position: absolute; top: 10px; left: 10px; color: white; text-shadow: 2px 2px #000; }
     </style>
 </head>
 <body>
-    <div id="debug">Minecraft Alpha v0.1.0<br>Chunks: 16x16</div>
+    <div id="ui">Kaguyacraft build 0.0.3</div>
     <div id="crosshair">+</div>
-    <div id="hotbar" id="inventory"></div>
+    <img id="hand" src="https://i.imgur.com/8kX5p8v.png">
 
     <script type="importmap">
         { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
@@ -24,167 +22,118 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- ENGINE DE SOM (Sintetizador) ---
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playPopSound(freq) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-        }
-
-        // --- SETUP CENA ---
+        // --- CONFIGURAÇÃO ---
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x80a0ff);
-        scene.fog = new THREE.Fog(0x80a0ff, 10, 50);
+        scene.fog = new THREE.Fog(0x80a0ff, 30, 80);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // --- TEXTURAS ALPHA ---
-        const loader = (c1, c2) => {
-            const can = document.createElement('canvas'); can.width = 16; can.height = 16;
-            const ctx = can.getContext('2d'); ctx.fillStyle = c1; ctx.fillRect(0,0,16,16);
-            ctx.fillStyle = c2; for(let i=0;i<64;i++) ctx.fillRect(Math.random()*16, Math.random()*16, 2, 2);
-            const tex = new THREE.CanvasTexture(can); tex.magFilter = THREE.NearestFilter; return tex;
-        };
+        const light = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(light);
 
-        const mats = {
-            1: new THREE.MeshLambertMaterial({ map: loader('#59c030', '#458b22') }), // Grama
-            2: new THREE.MeshLambertMaterial({ map: loader('#866043', '#503521') }), // Terra
-            3: new THREE.MeshLambertMaterial({ map: loader('#7a7a7a', '#5a5a5a') }), // Pedra
-            4: new THREE.MeshLambertMaterial({ map: loader('#5d422a', '#332314') }), // Madeira
-            5: new THREE.MeshLambertMaterial({ map: loader('#2d5d22', '#1a3614'), transparent: true, opacity: 0.9 }) // Folhas
-        };
+        // --- MUNDO EXPANDIDO (60x60) ---
+        const mapSize = 60;
+        const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+        const grassMat = new THREE.MeshLambertMaterial({ color: 0x59c030 });
+        const stoneMat = new THREE.MeshLambertMaterial({ color: 0x808080 });
 
-        // --- GERAÇÃO DE MUNDO ---
-        const world = [];
-        const size = 32;
-        const box = new THREE.BoxGeometry(1, 1, 1);
-        
-        for(let x=0; x<size; x++) {
-            for(let z=0; z<size; z++) {
-                const h = Math.floor(Math.sin(x/4)*Math.cos(z/4)*3) + 5;
-                for(let y=0; y<h; y++) {
-                    let type = y === h-1 ? 1 : (y > h-3 ? 2 : 3);
-                    const mesh = new THREE.Mesh(box, mats[type]);
-                    mesh.position.set(x-size/2, y, z-size/2);
-                    mesh.userData = { type };
-                    scene.add(mesh); world.push(mesh);
-                }
-                // Chance de árvore
-                if(Math.random() > 0.96 && h > 0) {
-                    for(let th=1; th<4; th++) {
-                        const log = new THREE.Mesh(box, mats[4]);
-                        log.position.set(x-size/2, h+th, z-size/2);
-                        log.userData = { type: 4 }; scene.add(log); world.push(log);
-                    }
+        for(let x = -mapSize/2; x < mapSize/2; x++) {
+            for(let z = -mapSize/2; z < mapSize/2; z++) {
+                const h = Math.floor(Math.sin(x/8) * Math.cos(z/8) * 4) + 3;
+                for(let y = 0; y < h; y++) {
+                    const cube = new THREE.Mesh(boxGeo, y === h-1 ? grassMat : stoneMat);
+                    cube.position.set(x, y, z);
+                    scene.add(cube);
                 }
             }
         }
 
-        // --- LUZ E DIA/NOITE ---
-        const sun = new THREE.DirectionalLight(0xffffff, 1);
-        sun.position.set(10, 20, 10); scene.add(sun);
-        scene.add(new THREE.AmbientLight(0x404040));
+        // --- ESQUELETOS E IA ---
+        const skeletons = [];
+        const arrows = [];
+        const skelGeo = new THREE.BoxGeometry(0.6, 1.8, 0.6);
+        const skelMat = new THREE.MeshLambertMaterial({ color: 0xe0e0e0 });
+
+        function spawnSkeleton(x, z) {
+            const skel = new THREE.Mesh(skelGeo, skelMat);
+            skel.position.set(x, 5, z);
+            skel.userData = { lastShot: 0 };
+            scene.add(skel);
+            skeletons.push(skel);
+        }
+
+        spawnSkeleton(10, 10);
+        spawnSkeleton(-15, 5);
+        spawnSkeleton(5, -15);
+
+        // --- FLECHAS ---
+        const arrowGeo = new THREE.BoxGeometry(0.1, 0.1, 0.5);
+        const arrowMat = new THREE.MeshBasicMaterial({ color: 0x555555 });
+
+        function fireArrow(from, target) {
+            const arrow = new THREE.Mesh(arrowGeo, arrowMat);
+            arrow.position.copy(from);
+            arrow.lookAt(target);
+            const dir = new THREE.Vector3().subVectors(target, from).normalize();
+            arrow.userData = { velocity: dir.multiplyScalar(0.3) };
+            scene.add(arrow);
+            arrows.push(arrow);
+        }
 
         // --- CONTROLES ---
         let keys = {};
-        let velY = 0;
-        let canJump = false;
-        let selected = 1;
-
-        document.addEventListener('keydown', e => {
-            keys[e.code] = true;
-            if(e.code.includes('Digit')) {
-                selected = parseInt(e.key);
-                updateHotbar();
-            }
-        });
+        document.addEventListener('keydown', e => keys[e.code] = true);
         document.addEventListener('keyup', e => keys[e.code] = false);
+        window.onclick = () => document.body.requestPointerLock();
 
-        // Hotbar UI
-        const hotbar = document.getElementById('hotbar');
-        function updateHotbar() {
-            hotbar.innerHTML = '';
-            [1,2,3,4,5].forEach(i => {
-                const s = document.createElement('div');
-                s.className = `slot ${i === selected ? 'selected' : ''}`;
-                s.style.backgroundColor = mats[i].map.image.getContext('2d').fillStyle;
-                hotbar.appendChild(s);
-            });
-        }
-        updateHotbar();
+        camera.position.set(0, 10, 0);
 
-        // Quebrar/Colocar
-        const ray = new THREE.Raycaster();
-        window.onclick = (e) => {
-            if(document.pointerLockElement !== document.body) { document.body.requestPointerLock(); return; }
-            ray.setFromCamera({x:0, y:0}, camera);
-            const inter = ray.intersectObjects(world);
-            if(inter.length > 0) {
-                if(e.button === 0) { // Esquerdo - Quebrar
-                    playPopSound(200);
-                    scene.remove(inter[0].object);
-                    world.splice(world.indexOf(inter[0].object), 1);
-                }
-            }
-        };
-
-        window.oncontextmenu = (e) => {
-            e.preventDefault();
-            ray.setFromCamera({x:0, y:0}, camera);
-            const inter = ray.intersectObjects(world);
-            if(inter.length > 0) {
-                playPopSound(400);
-                const p = inter[0].object.position.clone().add(inter[0].face.normal);
-                const m = new THREE.Mesh(box, mats[selected]);
-                m.position.copy(p);
-                scene.add(m); world.push(m);
-            }
-        };
-
-        // --- LOOP PRINCIPAL ---
-        camera.position.set(0, 15, 0);
-        camera.rotation.order = 'YXZ';
-
-        function loop() {
-            requestAnimationFrame(loop);
-            
-            // Movimento
+        function update() {
+            // Movimento Player
             const dir = new THREE.Vector3();
             camera.getWorldDirection(dir); dir.y = 0; dir.normalize();
-            const side = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0,1,0)).negate();
-
             if(keys['KeyW']) camera.position.addScaledVector(dir, 0.15);
             if(keys['KeyS']) camera.position.addScaledVector(dir, -0.15);
-            if(keys['KeyA']) camera.position.addScaledVector(side, -0.15);
-            if(keys['KeyD']) camera.position.addScaledVector(side, 0.15);
 
-            // Gravidade Simples
-            velY -= 0.01;
-            camera.position.y += velY;
-            if(camera.position.y < 10) { camera.position.y = 10; velY = 0; canJump = true; }
-            if(keys['Space'] && canJump) { velY = 0.2; canJump = false; }
-
-            // Mouse Look
-            document.onmousemove = e => {
-                if(document.pointerLockElement === document.body) {
-                    camera.rotation.y -= e.movementX * 0.002;
-                    camera.rotation.x -= e.movementY * 0.002;
-                    camera.rotation.x = Math.max(-1.5, Math.min(1.5, camera.rotation.x));
+            // IA dos Esqueletos
+            skeletons.forEach(s => {
+                s.lookAt(camera.position.x, s.position.y, camera.position.z);
+                const dist = s.position.distanceTo(camera.position);
+                
+                // Atira se estiver perto (menos de 20 blocos) a cada 2 segundos
+                if(dist < 20 && Date.now() - s.userData.lastShot > 2000) {
+                    fireArrow(s.position.clone(), camera.position.clone());
+                    s.userData.lastShot = Date.now();
                 }
-            };
+            });
+
+            // Movimento das Flechas
+            arrows.forEach((a, i) => {
+                a.position.add(a.userData.velocity);
+                if(a.position.distanceTo(camera.position) < 0.5) {
+                    console.log("Dano!"); // Aqui você pode adicionar sistema de vida
+                }
+                if(a.position.y < -5) { scene.remove(a); arrows.splice(i, 1); }
+            });
 
             renderer.render(scene, camera);
+            requestAnimationFrame(update);
         }
-        loop();
+
+        document.addEventListener('mousemove', e => {
+            if(document.pointerLockElement === document.body) {
+                camera.rotation.y -= e.movementX * 0.002;
+                camera.rotation.x -= e.movementY * 0.002;
+                camera.rotation.x = Math.max(-1.5, Math.min(1.5, camera.rotation.x));
+            }
+        });
+
+        camera.rotation.order = 'YXZ';
+        update();
     </script>
 </body>
 </html>
