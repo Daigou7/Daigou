@@ -1,41 +1,84 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kaguya World 1.8.0</title>
-    <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
+    <title>Kaguya World 1.9.3</title>
     <style>
         body { margin: 0; padding: 0; background: #5c94fc; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
         canvas { background: linear-gradient(to bottom, #5c94fc 0%, #92b9ff 100%); display: block; image-rendering: pixelated; }
         
-        .ui { position: absolute; top: 20px; left: 20px; color: white; pointer-events: none; display: none; flex-direction: column; gap: 10px; z-index: 10; }
-        .stat-row { display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 900; text-shadow: 2px 2px 0 #000; }
+        .overlay { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 20; }
+        .logo-main { width: 450px; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
         
-        /* Barras */
+        /* Controls Guide */
+        .controls-guide { background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 8px; margin: 10px 0; font-size: 14px; text-align: center; line-height: 1.6; border: 1px solid #444; }
+        
+        .menu-btn { background: #48f878; border: 4px solid #000; padding: 12px 30px; font-size: 20px; cursor: pointer; margin: 8px; font-weight: bold; transition: 0.2s; text-transform: uppercase; }
+        .menu-btn:hover { transform: scale(1.1); background: #32cd32; }
+
+        #leaderboardDisplay, #optionsPanel { display: none; background: #222; padding: 25px; border: 4px solid #48f878; border-radius: 15px; min-width: 320px; text-align: center; }
+        .rank-item { display: flex; justify-content: space-between; font-size: 20px; border-bottom: 1px solid #444; padding: 8px 0; }
+        
+        .credits-container { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 12px; opacity: 0.8; }
+        .logo-dev { height: 40px; }
+
+        /* Game UI */
+        .ui { position: absolute; top: 20px; left: 20px; color: white; pointer-events: none; display: none; flex-direction: column; gap: 10px; z-index: 10; }
         .bar-container { width: 200px; height: 15px; background: rgba(0, 0, 0, 0.7); border: 2px solid #000; border-radius: 4px; overflow: hidden; }
-        .hp-fill { width: 100%; height: 100%; background: #ff3333; transition: width 0.2s; }
+        .hp-fill { width: 100%; height: 100%; background: #ff3333; }
         .stamina-fill { width: 100%; height: 100%; background: #33aaff; }
 
-        #menuOverlay { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 20; }
-        .menu-btn { background: #48f878; border: 4px solid #000; padding: 15px 40px; font-size: 24px; cursor: pointer; margin: 10px; font-weight: bold; }
+        /* Pause Screen */
+        #pauseOverlay { display: none; background: rgba(0,0,0,0.5); position: absolute; width: 100%; height: 100%; justify-content: center; align-items: center; z-index: 15; }
+        #pauseOverlay h2 { font-size: 60px; color: white; text-shadow: 4px 4px #000; }
     </style>
 </head>
 <body>
 
-    <div id="menuOverlay">
-        <h1 style="font-size: 50px;">KAGUYA WORLD 1.8.0</h1>
-        <p>Setas/WASD: Mover | Shift: Dash | S: Defender | X: Chutar</p>
-        <button class="menu-btn" onclick="startGame()">INICIAR JOGO</button>
+    <div id="menuOverlay" class="overlay">
+        <img src="https://imgur.com/Fowormz.png" class="logo-main" alt="Kaguya World Logo">
+        
+        <div class="controls-guide">
+            <b>CONTROLS:</b><br>
+            WASD / ARROWS: Move & Jump | SHIFT: Dash<br>
+            S: Defend | X: Kick Attack | ENTER: Pause
+        </div>
+
+        <div id="mainButtons">
+            <button class="menu-btn" onclick="startGame()">PLAY</button>
+            <button class="menu-btn" onclick="showOptions()">OPTIONS</button>
+            <button class="menu-btn" onclick="showLeaderboard()">LEADERBOARD</button>
+        </div>
+
+        <div id="optionsPanel">
+            <h2 style="color: #48f878;">OPTIONS</h2>
+            <div style="margin-bottom: 20px;">
+                <input type="checkbox" id="noSpiders">
+                <label for="noSpiders" style="font-size: 18px;">NO SPIDERS (Remove 🕷️)</label>
+            </div>
+            <button class="menu-btn" onclick="hideAllPanels()">BACK</button>
+        </div>
+
+        <div id="leaderboardDisplay">
+            <h2 style="color: #48f878;">TOP 5 LOCAL</h2>
+            <div id="rankList"></div>
+            <button class="menu-btn" onclick="hideAllPanels()">BACK</button>
+        </div>
+
+        <div class="credits-container">
+            <span>created and developed by</span>
+            <img src="https://imgur.com/btg3Zph.png" class="logo-dev" alt="Developer Logo">
+        </div>
+    </div>
+
+    <div id="pauseOverlay">
+        <h2>PAUSED</h2>
     </div>
 
     <div class="ui" id="gameUI">
-        <div class="stat-row">
-            <img src="https://imgur.com/7H8pFGh.png" style="width:30px">
-            <span id="lifeText">LIFES = 3</span>
-        </div>
+        <div style="font-size: 24px; font-weight: bold; text-shadow: 2px 2px #000;">💸 <span id="moneyText">0</span></div>
         <div class="bar-container"><div id="hpFill" class="hp-fill"></div></div>
         <div class="bar-container"><div id="staminaFill" class="stamina-fill"></div></div>
-        <div class="stat-row">💸 <span id="moneyText">0</span></div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -44,8 +87,14 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
     let gameRunning = false;
+    let isPaused = false;
+    let noSpiders = false;
 
-    // Carregamento de Sprites
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Sprites
     const spr = {
         idle: new Image(), walk: new Image(), dash: new Image(),
         jump: new Image(), defend: new Image(), hurt: new Image(),
@@ -60,149 +109,133 @@
     spr.dead.src = "https://imgur.com/1NDnHJe.png";
     spr.kick.src = "https://imgur.com/oSyk1P9.png";
 
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize);
-    resize();
+    // Menu Logic
+    function showOptions() { document.getElementById("mainButtons").style.display = "none"; document.getElementById("optionsPanel").style.display = "block"; }
+    function showLeaderboard() {
+        document.getElementById("mainButtons").style.display = "none";
+        document.getElementById("leaderboardDisplay").style.display = "block";
+        const list = document.getElementById("rankList");
+        const scores = JSON.parse(localStorage.getItem('kaguya_scores')) || [];
+        list.innerHTML = scores.map((s, i) => `<div class="rank-item"><span>${i+1}. ${s.name}</span><span>$${s.score}</span></div>`).join('') || "<p>No records yet.</p>";
+    }
+    function hideAllPanels() {
+        document.getElementById("mainButtons").style.display = "block";
+        document.getElementById("optionsPanel").style.display = "none";
+        document.getElementById("leaderboardDisplay").style.display = "none";
+        noSpiders = document.getElementById("noSpiders").checked;
+    }
 
+    function startGame() {
+        noSpiders = document.getElementById("noSpiders").checked;
+        document.getElementById("menuOverlay").style.display = "none";
+        document.getElementById("gameUI").style.display = "flex";
+        gameRunning = true;
+        spawnInitial();
+        loop();
+    }
+
+    function togglePause() {
+        if (!gameRunning) return;
+        isPaused = !isPaused;
+        document.getElementById("pauseOverlay").style.display = isPaused ? "flex" : "none";
+    }
+
+    // Player & Physics
     let player = {
         x: 100, y: 0, width: 135, height: 180,
-        velX: 0, velY: 0, 
-        hp: 100, lives: 3, stamina: 100, shield: 100,
-        grounded: false, facing: 1, 
-        state: "idle", invincible: false, isDead: false
+        velX: 0, velY: 0, hp: 100, stamina: 100, shield: 100,
+        grounded: false, facing: 1, state: "idle", invincible: false
     };
 
     let keys = {};
-    let platforms = [{ x: 0, y: canvas.height - 200, width: 3000, height: 400 }];
+    let platforms = [{ x: 0, y: window.innerHeight - 200, width: 3000, height: 500 }];
     let enemies = [];
     let cameraX = 0;
     let money = 0;
 
-    function startGame() {
-        document.getElementById("menuOverlay").style.display = "none";
-        document.getElementById("gameUI").style.display = "flex";
-        gameRunning = true;
-        spawnEnemies(3000, 9000);
-        loop();
-    }
-
-    function spawnEnemies(startX, endX) {
-        for (let x = startX; x < endX; x += 800) {
-            let platY = canvas.height - (200 + Math.random() * 200);
-            platforms.push({ x: x, y: platY, width: 600, height: 1000 });
-            enemies.push({ x: x + 200, y: platY - 70, width: 70, height: 70, speed: 3, startX: x + 200, range: 300 });
+    function spawnInitial() {
+        for (let x = 3000; x < 20000; x += 850) {
+            let platY = window.innerHeight - (200 + Math.random() * 250);
+            let platW = 600 + Math.random() * 400;
+            platforms.push({ x: x, y: platY, width: platW, height: 1000 });
+            if (Math.random() > 0.4) {
+                let pool = ["🐢", "🦔", "🦀", "🦖"];
+                if (!noSpiders) pool.push("🕷️");
+                enemies.push({ x: x+100, y: platY-70, width: 70, height: 70, speed: 4, emoji: pool[Math.floor(Math.random()*pool.length)], startX: x+100, range: platW-150 });
+            }
         }
     }
 
     function update() {
-        if (player.isDead) { player.state = "dead"; return; }
+        if (!gameRunning || isPaused) return;
 
-        // RESET STATE
         let isMoving = keys[39] || keys[68] || keys[37] || keys[65];
         player.state = "idle";
 
-        // DEFESA (S ou Seta Baixo)
         if (keys[83] || keys[40]) {
-            player.state = "defend";
-            player.velX = 0;
-            player.shield = Math.max(0, player.shield - 0.5);
+            player.state = "defend"; player.velX = 0;
+            player.shield = Math.max(0, player.shield - 0.7);
         } else {
-            player.shield = Math.min(100, player.shield + 0.2);
-            
-            // MOVIMENTO E DASH
-            let currentSpeed = 8;
-            if (keys[16] && player.stamina > 0 && isMoving) { // Shift
-                currentSpeed = 16;
-                player.stamina -= 1;
-                player.state = "dash";
-            } else {
-                player.stamina = Math.min(100, player.stamina + 0.5);
-                if (isMoving) player.state = "walk";
-            }
+            player.shield = Math.min(100, player.shield + 0.3);
+            let speed = (keys[16] && player.stamina > 5) ? 19 : 11;
+            if (speed > 11) { player.stamina -= 1.4; player.state = "dash"; } 
+            else { player.stamina = Math.min(100, player.stamina + 0.6); if (isMoving) player.state = "walk"; }
 
-            if (keys[39] || keys[68]) { player.velX = currentSpeed; player.facing = 1; }
-            else if (keys[37] || keys[65]) { player.velX = -currentSpeed; player.facing = -1; }
-            else { player.velX *= 0.8; }
+            if (keys[39] || keys[68]) { player.velX = speed; player.facing = 1; }
+            else if (keys[37] || keys[65]) { player.velX = -speed; player.facing = -1; }
+            else { player.velX *= 0.82; }
 
-            // ATAQUE (X)
-            if (keys[88]) {
+            if (keys[88]) { 
                 player.state = "kick";
-                checkKick();
+                enemies.forEach((en, i) => {
+                    let hitX = player.facing === 1 ? player.x + player.width : player.x - 70;
+                    if (Math.abs(hitX - en.x) < 100 && Math.abs(player.y - en.y) < 150) {
+                        enemies.splice(i, 1); money += 100;
+                    }
+                });
             }
         }
 
         if (!player.grounded) player.state = "jump";
-        if (player.invincible && player.hp > 0) player.state = "hurt";
+        if (player.invincible) player.state = "hurt";
+        if ((keys[32] || keys[38] || keys[87]) && player.grounded) { player.velY = -26; player.grounded = false; }
 
-        // PULO
-        if ((keys[32] || keys[38] || keys[87]) && player.grounded) {
-            player.velY = -25;
-            player.grounded = false;
-        }
-
-        player.velY += 1; // Gravidade
-        player.y += player.velY;
-        player.x += player.velX;
-
-        // COLISÃO CHÃO
+        player.velY += 1.2; player.y += player.velY; player.x += player.velX;
         player.grounded = false;
+
         platforms.forEach(p => {
             if (player.x + 40 < p.x + p.width && player.x + player.width - 40 > p.x &&
-                player.y + player.height > p.y && player.y + player.height < p.y + 50) {
-                player.y = p.y - player.height;
-                player.velY = 0;
-                player.grounded = true;
+                player.y + player.height > p.y && player.y + player.height < p.y + 60) {
+                player.y = p.y - player.height; player.velY = 0; player.grounded = true;
             }
         });
 
-        // INIMIGOS
-        enemies.forEach((en, i) => {
+        enemies.forEach(en => {
             en.x += en.speed;
             if (en.x > en.startX + en.range || en.x < en.startX) en.speed *= -1;
-            
-            // Dano na Kaguya
-            if (rectIntersect(player.x, player.y, player.width, player.height, en.x, en.y, en.width, en.height)) {
+            if (Math.abs((player.x + 60) - (en.x + 35)) < 70 && Math.abs((player.y + 90) - (en.y + 35)) < 90) {
                 if (player.state !== "defend" || player.shield <= 0) {
-                    takeDamage(10);
+                    player.hp -= 15; player.invincible = true;
+                    if (player.hp <= 0) {
+                        let n = prompt(`GAME OVER! Score: $${money}. Your name:`);
+                        if(n) {
+                            let s = JSON.parse(localStorage.getItem('kaguya_scores')) || [];
+                            s.push({name: n, score: money});
+                            s.sort((a,b) => b.score - a.score);
+                            localStorage.setItem('kaguya_scores', JSON.stringify(s.slice(0,5)));
+                        }
+                        location.reload();
+                    }
+                    setTimeout(() => player.invincible = false, 1000);
                 }
             }
         });
 
-        cameraX += (player.x - canvas.width/3 - cameraX) * 0.1;
-        updateUI();
-    }
+        if (player.y > window.innerHeight + 500) location.reload();
+        cameraX += (player.x - window.innerWidth/4 - cameraX) * 0.1;
 
-    function checkKick() {
-        enemies.forEach((en, i) => {
-            let hitRange = player.facing === 1 ? player.x + player.width : player.x - 50;
-            if (rectIntersect(hitRange, player.y, 50, player.height, en.x, en.y, en.width, en.height)) {
-                enemies.splice(i, 1);
-                money += 500;
-            }
-        });
-    }
-
-    function takeDamage(amt) {
-        if (!player.invincible && !player.isDead) {
-            player.hp -= amt;
-            player.invincible = true;
-            if (player.hp <= 0) {
-                player.lives--;
-                player.hp = 100;
-                if (player.lives <= 0) player.isDead = true;
-            }
-            setTimeout(() => player.invincible = false, 1000);
-        }
-    }
-
-    function rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2) {
-        return x2 < x1 + w1 && x2 + w2 > x1 && y2 < y1 + h1 && y2 + h2 > y1;
-    }
-
-    function updateUI() {
         document.getElementById("hpFill").style.width = player.hp + "%";
         document.getElementById("staminaFill").style.width = player.stamina + "%";
-        document.getElementById("lifeText").innerText = "LIFES = " + player.lives;
         document.getElementById("moneyText").innerText = money;
     }
 
@@ -216,40 +249,34 @@
             ctx.fillStyle = "#189828"; ctx.fillRect(p.x, p.y, p.width, 30);
         });
 
-        enemies.forEach(en => {
-            ctx.font = "60px Arial"; ctx.fillText("🐢", en.x, en.y + 50);
-        });
+        enemies.forEach(en => { ctx.font = "60px Arial"; ctx.fillText(en.emoji, en.x, en.y + 55); });
 
-        // DESENHO DA KAGUYA
-        let img = spr[player.state];
+        let img = spr[player.state] || spr.idle;
         ctx.save();
         ctx.translate(player.x + player.width/2, player.y + player.height/2);
         ctx.scale(player.facing, 1);
         ctx.drawImage(img, -player.width/2, -player.height/2, player.width, player.height);
         
-        // ESCUDO ESTILO SMASH
         if (player.state === "defend") {
-            ctx.globalAlpha = 0.5;
-            ctx.fillStyle = player.shield > 20 ? "rgba(100, 200, 255, 0.7)" : "red";
-            ctx.beginPath();
-            ctx.arc(0, 0, player.shield, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 1;
+            ctx.beginPath(); ctx.arc(0, 0, player.shield * 1.3, 0, Math.PI*2);
+            ctx.fillStyle = "rgba(100, 200, 255, 0.4)"; ctx.fill();
         }
         ctx.restore();
-
         ctx.restore();
     }
 
     function loop() {
-        update();
+        if (!gameRunning) return;
+        update(); 
         draw();
-        if (gameRunning) requestAnimationFrame(loop);
+        requestAnimationFrame(loop);
     }
 
-    window.addEventListener("keydown", e => keys[e.keyCode] = true);
+    window.addEventListener("keydown", e => {
+        if (e.keyCode === 13) togglePause(); // ENTER to Pause
+        keys[e.keyCode] = true;
+    });
     window.addEventListener("keyup", e => keys[e.keyCode] = false);
-
 </script>
 </body>
 </html>
