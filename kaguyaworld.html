@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Kaguya World 1.5.0</title>
+    <title>Kaguya World 1.5.2</title>
     <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
         body { margin: 0; padding: 0; background: #5c94fc; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
@@ -36,13 +36,12 @@
 <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-    
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize);
     resize();
 
     const gravity = 0.8;
-    const friction = 0.7; // Aumentado para parar de deslizar
+    const friction = 0.85;
     let keys = [];
     let cameraX = 0;
     let money = 0;
@@ -52,11 +51,10 @@
     const imgJump = new Image(); imgJump.src = "https://imgur.com/NW9NZBS.png";
 
     let player = {
-        x: 100, y: 0, width: 135, height: 180, speed: 9,
+        x: 100, y: 0, width: 135, height: 180, speed: 10,
         velX: 0, velY: 0, jumping: false, grounded: false,
-        canDoubleJump: false, 
-        hp: 100, lives: 3, invincible: false,
-        lastSafeX: 100, lastSafeY: 0, facing: "right"
+        canDoubleJump: false, hp: 100, lives: 3, invincible: false,
+        facing: "right"
     };
 
     let platforms = [{ x: 0, y: canvas.height - 200, width: 2500, height: 200 }];
@@ -64,156 +62,129 @@
     let enemies = [];
 
     function spawnProcedural(startX, endX) {
-        for (let x = startX; x < endX; x += 500) {
-            let platW = 400 + Math.random() * 400;
-            let platH = 150 + Math.random() * 250;
+        for (let x = startX; x < endX; x += 600) {
+            let platW = 500 + Math.random() * 400;
+            let platH = 200 + Math.random() * 200;
             let platY = canvas.height - platH;
             platforms.push({ x: x, y: platY, width: platW, height: platH });
 
-            let itemX = x + platW/2;
-            let chance = Math.random() * 100;
-            let item = { x: itemX, y: platY - 70, type: '💸', value: 1, isHeal: false };
-            if (chance < 0.1) { item.type = '💎'; item.value = 1000000; }
-            else if (chance < 10) { item.type = '💰'; item.value = 10000; }
-            else if (chance < 25) { item.type = '💘'; item.isHeal = true; } 
-            else if (chance < 60) { item.type = '💵'; item.value = 100; }
+            let itemChance = Math.random() * 100;
+            let item = { x: x + platW/2, y: platY - 80, type: '💸', value: 1, isHeal: false };
+            if (itemChance < 5) { item.type = '💎'; item.value = 5000; }
+            else if (itemChance < 20) { item.type = '💘'; item.isHeal = true; }
+            else if (itemChance < 50) { item.type = '💵'; item.value = 100; }
             collectibles.push(item);
 
             if (Math.random() > 0.4) {
                 enemies.push({
-                    x: x + 100, y: platY - 10, width: 60, height: 60,
-                    speed: 3.5, emoji: ["🐢", "🦔", "🦀", "🕷️"][Math.floor(Math.random()*4)],
-                    range: platW - 100, startX: x + 100, groundY: platY
+                    x: x + 100, y: platY - 70, width: 70, height: 70,
+                    speed: 4, emoji: ["🐢", "🦔", "🦀", "🕷️"][Math.floor(Math.random()*4)],
+                    range: platW - 140, startX: x + 100
                 });
             }
         }
     }
 
-    spawnProcedural(2500, 7000);
+    spawnProcedural(2500, 8000);
 
-    function updateUI() {
-        document.getElementById("lifeText").innerText = "LIFES = " + player.lives;
-        document.getElementById("moneyText").innerText = "MONEY = " + money.toLocaleString('pt-BR');
-        document.getElementById("hpFill").style.width = player.hp + "%";
-    }
+    function colCheck(p, plat) {
+        if (p.x < plat.x + plat.width && p.x + p.width > plat.x &&
+            p.y < plat.y + plat.height && p.y + p.height > plat.y) {
+            
+            let overlapTop = (p.y + p.height) - plat.y;
+            let overlapBottom = (plat.y + plat.height) - p.y;
+            let overlapLeft = (p.x + p.width) - plat.x;
+            let overlapRight = (plat.x + plat.width) - p.x;
 
-    function drawPlatform(p) {
-        ctx.fillStyle = "#654321"; ctx.fillRect(p.x, p.y, p.width, p.height); // Solo Sólido
-        ctx.fillStyle = "#32CD32"; ctx.fillRect(p.x, p.y, p.width, 35); // Grama
-        ctx.fillStyle = "#90EE90"; ctx.fillRect(p.x, p.y, p.width, 10); // Brilho
-    }
+            let minOverlap = Math.min(overlapTop, overlapBottom, overlapLeft, overlapRight);
 
-    function handleJump() {
-        if (player.grounded) {
-            player.jumping = true; player.grounded = false;
-            player.canDoubleJump = true; player.velY = -22;
-        } else if (player.canDoubleJump) {
-            player.canDoubleJump = false; player.velY = -18;
+            if (minOverlap === overlapTop && p.velY >= 0) {
+                p.y = plat.y - p.height; p.velY = 0; p.grounded = true; p.jumping = false; p.canDoubleJump = false;
+            } else if (minOverlap === overlapBottom) {
+                p.y = plat.y + plat.height; p.velY = 1;
+            } else if (minOverlap === overlapLeft) {
+                p.x = plat.x - p.width; p.velX = 0;
+            } else if (minOverlap === overlapRight) {
+                p.x = plat.x + plat.width; p.velX = 0;
+            }
         }
     }
 
     function update() {
         if (keys[39] || keys[68]) { player.velX = player.speed; player.facing = "right"; }
         else if (keys[37] || keys[65]) { player.velX = -player.speed; player.facing = "left"; }
-        else { player.velX *= friction; }
+        else { player.velX *= friction; if(Math.abs(player.velX) < 0.5) player.velX = 0; }
 
         player.velY += gravity;
         player.grounded = false;
 
-        if (player.x + 2000 > lastGeneratedX) { spawnProcedural(lastGeneratedX, lastGeneratedX + 5000); lastGeneratedX += 5000; }
+        platforms.forEach(p => colCheck(player, p));
 
+        player.x += player.velX;
+        player.y += player.velY;
+
+        if (player.x + 2000 > lastGeneratedX) { spawnProcedural(lastGeneratedX, lastGeneratedX + 5000); lastGeneratedX += 5000; }
         cameraX = player.x - canvas.width/4;
 
         ctx.save();
         ctx.translate(-cameraX, 0);
 
         platforms.forEach(p => {
-            drawPlatform(p);
-            let dir = colCheck(player, p);
-            if (dir === "b") { 
-                player.grounded = true; 
-                player.jumping = false; 
-                player.velY = 0;
-                player.y = p.y - player.height;
-                player.lastSafeX = p.x; player.lastSafeY = p.y - player.height;
-            }
-            else if (dir === "t") { player.velY = 0; player.y = p.y + p.height; }
-            else if (dir === "l") { player.x = p.x - player.width; player.velX = 0; }
-            else if (dir === "r") { player.x = p.x + p.width; player.velX = 0; }
+            ctx.fillStyle = "#654321"; ctx.fillRect(p.x, p.y, p.width, p.height);
+            ctx.fillStyle = "#32CD32"; ctx.fillRect(p.x, p.y, p.width, 35);
+            ctx.fillStyle = "#90EE90"; ctx.fillRect(p.x, p.y, p.width, 10);
         });
 
-        ctx.font = "55px Arial";
         collectibles.forEach((c, i) => {
-            ctx.fillText(c.type, c.x, c.y);
-            if (rectIntersect(player.x, player.y, player.width, player.height, c.x, c.y-50, 60, 60)) {
-                if (c.isHeal) { player.hp = Math.min(100, player.hp + 20); }
-                else { money += c.value; }
-                updateUI(); collectibles.splice(i, 1);
+            ctx.font = "55px Arial"; ctx.fillText(c.type, c.x, c.y);
+            if (Math.abs(player.x + player.width/2 - (c.x + 25)) < 80 && Math.abs(player.y + player.height/2 - (c.y - 25)) < 100) {
+                c.isHeal ? player.hp = Math.min(100, player.hp + 20) : money += c.value;
+                document.getElementById("moneyText").innerText = "MONEY = " + money.toLocaleString('pt-BR');
+                document.getElementById("hpFill").style.width = player.hp + "%";
+                collectibles.splice(i, 1);
             }
         });
 
         enemies.forEach(en => {
             en.x += en.speed;
             if (en.x > en.startX + en.range || en.x < en.startX) en.speed *= -1;
-            ctx.font = "65px Arial";
-            ctx.fillText(en.emoji, en.x, en.groundY - 10); // Colado no topo da plataforma
-            if (rectIntersect(player.x, player.y, player.width, player.height, en.x, en.groundY-70, 65, 65)) takeDamage(15);
+            ctx.font = "65px Arial"; ctx.fillText(en.emoji, en.x, en.y + 60);
+            if (Math.abs(player.x + player.width/2 - (en.x + 35)) < 90 && Math.abs(player.y + player.height/2 - (en.y + 30)) < 100) takeDamage(20);
         });
 
-        player.x += player.velX; player.y += player.velY;
-        if (player.y > canvas.height + 500) { takeDamage(100); player.x = player.lastSafeX; player.y = player.lastSafeY; }
+        if (player.y > canvas.height + 500) { takeDamage(100); player.y = 0; player.velY = 0; }
 
-        let currentImg = (player.jumping || !player.grounded) ? imgJump : imgIdle;
-        if (player.invincible && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.4;
+        // DESENHO FINAL SEM FLICAGEM
+        let currentImg = (!player.grounded) ? imgJump : imgIdle;
+        let scaleX = (player.facing === "left") ? -1 : 1;
+        if (currentImg === imgJump) scaleX *= -1; 
+
         ctx.save();
-        if (player.facing === "left") {
-            ctx.translate(player.x + player.width/2, player.y + player.height/2);
-            ctx.scale(-1, 1);
-            ctx.drawImage(currentImg, -player.width/2, -player.height/2, player.width, player.height);
-        } else {
-            ctx.drawImage(currentImg, player.x, player.y, player.width, player.height);
-        }
+        if (player.invincible && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.3;
+        ctx.translate(player.x + player.width/2, player.y + player.height/2);
+        ctx.scale(scaleX, 1);
+        ctx.drawImage(currentImg, -player.width/2, -player.height/2, player.width, player.height);
         ctx.restore();
-        ctx.globalAlpha = 1.0; ctx.restore();
+        ctx.restore();
     }
 
     function takeDamage(amount) {
         if (!player.invincible) {
             player.hp -= amount;
-            if (player.hp <= 0) {
-                player.lives--;
-                player.hp = 100; // Reseta HP ao perder vida
-                if (player.lives <= 0) { alert("Game Over!"); location.reload(); }
-            }
-            updateUI();
+            if (player.hp <= 0) { player.lives--; player.hp = 100; if (player.lives <= 0) { alert("Game Over!"); location.reload(); } }
+            document.getElementById("lifeText").innerText = "LIFES = " + player.lives;
+            document.getElementById("hpFill").style.width = player.hp + "%";
             player.invincible = true;
             setTimeout(() => player.invincible = false, 1000);
         }
     }
 
-    function rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2) { return x2 < x1 + w1 && x2 + w2 > x1 && y2 < y1 + h1 && y2 + h2 > y1; }
-
-    function colCheck(shapeA, shapeB) {
-        let vX = (shapeA.x + (shapeA.width / 2)) - (shapeB.x + (shapeB.width / 2)),
-            vY = (shapeA.y + (shapeA.height / 2)) - (shapeB.y + (shapeB.height / 2)),
-            hWidths = (shapeA.width / 2) + (shapeB.width / 2),
-            hHeights = (shapeA.height / 2) + (shapeB.height / 2),
-            colDir = null;
-        if (Math.abs(vX) < hWidths && Math.abs(vY) < hHeights) {
-            let oX = hWidths - Math.abs(vX), oY = hHeights - Math.abs(vY);
-            if (oX >= oY) {
-                if (vY > 0) { colDir = "t"; } else { colDir = "b"; }
-            } else {
-                if (vX > 0) { colDir = "l"; } else { colDir = "r"; }
-            }
-        }
-        return colDir;
-    }
-
     function loop() { ctx.clearRect(0, 0, canvas.width, canvas.height); update(); requestAnimationFrame(loop); }
-
     window.addEventListener("keydown", (e) => {
-        if (!keys[e.keyCode] && (e.keyCode === 38 || e.keyCode === 32 || e.keyCode === 87)) handleJump();
+        if (!keys[e.keyCode] && (e.keyCode === 38 || e.keyCode === 32 || e.keyCode === 87)) {
+            if (player.grounded) { player.velY = -24; player.grounded = false; player.canDoubleJump = true; }
+            else if (player.canDoubleJump) { player.velY = -20; player.canDoubleJump = false; }
+        }
         keys[e.keyCode] = true;
     });
     window.addEventListener("keyup", (e) => keys[e.keyCode] = false);
