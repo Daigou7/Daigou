@@ -2,124 +2,167 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Kaguya Adventure</title>
+    <title>Kaguya Adventure - Infinite</title>
     <style>
         body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
         canvas { background: #5c94fc; border: 4px solid #fff; image-rendering: pixelated; }
-        .ui { position: absolute; top: 20px; color: white; text-align: center; width: 100%; pointer-events: none; text-shadow: 2px 2px #000; }
+        .ui { position: absolute; top: 20px; color: white; text-align: left; width: 760px; pointer-events: none; text-shadow: 2px 2px #000; display: flex; flex-direction: column; gap: 5px; }
+        .stat-row { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; }
+        .icon { width: 35px; height: 35px; object-fit: contain; }
     </style>
 </head>
 <body>
     <div class="ui">
-        <h1>KAGUYA WORLD</h1>
-        <p>Setas para mover | Espaço para pular</p>
+        <div class="stat-row">
+            <img src="https://imgur.com/7H8pFGh.png" class="icon" alt="vida">
+            <span id="lifeText">LIFES = 3</span>
+        </div>
+        <div class="stat-row">
+            <span style="font-size: 30px; width: 35px; text-align: center;">🪙</span>
+            <span id="moneyText">MONEY = 0</span>
+        </div>
     </div>
     <canvas id="gameCanvas"></canvas>
 
 <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-
-    canvas.width = 800;
-    canvas.height = 400;
+    canvas.width = 800; canvas.height = 400;
 
     const gravity = 0.6;
     const friction = 0.8;
     let keys = [];
+    let cameraX = 0;
+    let money = 0;
+    let lastGeneratedX = 800;
+
+    const imgIdle = new Image(); imgIdle.src = "https://imgur.com/5S20Ccp.png";
+    const imgJump = new Image(); imgJump.src = "https://imgur.com/NW9NZBS.png";
 
     let player = {
-        x: 100,
-        y: 300,
-        width: 30,
-        height: 45,
-        speed: 5,
-        velX: 0,
-        velY: 0,
-        jumping: false,
-        grounded: false
+        x: 100, y: 300, width: 40, height: 50, speed: 5,
+        velX: 0, velY: 0, jumping: false, grounded: false,
+        lives: 3, invincible: false
     };
 
-    const platforms = [
-        { x: 0, y: 370, width: 800, height: 30 }, // Chão
-        { x: 300, y: 270, width: 120, height: 20 },
-        { x: 500, y: 190, width: 120, height: 20 },
-        { x: 150, y: 180, width: 100, height: 20 },
-        { x: 650, y: 280, width: 100, height: 20 }
-    ];
+    let platforms = [{ x: 0, y: 370, width: 1000, height: 30 }];
+    let collectibles = [];
+    let enemies = [];
 
-    function drawKaguya() {
-        // Cabelo de trás
-        ctx.fillStyle = "#1a1a1a";
-        ctx.fillRect(player.x - 2, player.y + 5, player.width + 4, 25);
-        
-        // Vestido (Preto)
-        ctx.fillStyle = "#000";
-        ctx.fillRect(player.x, player.y + 15, player.width, player.height - 15);
-        
-        // Rosto
-        ctx.fillStyle = "#ffe0bd";
-        ctx.fillRect(player.x + 5, player.y, player.width - 10, 20);
+    function spawnProcedural(startX, endX) {
+        for (let x = startX; x < endX; x += 300) {
+            let platW = 150 + Math.random() * 200;
+            let platY = 150 + Math.random() * 150;
+            platforms.push({ x: x, y: platY, width: platW, height: 20 });
 
-        // Olhos (Vermelhos)
-        ctx.fillStyle = "#ff0000";
-        ctx.fillRect(player.x + 8, player.y + 8, 4, 4);
-        ctx.fillRect(player.x + 18, player.y + 8, 4, 4);
+            // Spawn de Itens
+            let chance = Math.random() * 100;
+            let item = { x: x + platW/2, y: platY - 40, type: '🪙', value: 1 };
+            
+            if (chance < 0.1) { item.type = '💎'; item.value = 1000000; }
+            else if (chance < 10) { item.type = '💰'; item.value = 10000; }
+            else if (chance < 50) { item.type = '💵'; item.value = 100; }
+            
+            collectibles.push(item);
 
-        // Laço Vermelho
-        ctx.fillStyle = "#be0000";
-        ctx.fillRect(player.x + 10, player.y - 5, 10, 8);
+            // Spawn de Inimigos
+            if (Math.random() > 0.5) {
+                enemies.push({
+                    x: x, y: platY - 30, width: 30, height: 30,
+                    speed: 2, emoji: ["🐢", "🦔", "🦀"][Math.floor(Math.random()*3)],
+                    range: platW - 30, startX: x
+                });
+            }
+        }
     }
 
+    // Inicializa os primeiros 2000px
+    spawnProcedural(1000, 3000);
+
     function update() {
-        // Movimentos
-        if (keys[38] || keys[32] || keys[87]) { // Pulo
+        if (keys[38] || keys[32] || keys[87]) {
             if (!player.jumping && player.grounded) {
-                player.jumping = true;
-                player.grounded = false;
+                player.jumping = true; player.grounded = false;
                 player.velY = -player.speed * 2.5;
             }
         }
-        if (keys[39] || keys[68]) { // Direita
-            if (player.velX < player.speed) player.velX++;
-        }
-        if (keys[37] || keys[65]) { // Esquerda
-            if (player.velX > -player.speed) player.velX--;
-        }
+        if (keys[39] || keys[68]) { if (player.velX < player.speed) player.velX++; }
+        if (keys[37] || keys[65]) { if (player.velX > -player.speed) player.velX--; }
 
         player.velX *= friction;
         player.velY += gravity;
-
         player.grounded = false;
 
-        // Desenhar Chão e Plataformas
+        // Gerar mais mapa conforme anda
+        if (player.x + 1000 > lastGeneratedX) {
+            spawnProcedural(lastGeneratedX, lastGeneratedX + 2000);
+            lastGeneratedX += 2000;
+        }
+
+        cameraX = player.x - 200;
+        if (cameraX < 0) cameraX = 0;
+
+        ctx.save();
+        ctx.translate(-cameraX, 0);
+
+        // Plataformas e Colisão
         ctx.fillStyle = "#8b4513";
-        for (let i = 0; i < platforms.length; i++) {
-            ctx.fillRect(platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
-            
-            // Colisão
-            let dir = colCheck(player, platforms[i]);
-            if (dir === "l" || dir === "r") {
-                player.velX = 0;
-            } else if (dir === "b") {
-                player.grounded = true;
-                player.jumping = false;
-            } else if (dir === "t") {
-                player.velY *= -1;
+        platforms.forEach(p => {
+            ctx.fillRect(p.x, p.y, p.width, p.height);
+            let dir = colCheck(player, p);
+            if (dir === "b") { player.grounded = true; player.jumping = false; }
+            else if (dir === "t") player.velY *= -0.5;
+        });
+
+        // Coletáveis
+        ctx.font = "25px Arial";
+        collectibles.forEach((c, index) => {
+            ctx.fillText(c.type, c.x, c.y);
+            if (rectIntersect(player.x, player.y, player.width, player.height, c.x, c.y-20, 20, 20)) {
+                money += c.value;
+                document.getElementById("moneyText").innerText = "MONEY = " + money.toLocaleString('pt-BR');
+                collectibles.splice(index, 1);
             }
-        }
+        });
 
-        if (player.grounded) {
-            player.velY = 0;
-        }
+        // Inimigos
+        enemies.forEach(en => {
+            en.x += en.speed;
+            if (en.x > en.startX + en.range || en.x < en.startX) en.speed *= -1;
+            ctx.fillText(en.emoji, en.x, en.y + 25);
+            if (rectIntersect(player.x, player.y, player.width, player.height, en.x, en.y, 30, 30)) takeDamage();
+        });
 
+        if (player.grounded) player.velY = 0;
         player.x += player.velX;
         player.y += player.velY;
 
-        // Limite de tela
-        if (player.x >= canvas.width - player.width) player.x = canvas.width - player.width;
-        else if (player.x <= 0) player.x = 0;
+        // Morte por queda
+        if (player.y > canvas.height) { takeDamage(); player.y = 0; player.x -= 100; }
 
-        drawKaguya();
+        let currentImg = player.jumping ? imgJump : imgIdle;
+        if (player.invincible && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.5;
+        ctx.drawImage(currentImg, player.x, player.y, player.width, player.height);
+        ctx.globalAlpha = 1.0;
+        ctx.restore();
+    }
+
+    function takeDamage() {
+        if (!player.invincible) {
+            player.lives--;
+            document.getElementById("lifeText").innerText = "LIFES = " + player.lives;
+            player.invincible = true;
+            player.velY = -10;
+            if (player.lives <= 0) {
+                alert("Fim de Jogo! Total: " + money);
+                location.reload();
+            }
+            setTimeout(() => player.invincible = false, 1500);
+        }
+    }
+
+    function rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2) {
+        return x2 < x1 + w1 && x2 + w2 > x1 && y2 < y1 + h1 && y2 + h2 > y1;
     }
 
     function colCheck(shapeA, shapeB) {
@@ -128,26 +171,14 @@
             hWidths = (shapeA.width / 2) + (shapeB.width / 2),
             hHeights = (shapeA.height / 2) + (shapeB.height / 2),
             colDir = null;
-
         if (Math.abs(vX) < hWidths && Math.abs(vY) < hHeights) {
-            let oX = hWidths - Math.abs(vX),
-                oY = hHeights - Math.abs(vY);
+            let oX = hWidths - Math.abs(vX), oY = hHeights - Math.abs(vY);
             if (oX >= oY) {
-                if (vY > 0) {
-                    colDir = "t";
-                    shapeA.y += oY;
-                } else {
-                    colDir = "b";
-                    shapeA.y -= oY;
-                }
+                if (vY > 0) { colDir = "t"; shapeA.y += oY; }
+                else { colDir = "b"; shapeA.y -= oY; }
             } else {
-                if (vX > 0) {
-                    colDir = "l";
-                    shapeA.x += oX;
-                } else {
-                    colDir = "r";
-                    shapeA.x -= oX;
-                }
+                if (vX > 0) { colDir = "l"; shapeA.x += oX; }
+                else { colDir = "r"; shapeA.x -= oX; }
             }
         }
         return colDir;
@@ -159,9 +190,8 @@
         requestAnimationFrame(loop);
     }
 
-    window.addEventListener("keydown", function (e) { keys[e.keyCode] = true; });
-    window.addEventListener("keyup", function (e) { keys[e.keyCode] = false; });
-
+    window.addEventListener("keydown", (e) => keys[e.keyCode] = true);
+    window.addEventListener("keyup", (e) => keys[e.keyCode] = false);
     loop();
 </script>
 </body>
