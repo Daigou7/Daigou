@@ -2,164 +2,254 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Kaguya World 1.6.1</title>
+    <title>Kaguya World 1.8.0</title>
     <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
         body { margin: 0; padding: 0; background: #5c94fc; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
         canvas { background: linear-gradient(to bottom, #5c94fc 0%, #92b9ff 100%); display: block; image-rendering: pixelated; }
-        .ui { position: absolute; top: 20px; left: 20px; color: white; pointer-events: none; display: flex; flex-direction: column; gap: 15px; z-index: 10; }
-        .stat-group { display: flex; flex-direction: column; gap: 5px; }
-        .stat-row { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 900; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000; }
-        .icon { width: 40px; height: 40px; filter: drop-shadow(2px 2px 0px black); }
-        .hp-bar-container { width: 250px; height: 20px; background: rgba(0, 0, 0, 0.7); border: 3px solid #000; border-radius: 5px; overflow: hidden; }
-        .hp-bar-fill { width: 100%; height: 100%; background: linear-gradient(to bottom, #ff3333, #880000); transition: width 0.2s ease; }
+        
+        .ui { position: absolute; top: 20px; left: 20px; color: white; pointer-events: none; display: none; flex-direction: column; gap: 10px; z-index: 10; }
+        .stat-row { display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 900; text-shadow: 2px 2px 0 #000; }
+        
+        /* Barras */
+        .bar-container { width: 200px; height: 15px; background: rgba(0, 0, 0, 0.7); border: 2px solid #000; border-radius: 4px; overflow: hidden; }
+        .hp-fill { width: 100%; height: 100%; background: #ff3333; transition: width 0.2s; }
+        .stamina-fill { width: 100%; height: 100%; background: #33aaff; }
+
+        #menuOverlay { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 20; }
+        .menu-btn { background: #48f878; border: 4px solid #000; padding: 15px 40px; font-size: 24px; cursor: pointer; margin: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="ui">
-        <div class="stat-group">
-            <div class="stat-row">
-                <img src="https://imgur.com/7H8pFGh.png" class="icon" alt="vida">
-                <span id="lifeText">LIFES = 3</span>
-            </div>
-            <div class="hp-bar-container">
-                <div id="hpFill" class="hp-bar-fill"></div>
-            </div>
-        </div>
-        <div class="stat-row">
-            <span style="font-size: 40px;">💸</span>
-            <span id="moneyText">MONEY = 0</span>
-        </div>
+
+    <div id="menuOverlay">
+        <h1 style="font-size: 50px;">KAGUYA WORLD 1.8.0</h1>
+        <p>Setas/WASD: Mover | Shift: Dash | S: Defender | X: Chutar</p>
+        <button class="menu-btn" onclick="startGame()">INICIAR JOGO</button>
     </div>
+
+    <div class="ui" id="gameUI">
+        <div class="stat-row">
+            <img src="https://imgur.com/7H8pFGh.png" style="width:30px">
+            <span id="lifeText">LIFES = 3</span>
+        </div>
+        <div class="bar-container"><div id="hpFill" class="hp-fill"></div></div>
+        <div class="bar-container"><div id="staminaFill" class="stamina-fill"></div></div>
+        <div class="stat-row">💸 <span id="moneyText">0</span></div>
+    </div>
+
     <canvas id="gameCanvas"></canvas>
 
 <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
+    let gameRunning = false;
+
+    // Carregamento de Sprites
+    const spr = {
+        idle: new Image(), walk: new Image(), dash: new Image(),
+        jump: new Image(), defend: new Image(), hurt: new Image(),
+        dead: new Image(), kick: new Image()
+    };
+    spr.idle.src = "https://imgur.com/eJtPITs.png";
+    spr.walk.src = "https://imgur.com/SQCGCDm.png";
+    spr.dash.src = "https://imgur.com/LVI6uTi.png";
+    spr.jump.src = "https://imgur.com/zEk3Cek.png";
+    spr.defend.src = "https://imgur.com/8VYfVnQ.png";
+    spr.hurt.src = "https://imgur.com/I5eFRGd.png";
+    spr.dead.src = "https://imgur.com/1NDnHJe.png";
+    spr.kick.src = "https://imgur.com/oSyk1P9.png";
+
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize);
     resize();
 
-    const gravity = 0.9;
-    const friction = 0.82;
-    let keys = [];
-    let cameraX = 0;
-    let money = 0;
-    let lastGeneratedX = 800;
-
-    const imgIdle = new Image(); imgIdle.src = "https://imgur.com/urbofgF.png";
-    const imgJump = new Image(); imgJump.src = "https://imgur.com/NW9NZBS.png";
-
     let player = {
-        x: 100, y: 0, width: 135, height: 180, speed: 11,
-        velX: 0, velY: 0, jumping: false, grounded: false,
-        canDoubleJump: false, hp: 100, lives: 3, invincible: false,
-        facing: "right"
+        x: 100, y: 0, width: 135, height: 180,
+        velX: 0, velY: 0, 
+        hp: 100, lives: 3, stamina: 100, shield: 100,
+        grounded: false, facing: 1, 
+        state: "idle", invincible: false, isDead: false
     };
 
+    let keys = {};
     let platforms = [{ x: 0, y: canvas.height - 200, width: 3000, height: 400 }];
-    let collectibles = [];
     let enemies = [];
+    let cameraX = 0;
+    let money = 0;
 
-    function spawnProcedural(startX, endX) {
-        for (let x = startX; x < endX; x += 700) {
-            let platW = 600 + Math.random() * 500;
-            let platH = 250 + Math.random() * 200;
-            let platY = canvas.height - platH;
-            platforms.push({ x: x, y: platY, width: platW, height: 1000 });
-            collectibles.push({ x: x + platW/2, y: platY - 80, type: '💸', value: 1 });
-            if (Math.random() > 0.4) {
-                enemies.push({ x: x + 150, y: platY - 70, width: 70, height: 70, speed: 4, emoji: "🐢", range: platW - 200, startX: x + 150 });
-            }
-        }
-    }
-    spawnProcedural(3000, 9000);
-
-    function drawSMWPlatform(p) {
-        ctx.fillStyle = "#a85020"; ctx.fillRect(p.x, p.y + 30, p.width, p.height);
-        ctx.fillStyle = "#000"; ctx.fillRect(p.x, p.y + 30, p.width, 4);
-        ctx.fillStyle = "#189828"; ctx.fillRect(p.x, p.y, p.width, 30);
-        ctx.fillStyle = "#48f878"; ctx.fillRect(p.x, p.y, p.width, 8);
+    function startGame() {
+        document.getElementById("menuOverlay").style.display = "none";
+        document.getElementById("gameUI").style.display = "flex";
+        gameRunning = true;
+        spawnEnemies(3000, 9000);
+        loop();
     }
 
-    function colCheck(p, plat) {
-        if (p.x + p.width > plat.x && p.x < plat.x + plat.width &&
-            p.y + p.height > plat.y && p.y < plat.y + plat.height) {
-            let overlapTop = (p.y + p.height) - plat.y;
-            if (overlapTop < 50 && p.velY >= 0) {
-                p.y = plat.y - p.height; p.velY = 0; p.grounded = true; p.jumping = false; p.canDoubleJump = false;
-            }
+    function spawnEnemies(startX, endX) {
+        for (let x = startX; x < endX; x += 800) {
+            let platY = canvas.height - (200 + Math.random() * 200);
+            platforms.push({ x: x, y: platY, width: 600, height: 1000 });
+            enemies.push({ x: x + 200, y: platY - 70, width: 70, height: 70, speed: 3, startX: x + 200, range: 300 });
         }
     }
 
     function update() {
-        if (keys[39] || keys[68]) { player.velX = player.speed; player.facing = "right"; }
-        else if (keys[37] || keys[65]) { player.velX = -player.speed; player.facing = "left"; }
-        else { player.velX *= friction; }
+        if (player.isDead) { player.state = "dead"; return; }
 
-        player.velY += gravity;
-        player.grounded = false;
-        platforms.forEach(p => colCheck(player, p));
+        // RESET STATE
+        let isMoving = keys[39] || keys[68] || keys[37] || keys[65];
+        player.state = "idle";
 
-        player.x += player.velX;
+        // DEFESA (S ou Seta Baixo)
+        if (keys[83] || keys[40]) {
+            player.state = "defend";
+            player.velX = 0;
+            player.shield = Math.max(0, player.shield - 0.5);
+        } else {
+            player.shield = Math.min(100, player.shield + 0.2);
+            
+            // MOVIMENTO E DASH
+            let currentSpeed = 8;
+            if (keys[16] && player.stamina > 0 && isMoving) { // Shift
+                currentSpeed = 16;
+                player.stamina -= 1;
+                player.state = "dash";
+            } else {
+                player.stamina = Math.min(100, player.stamina + 0.5);
+                if (isMoving) player.state = "walk";
+            }
+
+            if (keys[39] || keys[68]) { player.velX = currentSpeed; player.facing = 1; }
+            else if (keys[37] || keys[65]) { player.velX = -currentSpeed; player.facing = -1; }
+            else { player.velX *= 0.8; }
+
+            // ATAQUE (X)
+            if (keys[88]) {
+                player.state = "kick";
+                checkKick();
+            }
+        }
+
+        if (!player.grounded) player.state = "jump";
+        if (player.invincible && player.hp > 0) player.state = "hurt";
+
+        // PULO
+        if ((keys[32] || keys[38] || keys[87]) && player.grounded) {
+            player.velY = -25;
+            player.grounded = false;
+        }
+
+        player.velY += 1; // Gravidade
         player.y += player.velY;
+        player.x += player.velX;
 
-        if (player.x + 3000 > lastGeneratedX) { spawnProcedural(lastGeneratedX, lastGeneratedX + 6000); lastGeneratedX += 6000; }
-        cameraX += (player.x - canvas.width/4 - cameraX) * 0.1;
+        // COLISÃO CHÃO
+        player.grounded = false;
+        platforms.forEach(p => {
+            if (player.x + 40 < p.x + p.width && player.x + player.width - 40 > p.x &&
+                player.y + player.height > p.y && player.y + player.height < p.y + 50) {
+                player.y = p.y - player.height;
+                player.velY = 0;
+                player.grounded = true;
+            }
+        });
 
+        // INIMIGOS
+        enemies.forEach((en, i) => {
+            en.x += en.speed;
+            if (en.x > en.startX + en.range || en.x < en.startX) en.speed *= -1;
+            
+            // Dano na Kaguya
+            if (rectIntersect(player.x, player.y, player.width, player.height, en.x, en.y, en.width, en.height)) {
+                if (player.state !== "defend" || player.shield <= 0) {
+                    takeDamage(10);
+                }
+            }
+        });
+
+        cameraX += (player.x - canvas.width/3 - cameraX) * 0.1;
+        updateUI();
+    }
+
+    function checkKick() {
+        enemies.forEach((en, i) => {
+            let hitRange = player.facing === 1 ? player.x + player.width : player.x - 50;
+            if (rectIntersect(hitRange, player.y, 50, player.height, en.x, en.y, en.width, en.height)) {
+                enemies.splice(i, 1);
+                money += 500;
+            }
+        });
+    }
+
+    function takeDamage(amt) {
+        if (!player.invincible && !player.isDead) {
+            player.hp -= amt;
+            player.invincible = true;
+            if (player.hp <= 0) {
+                player.lives--;
+                player.hp = 100;
+                if (player.lives <= 0) player.isDead = true;
+            }
+            setTimeout(() => player.invincible = false, 1000);
+        }
+    }
+
+    function rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2) {
+        return x2 < x1 + w1 && x2 + w2 > x1 && y2 < y1 + h1 && y2 + h2 > y1;
+    }
+
+    function updateUI() {
+        document.getElementById("hpFill").style.width = player.hp + "%";
+        document.getElementById("staminaFill").style.width = player.stamina + "%";
+        document.getElementById("lifeText").innerText = "LIFES = " + player.lives;
+        document.getElementById("moneyText").innerText = money;
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
         ctx.translate(-cameraX, 0);
 
-        platforms.forEach(p => drawSMWPlatform(p));
-
-        enemies.forEach(en => {
-            en.x += en.speed;
-            if (en.x > en.startX + en.range || en.x < en.startX) en.speed *= -1;
-            ctx.font = "70px Arial"; ctx.fillText(en.emoji, en.x, en.y + 60);
-            if (Math.abs(player.x + player.width/2 - (en.x + 35)) < 80 && Math.abs(player.y + player.height/2 - (en.y + 30)) < 100) takeDamage(20);
+        platforms.forEach(p => {
+            ctx.fillStyle = "#a85020"; ctx.fillRect(p.x, p.y + 30, p.width, p.height);
+            ctx.fillStyle = "#189828"; ctx.fillRect(p.x, p.y, p.width, 30);
         });
 
-        // --- LÓGICA DE DESENHO CORRIGIDA (SEM FLICKER) ---
-        // Só muda para imgJump se ela realmente estiver no ar (não grounded)
-        let currentImg = (!player.grounded) ? imgJump : imgIdle;
-        
+        enemies.forEach(en => {
+            ctx.font = "60px Arial"; ctx.fillText("🐢", en.x, en.y + 50);
+        });
+
+        // DESENHO DA KAGUYA
+        let img = spr[player.state];
         ctx.save();
-        if (player.invincible && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.3;
-        
         ctx.translate(player.x + player.width/2, player.y + player.height/2);
+        ctx.scale(player.facing, 1);
+        ctx.drawImage(img, -player.width/2, -player.height/2, player.width, player.height);
         
-        // Decide a escala final
-        let finalScaleX = (player.facing === "left") ? -1 : 1;
-        // Se o sprite de pulo for invertido em relação ao idle, descomente a linha abaixo:
-        // if (currentImg === imgJump) finalScaleX *= -1; 
-        
-        ctx.scale(finalScaleX, 1);
-        ctx.drawImage(currentImg, -player.width/2, -player.height/2, player.width, player.height);
+        // ESCUDO ESTILO SMASH
+        if (player.state === "defend") {
+            ctx.globalAlpha = 0.5;
+            ctx.fillStyle = player.shield > 20 ? "rgba(100, 200, 255, 0.7)" : "red";
+            ctx.beginPath();
+            ctx.arc(0, 0, player.shield, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
         ctx.restore();
+
         ctx.restore();
     }
 
-    function takeDamage(amount) {
-        if (!player.invincible) {
-            player.hp -= amount;
-            if (player.hp <= 0) { player.lives--; player.hp = 100; if (player.lives <= 0) location.reload(); }
-            document.getElementById("lifeText").innerText = "LIFES = " + player.lives;
-            document.getElementById("hpFill").style.width = player.hp + "%";
-            player.invincible = true;
-            setTimeout(() => player.invincible = false, 1200);
-        }
+    function loop() {
+        update();
+        draw();
+        if (gameRunning) requestAnimationFrame(loop);
     }
 
-    function loop() { ctx.clearRect(0, 0, canvas.width, canvas.height); update(); requestAnimationFrame(loop); }
-    window.addEventListener("keydown", (e) => {
-        if (!keys[e.keyCode] && (e.keyCode === 38 || e.keyCode === 32 || e.keyCode === 87)) {
-            if (player.grounded) { player.velY = -26; player.grounded = false; player.canDoubleJump = true; }
-            else if (player.canDoubleJump) { player.velY = -22; player.canDoubleJump = false; }
-        }
-        keys[e.keyCode] = true;
-    });
-    window.addEventListener("keyup", (e) => keys[e.keyCode] = false);
-    loop();
+    window.addEventListener("keydown", e => keys[e.keyCode] = true);
+    window.addEventListener("keyup", e => keys[e.keyCode] = false);
+
 </script>
 </body>
 </html>
