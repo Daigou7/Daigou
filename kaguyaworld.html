@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Kaguya World</title>
+    <title>Kaguya World 1.3.0</title>
     <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
         body { margin: 0; padding: 0; background: #5c94fc; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
@@ -19,32 +19,51 @@
             pointer-events: none; 
             display: flex; 
             flex-direction: column; 
-            gap: 10px; 
+            gap: 15px; 
         }
+        .stat-group { display: flex; flex-direction: column; gap: 5px; }
         .stat-row { 
             display: flex; 
             align-items: center; 
             gap: 12px; 
             font-size: 28px; 
             font-weight: 900; 
-            text-shadow: 
-                -2px -2px 0 #000,  
-                 2px -2px 0 #000,
-                -2px  2px 0 #000,
-                 2px  2px 0 #000,
-                 4px  4px 5px rgba(0,0,0,0.5);
+            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
         }
         .icon { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(2px 2px 0px black); }
+        
+        .hp-bar-container {
+            width: 200px;
+            height: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 3px solid #000;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        .hp-bar-fill {
+            width: 100%; 
+            height: 100%;
+            background: linear-gradient(to bottom, #ff4d4d, #b30000);
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4);
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
 <body>
     <div class="ui">
-        <div class="stat-row">
-            <img src="https://imgur.com/7H8pFGh.png" class="icon" alt="vida">
-            <span id="lifeText">LIFES = 3</span>
+        <div class="stat-group">
+            <div class="stat-row">
+                <img src="https://imgur.com/7H8pFGh.png" class="icon" alt="vida">
+                <span id="lifeText">LIFES = 3</span>
+            </div>
+            <div class="hp-bar-container">
+                <div id="hpFill" class="hp-bar-fill"></div>
+            </div>
         </div>
+
         <div class="stat-row">
-            <span style="font-size: 40px;">💸</span>
+            <span style="font-size: 40px; text-shadow: 2px 2px 0 #000;">💸</span>
             <span id="moneyText">MONEY = 0</span>
         </div>
     </div>
@@ -74,8 +93,8 @@
     let player = {
         x: 100, y: 100, width: 45, height: 60, speed: 6,
         velX: 0, velY: 0, jumping: false, grounded: false,
-        lives: 3, invincible: false, lastSafeX: 100, lastSafeY: 100,
-        facing: "right" // Controla a direção do sprite
+        lives: 3, maxLives: 3, invincible: false, lastSafeX: 100, lastSafeY: 100,
+        facing: "right"
     };
 
     let platforms = [{ x: 0, y: canvas.height - 100, width: 1200, height: 100 }];
@@ -92,10 +111,13 @@
             platforms.push({ x: x, y: platY, width: platW, height: platH });
 
             let chance = Math.random() * 100;
-            let item = { x: x + platW/2, y: platY - 50, type: '💸', value: 1 };
+            let item = { x: x + platW/2, y: platY - 50, type: '💸', value: 1, isHeal: false };
+            
             if (chance < 0.1) { item.type = '💎'; item.value = 1000000; }
             else if (chance < 10) { item.type = '💰'; item.value = 10000; }
+            else if (chance < 20) { item.type = '💘'; item.isHeal = true; } 
             else if (chance < 50) { item.type = '💵'; item.value = 100; }
+            
             collectibles.push(item);
 
             if (Math.random() > 0.5) {
@@ -110,6 +132,13 @@
 
     spawnProcedural(1200, 4000);
 
+    function updateUI() {
+        document.getElementById("lifeText").innerText = "LIFES = " + player.lives;
+        document.getElementById("moneyText").innerText = "MONEY = " + money.toLocaleString('pt-BR');
+        let hpPercent = (player.lives / player.maxLives) * 100;
+        document.getElementById("hpFill").style.width = hpPercent + "%";
+    }
+
     function drawPlatform(p) {
         ctx.fillStyle = "#654321";
         ctx.fillRect(p.x, p.y + 15, p.width, p.height);
@@ -120,19 +149,16 @@
     }
 
     function update() {
-        // Pulo (Seta Cima, Espaço ou W)
         if (keys[38] || keys[32] || keys[87]) {
             if (!player.jumping && player.grounded) {
                 player.jumping = true; player.grounded = false;
                 player.velY = -15;
             }
         }
-        // Direita (Seta Direita ou D)
         if (keys[39] || keys[68]) { 
             if (player.velX < player.speed) player.velX++;
             player.facing = "right";
         }
-        // Esquerda (Seta Esquerda ou A)
         if (keys[37] || keys[65]) { 
             if (player.velX > -player.speed) player.velX--;
             player.facing = "left";
@@ -154,8 +180,7 @@
         ctx.translate(-cameraX, 0);
 
         decorations.forEach(d => {
-            ctx.globalAlpha = 0.4;
-            ctx.font = "60px Arial";
+            ctx.globalAlpha = 0.4; ctx.font = "60px Arial";
             ctx.fillText(d.type, d.x + (cameraX * 0.6), d.y);
             ctx.globalAlpha = 1.0;
         });
@@ -176,8 +201,12 @@
             ctx.font = "35px Arial";
             ctx.fillText(c.type, c.x, c.y + floatY);
             if (rectIntersect(player.x, player.y, player.width, player.height, c.x, c.y-30, 40, 40)) {
-                money += c.value;
-                document.getElementById("moneyText").innerText = "MONEY = " + money.toLocaleString('pt-BR');
+                if (c.isHeal) {
+                    if (player.lives < player.maxLives) player.lives++;
+                } else {
+                    money += c.value;
+                }
+                updateUI();
                 collectibles.splice(index, 1);
             }
         });
@@ -200,13 +229,11 @@
             player.velX = 0; player.velY = 0;
         }
 
-        // --- DESENHO DA PERSONAGEM COM ESPELHAMENTO ---
         let currentImg = player.jumping ? imgJump : imgIdle;
         if (player.invincible && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.4;
         
         ctx.save();
         if (player.facing === "left") {
-            // Move o contexto para a posição da personagem, espelha e volta
             ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
             ctx.scale(-1, 1);
             ctx.drawImage(currentImg, -player.width / 2, -player.height / 2, player.width, player.height);
@@ -222,10 +249,10 @@
     function takeDamage() {
         if (!player.invincible) {
             player.lives--;
-            document.getElementById("lifeText").innerText = "LIFES = " + player.lives;
+            updateUI();
             player.invincible = true;
             if (player.lives <= 0) {
-                alert("Game Over! Total: " + money.toLocaleString('pt-BR'));
+                alert("Game Over! Kaguya coletou " + money.toLocaleString('pt-BR') + " dinheiros!");
                 location.reload();
             }
             setTimeout(() => player.invincible = false, 1500);
