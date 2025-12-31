@@ -6,141 +6,183 @@
     <title>Daigou | Profile</title>
     <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
+        /* Importando fonte fofa */
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            background: url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;
-            background-size: cover; /* Modo fit/stretched */
+            background: #000 url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;
+            background-size: cover;
             color: #f7d1d7;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Quicksand', sans-serif; /* Fonte mais fofa/pastel */
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* Barra Superior Steam */
+        /* Efeito de sobreposição Vortex Rosa/Preto */
+        .vortex-overlay {
+            position: fixed;
+            top: 50%; left: 50%;
+            width: 200vmax; height: 200vmax;
+            background: repeating-conic-gradient(from 0deg, #000 0deg 15deg, #1a0d0f 15deg 30deg);
+            opacity: 0.3;
+            animation: rotateVortex 100s linear infinite;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 70%);
+            pointer-events: none;
+        }
+
+        @keyframes rotateVortex {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Barra Superior Estilizada (Menor e Arredondada) */
         .steam-header {
-            width: 100%;
-            background: rgba(23, 26, 33, 0.95);
-            height: 104px;
+            width: 90%;
+            max-width: 940px;
+            background: rgba(23, 26, 33, 0.8);
+            backdrop-filter: blur(10px);
+            height: 60px; /* Reduzido */
+            margin-top: 15px;
+            border-radius: 30px; /* Mais estiloso */
+            padding: 0 25px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(247, 209, 215, 0.2);
             z-index: 100;
         }
 
-        .header-content {
-            width: 940px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 30px; }
+        .nav-text { font-size: 13px; color: #f7d1d7; letter-spacing: 1px; }
+
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .btn-install { 
+            background: #f7d1d7; color: #000 !important; 
+            padding: 6px 15px; text-decoration: none; 
+            border-radius: 20px; font-weight: bold; font-size: 11px;
+            transition: 0.3s;
         }
+        .btn-install:hover { transform: scale(1.05); box-shadow: 0 0 10px #f7d1d7; }
+        .top-avatar { width: 35px; height: 35px; border-radius: 50%; border: 1px solid #f7d1d7; }
 
-        .logo-area { display: flex; align-items: center; gap: 20px; }
-        .logo-img { height: 44px; }
-        .nav-links { color: #dcdedf; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; }
-
-        .user-menu { display: flex; align-items: center; gap: 10px; color: #b8b6b4; font-size: 11px; }
-        .btn-install { background: #5c7e10; color: white !important; padding: 4px 10px; text-decoration: none; border-radius: 2px; }
-        .top-avatar { width: 32px; height: 32px; border: 1px solid #f7d1d7; }
-
-        /* Container Principal */
+        /* Container Principal sem os quadrados secos */
         .profile-container {
-            width: 940px;
-            background: rgba(0, 0, 0, 0.85);
-            margin-top: 40px;
-            padding: 40px;
+            width: 90%;
+            max-width: 940px;
+            margin-top: 30px;
             display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 30px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(247, 209, 215, 0.2);
+            grid-template-columns: 1fr 280px;
+            gap: 40px;
+            z-index: 10;
         }
 
-        /* Esquerda: Bio e Waifu */
-        .avatar-big { width: 164px; height: 164px; border: 2px solid #f7d1d7; float: left; margin-right: 20px; }
-        .profile-name { font-size: 24px; color: #fff; margin-bottom: 10px; }
-        .bio-links { font-size: 14px; line-height: 1.6; color: #acb2b8; margin-bottom: 40px; }
-        .bio-links a { color: #f7d1d7; text-decoration: none; }
-        .bio-links a:hover { text-decoration: underline; }
+        /* Avatar Principal */
+        .avatar-main { width: 160px; height: 160px; border-radius: 20px; filter: drop-shadow(0 0 15px rgba(247, 209, 215, 0.4)); }
 
-        .waifu-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            clear: both;
-            border-radius: 3px;
-        }
-        .section-title { color: #67c1f5; font-size: 14px; text-transform: uppercase; margin-bottom: 15px; }
-        .waifu-banner { 
-            width: 100%; 
-            height: 180px; 
-            object-fit: cover; /* Recorte similar ao preview de jogo */
-            border: 1px solid #f7d1d7;
-        }
-        .waifu-name { font-size: 20px; margin-top: 10px; color: #fff; }
-
-        /* Direita: Status e Jogos */
-        .status-box { color: #57cbde; font-size: 18px; margin-bottom: 20px; }
-        .status-time { color: #898989; font-size: 12px; }
+        .profile-info { margin-top: 10px; }
+        .profile-name { font-size: 28px; font-weight: bold; text-shadow: 0 0 10px rgba(247, 209, 215, 0.5); }
         
-        .game-icons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
-        .game-icon { width: 60px; height: 60px; border: 1px solid #333; transition: 0.3s; }
-        .game-icon:hover { transform: scale(1.1); border-color: #f7d1d7; }
+        /* Ícones da Bio apenas */
+        .bio-icons { display: flex; gap: 15px; margin: 15px 0; }
+        .bio-icons a img { width: 28px; transition: 0.3s; filter: drop-shadow(0 0 5px #f7d1d7); }
+        .bio-icons a:hover img { transform: translateY(-3px); }
 
-        /* Notificação */
+        /* Seção Waifu */
+        .waifu-box { margin-top: 30px; }
+        .section-title { color: #f7d1d7; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; display: block; }
+        .waifu-img { 
+            width: 100%; max-width: 500px; border-radius: 15px; 
+            border: 1px solid rgba(247, 209, 215, 0.3);
+            transition: 0.5s;
+        }
+        .waifu-img:hover { border-color: #f7d1d7; box-shadow: 0 0 20px rgba(247, 209, 215, 0.2); }
+
+        /* Coluna Direita Status */
+        .status-text { font-size: 18px; color: #57cbde; margin-bottom: 5px; }
+        .online-time { font-size: 12px; color: #898989; margin-bottom: 30px; }
+
+        /* Jogos Favoritos com cantos arredondados */
+        .game-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+        .game-card { 
+            width: 55px; height: 55px; 
+            border-radius: 12px; /* Quadrado arredondado */
+            overflow: hidden;
+            transition: 0.3s;
+            border: 1px solid rgba(247, 209, 215, 0.1);
+        }
+        .game-card img { width: 100%; height: 100%; object-fit: cover; }
+        .game-card:hover { transform: scale(1.15); border-color: #f7d1d7; }
+
         #notification {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: #f7d1d7; color: #000; padding: 10px 20px; display: none;
-            font-weight: bold; z-index: 1000; border-radius: 2px;
+            background: #f7d1d7; color: #000; padding: 10px 25px; border-radius: 20px;
+            display: none; font-weight: bold; z-index: 1000;
         }
     </style>
 </head>
 <body>
 
+    <div class="vortex-overlay"></div>
+
     <header class="steam-header">
-        <div class="header-content">
-            <div class="logo-area">
-                <img src="https://imgur.com/WLJ0VG5" class="logo-img" alt="Logo">
-                <span class="nav-links">Welcome to my site</span>
-            </div>
-            <div class="user-menu">
-                <a href="https://imgur.com/Yt5CwBL" class="btn-install" target="_blank">Install Kaguya</a>
-                <span>Daigou</span>
-                <img src="https://imgur.com/pHJtwPT.gif" class="top-avatar">
-            </div>
+        <div class="header-left">
+            <img src="https://imgur.com/WLJ0VG5.png" class="logo-img" alt="Logo">
+            <span class="nav-text">Welcome to my site!</span>
+        </div>
+        <div class="header-right">
+            <a href="https://media.tenor.com/S-K-H-Yd_hX4AAAAC/kaguya-dance-kaguya.gif" class="btn-install" target="_blank">Install Kaguya</a>
+            <img src="https://imgur.com/pHJtwPT.gif" class="top-avatar">
         </div>
     </header>
 
     <div class="profile-container">
-        <div class="main-col">
-            <img src="https://imgur.com/pHJtwPT.gif" class="avatar-big">
-            <div class="profile-name">Daigou ‡</div>
-            <div class="bio-links">
-                <span style="color: #f7d1d7; font-weight: bold;">Jesus Christ of Nazareth ☦</span><br><br>
-                <b>Steam:</b> <a href="https://steamcommunity.com/id/Daigou7/" target="_blank">@Daigou7</a><br>
-                <b>MyAnimeList:</b> <a href="https://myanimelist.net/profile/Daigou" target="_blank">@Daigou</a><br>
-                <b>Bitcoin:</b> <a href="javascript:void(0);" onclick="copyBTC()">bc1qxy...sh8ws (Clique para copiar)</a>
+        <div class="main-content">
+            <img src="https://imgur.com/pHJtwPT.gif" class="avatar-main">
+            <div class="profile-info">
+                <div class="profile-name">Daigou ‡</div>
+                <p style="font-style: italic; color: #e2c0c5; margin-top: 5px;">Jesus Christ of Nazareth ☦</p>
+                
+                <div class="bio-icons">
+                    <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png" alt="Steam"></a>
+                    <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png" alt="MAL"></a>
+                    <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png" alt="BTC"></a>
+                </div>
             </div>
 
-            <div class="waifu-section">
-                <div class="section-title">Waifu</div>
-                <img src="https://imgur.com/0KdEbwX" class="waifu-banner">
-                <div class="waifu-name">Kaguya Shinomiya</div>
+            <div class="waifu-box">
+                <span class="section-title">Waifu</span>
+                <img src="https://imgur.com/w3hHP2D.png" class="waifu-img">
+                <p style="margin-top: 10px; font-size: 20px; color: #f7d1d7;">Kaguya Shinomiya</p>
             </div>
         </div>
 
-        <div class="side-col">
-            <div class="status-box">
-                Currently Offline
-                <div class="status-time">Last Online 18 mins ago</div>
-            </div>
+        <div class="sidebar">
+            <div class="status-text">Currently Offline</div>
+            <div class="online-time">Last Online 700 years ago</div>
 
-            <div class="section-title">Favorite Games</div>
-            <div class="game-icons">
-                <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/570940/capsule_sm_120.jpg" class="game-icon" title="Dark Souls Remastered">
-                <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/24700/capsule_sm_120.jpg" class="game-icon" title="Spore">
-                <img src="https://i.imgur.com/h9xY62U.png" class="game-icon" title="Yandere Simulator">
-                <img src="https://i.imgur.com/vH9U8pS.png" class="game-icon" title="Minecraft">
+            <span class="section-title">Favorite Games</span>
+            <div class="game-grid">
+                <a href="https://store.steampowered.com/app/570940/DARK_SOULS_REMASTERED/" target="_blank" class="game-card">
+                    <img src="https://imgur.com/lcMd96p.png" title="Dark Souls Remastered">
+                </a>
+                <a href="https://minecraft.net" target="_blank" class="game-card">
+                    <img src="https://imgur.com/ctWNET1.png" title="Minecraft">
+                </a>
+                <a href="https://store.steampowered.com/app/17390/SPORE" target="_blank" class="game-card">
+                    <img src="https://imgur.com/J4g8PTZ.png" title="Spore">
+                </a>
+                <a href="https://yanderesimulator.com/download/" target="_blank" class="game-card">
+                    <img src="https://imgur.com/hdifxRI.png" title="Yandere Simulator">
+                </a>
             </div>
         </div>
     </div>
