@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Meu Minecraft JS</title>
+    <title>Minecraft Classic JS</title>
     <style>
-        body { margin: 0; overflow: hidden; }
-        #crosshair {
-            position: absolute; top: 50%; left: 50%;
-            width: 20px; height: 20px; color: white;
-            transform: translate(-50%, -50%); font-size: 20px;
-        }
+        body { margin: 0; overflow: hidden; font-family: sans-serif; }
+        #ui { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: white; background: rgba(0,0,0,0.5); padding: 10px; pointer-events: none; }
+        #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px; }
     </style>
 </head>
 <body>
     <div id="crosshair">+</div>
+    <div id="ui">WASD: Andar | Espaço: Pular | Click: Quebrar | Shift+Click: Colocar</div>
+
     <script type="importmap">
         { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
     </script>
@@ -21,62 +19,135 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // 1. Configuração Básica
+        // --- CONFIGURAÇÃO ---
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87CEEB); // Céu azul
+        scene.background = new THREE.Color(0x7092ff); // Céu clássico
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer();
+        const renderer = new THREE.WebGLRenderer({ antialias: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // 2. Iluminação
-        const light = new THREE.AmbientLight(0x404040); 
-        scene.add(light);
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-        dirLight.position.set(5, 10, 7.5);
-        scene.add(dirLight);
+        // --- TEXTURAS (Geradas via Canvas para ser rápido) ---
+        const createTexture = (color1, color2) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 16; canvas.height = 16;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = color1; ctx.fillRect(0,0,16,16);
+            ctx.fillStyle = color2;
+            for(let i=0; i<16; i+=2) for(let j=0; j<16; j+=2) {
+                if(Math.random() > 0.5) ctx.fillRect(i,j,2,2);
+            }
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.magFilter = THREE.NearestFilter; // Estilo Pixelado
+            return tex;
+        };
 
-        // 3. Criando o Chão (Mundo de Blocos)
+        const grassMat = new THREE.MeshLambertMaterial({ map: createTexture('#5a8d31', '#4a7d21') });
+        const dirtMat = new THREE.MeshLambertMaterial({ map: createTexture('#8b5d42', '#5d3a24') });
+
+        // --- MUNDO ---
+        const worldSize = 20;
+        const blocks = [];
         const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshLambertMaterial({ color: 0x348C31 }); // Grama
 
-        for(let x = -10; x < 10; x++) {
-            for(let z = -10; z < 10; z++) {
-                const cube = new THREE.Mesh(geometry, material);
-                cube.position.set(x, 0, z);
-                scene.add(cube);
+        for(let x = -worldSize; x < worldSize; x++) {
+            for(let z = -worldSize; z < worldSize; z++) {
+                const h = Math.floor(Math.sin(x/5) * Math.cos(z/5) * 2) + 2; // Relevo
+                for(let y = 0; y < h; y++) {
+                    const block = new THREE.Mesh(geometry, y === h-1 ? grassMat : dirtMat);
+                    block.position.set(x, y, z);
+                    scene.add(block);
+                    blocks.push(block);
+                }
             }
         }
 
-        camera.position.y = 2;
-        camera.position.z = 5;
+        const light = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(light);
+        const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+        sun.position.set(10, 20, 10);
+        scene.add(sun);
 
-        // 4. Controles Simples (WASD)
-        const keys = {};
-        document.addEventListener('keydown', (e) => keys[e.code] = true);
-        document.addEventListener('keyup', (e) => keys[e.code] = false);
+        // --- CONTROLES E FÍSICA ---
+        let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+        let velocity = new THREE.Vector3();
+        let canJump = false;
+
+        document.addEventListener('keydown', (e) => {
+            if(e.code === 'KeyW') moveForward = true;
+            if(e.code === 'KeyS') moveBackward = true;
+            if(e.code === 'KeyA') moveLeft = true;
+            if(e.code === 'KeyD') moveRight = true;
+            if(e.code === 'Space' && canJump) { velocity.y = 0.15; canJump = false; }
+        });
+        document.addEventListener('keyup', (e) => {
+            if(e.code === 'KeyW') moveForward = false;
+            if(e.code === 'KeyS') moveBackward = false;
+            if(e.code === 'KeyA') moveLeft = false;
+            if(e.code === 'KeyD') moveRight = false;
+        });
+
+        // Interação (Quebrar/Colocar)
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2(0, 0);
+
+        window.addEventListener('mousedown', (e) => {
+            if (document.pointerLockElement !== document.body) {
+                document.body.requestPointerLock();
+                return;
+            }
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(blocks);
+            if (intersects.length > 0) {
+                const intersect = intersects[0];
+                if (e.shiftKey) { // Colocar Bloco
+                    const pos = intersect.object.position.clone().add(intersect.face.normal);
+                    const b = new THREE.Mesh(geometry, grassMat);
+                    b.position.copy(pos);
+                    scene.add(b);
+                    blocks.push(b);
+                } else { // Quebrar Bloco
+                    scene.remove(intersect.object);
+                    blocks.splice(blocks.indexOf(intersect.object), 1);
+                }
+            }
+        });
+
+        camera.position.set(0, 10, 0);
 
         function animate() {
             requestAnimationFrame(animate);
-            if(keys['KeyW']) camera.translateZ(-0.1);
-            if(keys['KeyS']) camera.translateZ(0.1);
-            if(keys['KeyA']) camera.translateX(-0.1);
-            if(keys['KeyD']) camera.translateX(0.1);
+            
+            // Movimentação básica
+            const direction = new THREE.Vector3();
+            camera.getWorldDirection(direction);
+            direction.y = 0; direction.normalize();
+
+            if (moveForward) camera.position.addScaledVector(direction, 0.1);
+            if (moveBackward) camera.position.addScaledVector(direction, -0.1);
+            
+            // Gravidade simples
+            velocity.y -= 0.005; 
+            camera.position.y += velocity.y;
+
+            if (camera.position.y < 3) { // Chão fake para não cair no infinito
+                velocity.y = 0;
+                camera.position.y = 3;
+                canJump = true;
+            }
+
             renderer.render(scene, camera);
         }
-        
-        // Clique para travar o mouse
-        document.body.addEventListener('click', () => {
-            document.body.requestPointerLock();
-        });
 
         document.addEventListener('mousemove', (e) => {
             if (document.pointerLockElement === document.body) {
                 camera.rotation.y -= e.movementX * 0.002;
                 camera.rotation.x -= e.movementY * 0.002;
+                camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
             }
         });
 
+        camera.rotation.order = "YXZ";
         animate();
     </script>
 </body>
