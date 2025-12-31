@@ -91,10 +91,10 @@
         .section-label { color: #67c1f5; font-size: 12px; text-transform: uppercase; display: block; margin-top: 20px; margin-bottom: 10px; }
 
         .game-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 5px; }
-        .game-card { width: 60px; height: 80px; text-decoration: none; background: transparent; outline: none; display: block; }
-        .game-card.square { height: 60px; } /* Para manter ícones de jogos quadrados */
-        .game-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; transition: 0.3s; }
-        .game-card:hover img { transform: scale(1.1); box-shadow: 0 0 10px rgba(247, 209, 215, 0.4); }
+        .game-card { width: 60px; height: 85px; text-decoration: none; background: transparent; outline: none; display: block; }
+        .game-card.square { height: 60px; }
+        .game-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; transition: 0.3s; border: 1px solid rgba(247, 209, 215, 0.1); }
+        .game-card:hover img { transform: scale(1.1); box-shadow: 0 0 12px rgba(247, 209, 215, 0.5); border-color: #f7d1d7; }
 
         #notification {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -153,27 +153,27 @@
 
             <span class="section-label">Favorite Anime</span>
             <div class="game-grid">
-                <a href="https://myanimelist.net/anime/9253/Steins_Gate" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/anime/1935/127923.jpg" title="Steins;Gate"></a>
-                <a href="https://myanimelist.net/anime/31240/Re_Zero_kara_Hajimeru_Isekai_Seikatsu" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/anime/11/79410.jpg" title="Re:Zero"></a>
-                <a href="https://myanimelist.net/anime/30/Shinseiki_Evangelion" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/anime/1314/108922.jpg" title="Neon Genesis Evangelion"></a>
-                <a href="https://myanimelist.net/anime/32182/Mob_Psycho_100" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/anime/1918/138407.jpg" title="Mob Psycho 100"></a>
-                <a href="https://myanimelist.net/anime/6/Trigun" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/anime/7/20310.jpg" title="Trigun"></a>
-                <a href="https://myanimelist.net/anime/9756/Mahou_Shoujo_Madoka%E2%98%85Magica" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/anime/11/50531.jpg" title="Madoka Magica"></a>
-                <a href="https://myanimelist.net/anime/17074/Monogatari_Series__Second_Season" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/anime/3/52133.jpg" title="Monogatari Series: Second Season"></a>
+                <a href="https://myanimelist.net/anime/9253/Steins_Gate" target="_blank" class="game-card"><img src="https://i.imgur.com/fM91B6m.jpg" title="Steins;Gate"></a>
+                <a href="https://myanimelist.net/anime/31240/Re_Zero_kara_Hajimeru_Isekai_Seikatsu" target="_blank" class="game-card"><img src="https://i.imgur.com/6Xm7uYm.jpg" title="Re:Zero"></a>
+                <a href="https://myanimelist.net/anime/30/Shinseiki_Evangelion" target="_blank" class="game-card"><img src="https://i.imgur.com/A66D6r1.jpg" title="Neon Genesis Evangelion"></a>
+                <a href="https://myanimelist.net/anime/32182/Mob_Psycho_100" target="_blank" class="game-card"><img src="https://i.imgur.com/E88mG7z.jpg" title="Mob Psycho 100"></a>
+                <a href="https://myanimelist.net/anime/6/Trigun" target="_blank" class="game-card"><img src="https://i.imgur.com/N6E7ksc.jpg" title="Trigun"></a>
+                <a href="https://myanimelist.net/anime/9756/Mahou_Shoujo_Madoka%E2%98%85Magica" target="_blank" class="game-card"><img src="https://i.imgur.com/9oXfB0L.jpg" title="Madoka Magica"></a>
+                <a href="https://myanimelist.net/anime/17074/Monogatari_Series__Second_Season" target="_blank" class="game-card"><img src="https://i.imgur.com/Psh5n12.jpg" title="Monogatari"></a>
             </div>
 
             <span class="section-label">Favorite Manga</span>
             <div class="game-grid">
-                <a href="https://myanimelist.net/manga/2/Berserk" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/manga/1/157897.jpg" title="Berserk"></a>
-                <a href="https://myanimelist.net/manga/1706/JoJo_no_Kimyou_na_Bouken_Part_7__Steel_Ball_Run" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/manga/3/179882.jpg" title="Steel Ball Run"></a>
-                <a href="https://myanimelist.net/manga/642/Vinland_Saga" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/manga/2/188925.jpg" title="Vinland Saga"></a>
-                <a href="https://myanimelist.net/manga/90125/Kaguya-sama_wa_Kokurasetai__Tensai-tachi_no_Renai_Zunousen" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/manga/3/188896.jpg" title="Kaguya-sama"></a>
-                <a href="https://myanimelist.net/manga/26/Hunter_x_Hunter" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/manga/2/253119.jpg" title="Hunter x Hunter"></a>
-                <a href="https://myanimelist.net/manga/656/Vagabond" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/manga/1/259191.jpg" title="Vagabond"></a>
-                <a href="https://myanimelist.net/manga/8/GTO" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/manga/2/172982.jpg" title="Great Teacher Onizuka"></a>
-                <a href="https://myanimelist.net/manga/24705/Aku_no_Hana" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/manga/1/155799.jpg" title="Aku no Hana"></a>
-                <a href="https://myanimelist.net/manga/936/Homunculus" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/manga/3/173256.jpg" title="Homunculus"></a>
-                <a href="https://myanimelist.net/manga/7375/Kokou_no_Hito" target="_blank" class="game-card"><img src="https://cdn.myanimelist.net/images/manga/2/155913.jpg" title="Kokou no Hito"></a>
+                <a href="https://myanimelist.net/manga/2/Berserk" target="_blank" class="game-card"><img src="https://i.imgur.com/S9fA5oY.jpg" title="Berserk"></a>
+                <a href="https://myanimelist.net/manga/1706/JoJo_no_Kimyou_na_Bouken_Part_7__Steel_Ball_Run" target="_blank" class="game-card"><img src="https://i.imgur.com/vHqR984.jpg" title="Steel Ball Run"></a>
+                <a href="https://myanimelist.net/manga/642/Vinland_Saga" target="_blank" class="game-card"><img src="https://i.imgur.com/k6lPqS2.jpg" title="Vinland Saga"></a>
+                <a href="https://myanimelist.net/manga/90125/Kaguya-sama_wa_Kokurasetai" target="_blank" class="game-card"><img src="https://i.imgur.com/Y3W1G9X.jpg" title="Kaguya-sama"></a>
+                <a href="https://myanimelist.net/manga/26/Hunter_x_Hunter" target="_blank" class="game-card"><img src="https://i.imgur.com/Y7K5vP0.jpg" title="Hunter x Hunter"></a>
+                <a href="https://myanimelist.net/manga/656/Vagabond" target="_blank" class="game-card"><img src="https://i.imgur.com/qF0jYvQ.jpg" title="Vagabond"></a>
+                <a href="https://myanimelist.net/manga/8/GTO" target="_blank" class="game-card"><img src="https://i.imgur.com/pYIitYQ.jpg" title="GTO"></a>
+                <a href="https://myanimelist.net/manga/24705/Aku_no_Hana" target="_blank" class="game-card"><img src="https://i.imgur.com/Y6k8xL8.jpg" title="Aku no Hana"></a>
+                <a href="https://myanimelist.net/manga/936/Homunculus" target="_blank" class="game-card"><img src="https://i.imgur.com/xO77U8V.jpg" title="Homunculus"></a>
+                <a href="https://myanimelist.net/manga/7375/Kokou_no_Hito" target="_blank" class="game-card"><img src="https://i.imgur.com/lV4lP7W.jpg" title="Kokou no Hito"></a>
             </div>
         </div>
     </div>
