@@ -60,7 +60,7 @@
             gap: 20px;
         }
 
-        /* Coluna Esquerda: Perfil */
+        /* Sidebar: Avatar e Logo */
         .sidebar { display: flex; flex-direction: column; align-items: center; text-align: center; }
         .avatar-frame {
             width: 160px; height: 160px;
@@ -81,39 +81,42 @@
         .status-box { background: rgba(87, 203, 222, 0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(87, 203, 222, 0.15); width: 100%; }
         .status-on { color: #57cbde; font-weight: bold; font-size: 13px; }
 
-        /* Coluna Direita: Explorer de Pastas */
+        /* Explorer: Pastas Linux Papirus */
         .explorer-area { overflow-y: auto; padding-right: 10px; }
         .explorer-area::-webkit-scrollbar { width: 6px; }
         .explorer-area::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-        .folder-section { margin-bottom: 15px; border-radius: 8px; transition: 0.3s; }
+        .folder-section { margin-bottom: 10px; border-radius: 8px; }
         
         .folder-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px;
+            padding: 8px 12px;
             cursor: pointer;
-            background: rgba(255,255,255,0.03);
             border-radius: 6px;
             transition: 0.2s;
-            border: 1px solid transparent;
         }
-        .folder-header:hover { background: rgba(255,255,255,0.08); border-color: #444; }
+        .folder-header:hover { background: rgba(255,255,255,0.05); }
         
-        .folder-icon { width: 24px; height: 24px; background: url('https://imgur.com/qR6mK9T.png') no-repeat center; background-size: contain; }
-        .folder-section.open .folder-icon { background-image: url('https://imgur.com/I6PjXgP.png'); } /* Ícone de pasta aberta */
+        /* Ícones Papirus Linux via CDN */
+        .folder-icon { 
+            width: 32px; 
+            height: 32px; 
+            background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center; 
+            background-size: contain; 
+        }
+        .folder-section.open .folder-icon { 
+            background-image: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue-open.svg'); 
+        }
         
         .folder-name { font-size: 14px; font-weight: bold; color: #67c1f5; }
 
         .folder-content {
             display: none;
-            padding: 15px;
+            padding: 15px 0 15px 45px;
             grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
             gap: 12px;
-            background: rgba(0,0,0,0.2);
-            border-left: 2px solid #333;
-            margin-left: 20px;
         }
         .folder-section.open .folder-content { display: grid; }
 
@@ -170,10 +173,10 @@
                         <span class="folder-name">Waifus</span>
                     </div>
                     <div class="folder-content">
-                        <a href="#" class="item-card square"><img src="https://imgur.com/9Z8MRSu.png"></a>
-                        <a href="#" class="card square item-card"><img src="https://imgur.com/YALUeUn.png"></a>
-                        <a href="#" class="card square item-card"><img src="https://imgur.com/7L27P94.png"></a>
-                        <a href="#" class="card square item-card"><img src="https://imgur.com/iOmt3Xb.png"></a>
+                        <a href="https://anilist.co/character/120649/" target="_blank" class="item-card square"><img src="https://imgur.com/9Z8MRSu.png" title="Kaguya Shinomiya"></a>
+                        <a href="https://anilist.co/character/34470/" target="_blank" class="item-card square"><img src="https://imgur.com/YALUeUn.png" title="Makise Kurisu"></a>
+                        <a href="https://anilist.co/character/144594/" target="_blank" class="item-card square"><img src="https://imgur.com/7L27P94.png" title="Kobeni Higashiyama"></a>
+                        <a href="https://anilist.co/character/88572/" target="_blank" class="item-card square"><img src="https://imgur.com/iOmt3Xb.png" title="Emilia"></a>
                     </div>
                 </div>
 
@@ -183,10 +186,10 @@
                         <span class="folder-name">Favorite Games</span>
                     </div>
                     <div class="folder-content">
-                        <a href="#" class="item-card square"><img src="https://imgur.com/lcMd96p.png"></a>
-                        <a href="#" class="item-card square"><img src="https://imgur.com/ctWNET1.png"></a>
-                        <a href="#" class="item-card square"><img src="https://imgur.com/J4g8PTZ.png"></a>
-                        <a href="#" class="item-card square"><img src="https://imgur.com/hdifxRI.png"></a>
+                        <a href="https://store.steampowered.com/app/570940/" target="_blank" class="item-card square"><img src="https://imgur.com/lcMd96p.png" title="Dark Souls"></a>
+                        <a href="https://minecraft.net" target="_blank" class="item-card square"><img src="https://imgur.com/ctWNET1.png" title="Minecraft"></a>
+                        <a href="https://store.steampowered.com/app/17390/" target="_blank" class="item-card square"><img src="https://imgur.com/J4g8PTZ.png" title="Spore"></a>
+                        <a href="https://yanderesimulator.com/" target="_blank" class="item-card square"><img src="https://imgur.com/hdifxRI.png" title="Yandere Sim"></a>
                     </div>
                 </div>
 
@@ -196,16 +199,16 @@
                         <span class="folder-name">Favorite Anime</span>
                     </div>
                     <div class="folder-content">
-                        <a href="#" class="item-card"><img src="https://imgur.com/P1HogUg.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/d9zFEZu.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/njmKBUI.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/PIox0ID.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/6Q38gYG.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/KNJervC.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/JbDnQBm.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/Iwn43dp.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/SqG1E4O.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/IOfxGtx.png"></a>
+                        <a href="https://anilist.co/anime/9253/" target="_blank" class="item-card"><img src="https://imgur.com/P1HogUg.png" title="Steins;Gate"></a>
+                        <a href="https://anilist.co/anime/21355/" target="_blank" class="item-card"><img src="https://imgur.com/d9zFEZu.png" title="Re:Zero"></a>
+                        <a href="https://anilist.co/anime/30/" target="_blank" class="item-card"><img src="https://imgur.com/njmKBUI.png" title="Evangelion"></a>
+                        <a href="https://anilist.co/anime/21507/" target="_blank" class="item-card"><img src="https://imgur.com/PIox0ID.png" title="Mob Psycho 100"></a>
+                        <a href="https://anilist.co/anime/6/" target="_blank" class="item-card"><img src="https://imgur.com/6Q38gYG.png" title="Trigun"></a>
+                        <a href="https://anilist.co/anime/9756/" target="_blank" class="item-card"><img src="https://imgur.com/KNJervC.png" title="Madoka Magica"></a>
+                        <a href="https://anilist.co/anime/17074/" target="_blank" class="item-card"><img src="https://imgur.com/JbDnQBm.png" title="Monogatari Series"></a>
+                        <a href="https://anilist.co/anime/21471/" target="_blank" class="item-card"><img src="https://imgur.com/Iwn43dp.png" title="Saiki Kusuo"></a>
+                        <a href="https://anilist.co/anime/20832/" target="_blank" class="item-card"><img src="https://imgur.com/SqG1E4O.png" title="Overlord"></a>
+                        <a href="https://anilist.co/anime/108710/" target="_blank" class="item-card"><img src="https://imgur.com/IOfxGtx.png" title="Dorohedoro"></a>
                     </div>
                 </div>
 
@@ -215,16 +218,16 @@
                         <span class="folder-name">Favorite Manga</span>
                     </div>
                     <div class="folder-content">
-                        <a href="#" class="item-card"><img src="https://imgur.com/S2itjEq.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/eUcGVum.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/AVBfjQX.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/xrB46Ft.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/vwLIPx2.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/nC9QYtI.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/e36y1NW.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/gGZA0zR.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/wi5ru2O.png"></a>
-                        <a href="#" class="item-card"><img src="https://imgur.com/Zg6JTrd.png"></a>
+                        <a href="https://anilist.co/manga/30002/" target="_blank" class="item-card"><img src="https://imgur.com/S2itjEq.png" title="Berserk"></a>
+                        <a href="https://anilist.co/manga/31706/" target="_blank" class="item-card"><img src="https://imgur.com/eUcGVum.png" title="Steel Ball Run"></a>
+                        <a href="https://anilist.co/manga/30642/" target="_blank" class="item-card"><img src="https://imgur.com/AVBfjQX.png" title="Vinland Saga"></a>
+                        <a href="https://anilist.co/manga/86635/" target="_blank" class="item-card"><img src="https://imgur.com/xrB46Ft.png" title="Kaguya-sama"></a>
+                        <a href="https://anilist.co/manga/30026/" target="_blank" class="item-card"><img src="https://imgur.com/vwLIPx2.png" title="Hunter x Hunter"></a>
+                        <a href="https://anilist.co/manga/30656/" target="_blank" class="item-card"><img src="https://imgur.com/nC9QYtI.png" title="Vagabond"></a>
+                        <a href="https://anilist.co/manga/30336/" target="_blank" class="item-card"><img src="https://imgur.com/e36y1NW.png" title="GTO"></a>
+                        <a href="https://anilist.co/manga/54705/" target="_blank" class="item-card"><img src="https://imgur.com/gGZA0zR.png" title="Aku no Hana"></a>
+                        <a href="https://anilist.co/manga/30936/" target="_blank" class="item-card"><img src="https://imgur.com/wi5ru2O.png" title="Homunculus"></a>
+                        <a href="https://anilist.co/manga/37375/" target="_blank" class="item-card"><img src="https://imgur.com/Zg6JTrd.png" title="Kokou no Hito"></a>
                     </div>
                 </div>
             </main>
@@ -235,9 +238,6 @@
 
     <script>
         function toggleFolder(element) {
-            // Se quiser que apenas uma pasta abra por vez, descomente a linha abaixo:
-            // document.querySelectorAll('.folder-section').forEach(f => { if(f !== element) f.classList.remove('open'); });
-            
             element.classList.toggle('open');
         }
 
