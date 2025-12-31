@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daigou</title>
+    <link rel="icon" href="https://imgur.com/4NDoDX3.png" type="image/png">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .header-image {
+            margin-bottom: 20px;
+        }
+
+        .content {
+            display: block;
+        }
+
+        .links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        img {
+            margin: 10px;
+        }
+
+        .highlight {
+            font-size: 30px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="header-image">
+    <img src="https://imgur.com/pHJtwPT.gif" width="150" alt="Imagem">
+    <p class="tiny-text">
+        Welcome.<br>
+        My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br>
+        Buy Bitcoin ₿ – A shield of economic freedom.
+    </p>
+</div>
+    <div class="links">
+        <a href="https://steamcommunity.com/id/Daigou7/" target="_blank">
+            <img src="https://imgur.com/N92w6JN.png" width="30" alt="Steam">
+        </a>
+        <a href="https://myanimelist.net/profile/Daigou" target="_blank">
+            <img src="https://i.imgur.com/jWbk2Ey.png" width="30" alt="MyAnimeList">
+        </a>
+        <a href="javascript:void(0);" onclick="copyBTC()">
+            <img src="https://imgur.com/dvR0GB6.png" width="30" alt="Bitcoin">
+        </a>
+    </div>
+
+    <div id="notification" class="notification">copied successfully ✓</div>
+
+    <script>
+        function copyBTC() {
+            const btcAddress = "bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws";
+            navigator.clipboard.writeText(btcAddress).then(() => {
+                const notification = document.getElementById("notification");
+                notification.style.display = "block";
+                setTimeout(() => {
+                    notification.style.display = "none";
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
