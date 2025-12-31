@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daigou | MAL Style</title>
+    <title>Daigou | Full Profile</title>
     <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap');
@@ -11,9 +11,8 @@
         :root {
             --mal-blue: #2e51a2;
             --mal-bg: #161516;
-            --mal-darker: #0d0d0d;
             --pink-accent: #f7d1d7;
-            --border: rgba(247, 209, 215, 0.1);
+            --border: rgba(247, 209, 215, 0.15);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,133 +22,154 @@
             background-size: cover;
             color: #f7d1d7;
             font-family: 'Quicksand', sans-serif;
-            padding: 20px;
+            padding: 30px 10px;
             display: flex;
             justify-content: center;
         }
 
-        /* Layout Principal Baseado no MAL */
         .mal-container {
             width: 1050px;
-            background: rgba(13, 13, 13, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(13, 13, 13, 0.92);
+            backdrop-filter: blur(12px);
             border: 1px solid var(--border);
             display: grid;
-            grid-template-columns: 220px 1fr 250px;
-            gap: 1px; /* Cria linhas divisórias entre as colunas */
-            background-color: var(--border); /* Cor da linha divisória */
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            grid-template-columns: 240px 1fr 240px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.9);
+            border-radius: 8px;
+            overflow: hidden;
         }
 
-        .mal-column { background: var(--mal-bg); padding: 20px; }
+        .mal-column { padding: 20px; }
+        .middle-col { border-left: 1px solid var(--border); border-right: 1px solid var(--border); background: rgba(20, 20, 20, 0.4); }
 
-        /* Coluna 1: Perfil */
-        .sidebar-left { text-align: center; }
-        .avatar-mal { width: 100%; border-radius: 4px; border: 1px solid var(--border); margin-bottom: 15px; }
-        .mal-name { font-size: 18px; font-weight: bold; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
-        .mal-bio { font-size: 11px; text-align: left; opacity: 0.8; line-height: 1.4; margin-bottom: 20px; }
+        /* Sidebar Esquerda */
+        .avatar-mal { width: 100%; border-radius: 4px; border: 1px solid var(--border); margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .mal-name { font-size: 20px; font-weight: bold; margin-bottom: 5px; text-align: center; }
+        .mal-bio { font-size: 12px; opacity: 0.8; line-height: 1.5; margin-bottom: 20px; text-align: center; font-style: italic; }
+        
+        .mal-btn { 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 10px; background: var(--mal-blue); color: #fff; 
+            text-decoration: none; font-size: 12px; font-weight: bold; margin-bottom: 8px; 
+            border-radius: 4px; transition: 0.3s;
+        }
+        .mal-btn:hover { filter: brightness(1.2); transform: translateX(5px); }
+        .btn-steam { background: #171a21; }
+        .btn-btc { background: #f7931a; color: #000; }
 
-        /* Coluna 2: Conteúdo Principal */
-        .main-content { border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+        /* Conteúdo Central */
         .mal-header { 
-            background: rgba(255,255,255,0.05); 
-            padding: 8px 15px; 
-            font-size: 13px; 
-            font-weight: bold; 
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
+            background: rgba(46, 81, 162, 0.2); 
+            padding: 8px 15px; font-size: 12px; font-weight: bold; 
+            border-left: 4px solid var(--mal-blue);
+            margin-bottom: 15px; color: #67c1f5; letter-spacing: 1px;
         }
 
-        /* Grids de Itens */
-        .item-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; margin-bottom: 25px; }
-        .item-box { aspect-ratio: 2/3; border-radius: 3px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 10px; margin-bottom: 30px; }
+        .item-box { aspect-ratio: 2/3; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: 0.4s; position: relative; }
         .item-box.square { aspect-ratio: 1/1; }
         .item-box img { width: 100%; height: 100%; object-fit: cover; }
-        .item-box:hover { transform: scale(1.05); border-color: var(--pink-accent); box-shadow: 0 0 10px var(--pink-accent); }
+        .item-box:hover { transform: scale(1.1) translateY(-5px); border-color: var(--pink-accent); z-index: 5; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
 
-        /* Coluna 3: Estatísticas */
-        .stats-label { font-size: 12px; font-weight: bold; color: #67c1f5; margin-bottom: 10px; display: block; border-bottom: 1px solid rgba(103, 193, 245, 0.2); padding-bottom: 5px; }
-        .stat-item { font-size: 11px; display: flex; justify-content: space-between; margin-bottom: 8px; opacity: 0.9; }
-        .stat-bar { height: 8px; background: #222; border-radius: 4px; margin-bottom: 15px; overflow: hidden; }
-        .stat-fill { height: 100%; background: var(--mal-blue); }
+        /* Sidebar Direita - Stats */
+        .stats-label { font-size: 13px; font-weight: bold; color: #67c1f5; margin-bottom: 12px; display: block; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        .stat-line { font-size: 11px; display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .bar-bg { height: 10px; background: #000; border-radius: 5px; margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--mal-blue); box-shadow: 0 0 10px var(--mal-blue); }
 
-        /* Botões de Ação */
-        .mal-btn { 
-            display: block; width: 100%; padding: 8px; 
-            background: var(--mal-blue); color: #fff; 
-            text-decoration: none; font-size: 11px; 
-            font-weight: bold; margin-bottom: 5px; 
-            border-radius: 3px; text-align: center;
+        #notification {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--pink-accent); color: #000; padding: 10px 25px;
+            border-radius: 20px; font-weight: bold; display: none; z-index: 1000;
         }
     </style>
 </head>
 <body>
 
     <div class="mal-container">
-        <aside class="mal-column sidebar-left">
+        <aside class="mal-column">
             <img src="https://imgur.com/pHJtwPT.gif" class="avatar-mal">
             <div class="mal-name">Daigou ☦</div>
             <p class="mal-bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦</p>
             
-            <a href="https://steamcommunity.com/id/Daigou7/" target="_blank" class="mal-btn">Steam Profile</a>
-            <a href="https://myanimelist.net/profile/Daigou" target="_blank" class="mal-btn" style="background: #2e51a2">MyAnimeList</a>
-            <a href="javascript:void(0);" onclick="copyBTC()" class="mal-btn" style="background: #f7931a">Bitcoin Vault</a>
+            <a href="https://steamcommunity.com/id/Daigou7/" target="_blank" class="mal-btn btn-steam">Steam Profile</a>
+            <a href="https://myanimelist.net/profile/Daigou" target="_blank" class="mal-btn">MyAnimeList</a>
+            <a href="javascript:void(0);" onclick="copyBTC()" class="mal-btn btn-btc">Bitcoin Vault</a>
         </aside>
 
-        <main class="mal-column main-content">
-            <div class="mal-header"><span>FAVORITE GAMES</span></div>
-            <div class="item-row">
-                <a href="https://store.steampowered.com/app/570940/" class="item-box square"><img src="https://imgur.com/lcMd96p.png" title="Dark Souls"></a>
-                <a href="https://minecraft.net" class="item-box square"><img src="https://imgur.com/ctWNET1.png" title="Minecraft"></a>
-                <a href="https://store.steampowered.com/app/17390/" class="item-box square"><img src="https://imgur.com/J4g8PTZ.png" title="Spore"></a>
-                <a href="https://yanderesimulator.com/" class="item-box square"><img src="https://imgur.com/hdifxRI.png" title="Yandere Sim"></a>
+        <main class="mal-column middle-col">
+            
+            <div class="mal-header">WAIFUS</div>
+            <div class="item-grid">
+                <a href="https://anilist.co/character/120649/" target="_blank" class="item-box square"><img src="https://imgur.com/9Z8MRSu.png" title="Kaguya Shinomiya"></a>
+                <a href="https://anilist.co/character/34470/" target="_blank" class="item-box square"><img src="https://imgur.com/YALUeUn.png" title="Makise Kurisu"></a>
+                <a href="https://anilist.co/character/144594/" target="_blank" class="item-box square"><img src="https://imgur.com/7L27P94.png" title="Kobeni Higashiyama"></a>
+                <a href="https://anilist.co/character/88572/" target="_blank" class="item-box square"><img src="https://imgur.com/iOmt3Xb.png" title="Emilia"></a>
             </div>
 
-            <div class="mal-header"><span>FAVORITE ANIME</span></div>
-            <div class="item-row">
-                <a href="#" class="item-box"><img src="https://imgur.com/P1HogUg.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/d9zFEZu.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/njmKBUI.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/PIox0ID.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/6Q38gYG.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/KNJervC.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/JbDnQBm.png"></a>
+            <div class="mal-header">FAVORITE GAMES</div>
+            <div class="item-grid">
+                <a href="https://store.steampowered.com/app/570940/" target="_blank" class="item-box square"><img src="https://imgur.com/lcMd96p.png" title="Dark Souls"></a>
+                <a href="https://minecraft.net" target="_blank" class="item-box square"><img src="https://imgur.com/ctWNET1.png" title="Minecraft"></a>
+                <a href="https://store.steampowered.com/app/17390/" target="_blank" class="item-box square"><img src="https://imgur.com/J4g8PTZ.png" title="Spore"></a>
+                <a href="https://yanderesimulator.com/" target="_blank" class="item-box square"><img src="https://imgur.com/hdifxRI.png" title="Yandere Simulator"></a>
             </div>
 
-            <div class="mal-header"><span>FAVORITE MANGA</span></div>
-            <div class="item-row">
-                <a href="#" class="item-box"><img src="https://imgur.com/S2itjEq.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/eUcGVum.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/AVBfjQX.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/xrB46Ft.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/vwLIPx2.png"></a>
-                <a href="#" class="item-box"><img src="https://imgur.com/nC9QYtI.png"></a>
-                <a href="https://anilist.co/manga/30336/" class="item-box"><img src="https://imgur.com/e36y1NW.png"></a>
+            <div class="mal-header">FAVORITE ANIME</div>
+            <div class="item-grid">
+                <a href="https://anilist.co/anime/9253/" target="_blank" class="item-box"><img src="https://imgur.com/P1HogUg.png" title="Steins;Gate"></a>
+                <a href="https://anilist.co/anime/21355/" target="_blank" class="item-box"><img src="https://imgur.com/d9zFEZu.png" title="Re:Zero"></a>
+                <a href="https://anilist.co/anime/30/" target="_blank" class="item-box"><img src="https://imgur.com/njmKBUI.png" title="Evangelion"></a>
+                <a href="https://anilist.co/anime/21507/" target="_blank" class="item-box"><img src="https://imgur.com/PIox0ID.png" title="Mob Psycho 100"></a>
+                <a href="https://anilist.co/anime/6/" target="_blank" class="item-box"><img src="https://imgur.com/6Q38gYG.png" title="Trigun"></a>
+                <a href="https://anilist.co/anime/9756/" target="_blank" class="item-box"><img src="https://imgur.com/KNJervC.png" title="Madoka Magica"></a>
+                <a href="https://anilist.co/anime/17074/" target="_blank" class="item-box"><img src="https://imgur.com/JbDnQBm.png" title="Monogatari Series"></a>
+                <a href="https://anilist.co/anime/21471/" target="_blank" class="item-box"><img src="https://imgur.com/Iwn43dp.png" title="Saiki Kusuo"></a>
+                <a href="https://anilist.co/anime/20832/" target="_blank" class="item-box"><img src="https://imgur.com/SqG1E4O.png" title="Overlord"></a>
+                <a href="https://anilist.co/anime/108710/" target="_blank" class="item-box"><img src="https://imgur.com/IOfxGtx.png" title="Dorohedoro"></a>
+            </div>
+
+            <div class="mal-header">FAVORITE MANGA</div>
+            <div class="item-grid">
+                <a href="https://anilist.co/manga/30002/" target="_blank" class="item-box"><img src="https://imgur.com/S2itjEq.png" title="Berserk"></a>
+                <a href="https://anilist.co/manga/31706/" target="_blank" class="item-box"><img src="https://imgur.com/eUcGVum.png" title="Steel Ball Run"></a>
+                <a href="https://anilist.co/manga/30642/" target="_blank" class="item-box"><img src="https://imgur.com/AVBfjQX.png" title="Vinland Saga"></a>
+                <a href="https://anilist.co/manga/86635/" target="_blank" class="item-box"><img src="https://imgur.com/xrB46Ft.png" title="Kaguya-sama"></a>
+                <a href="https://anilist.co/manga/30026/" target="_blank" class="item-box"><img src="https://imgur.com/vwLIPx2.png" title="Hunter x Hunter"></a>
+                <a href="https://anilist.co/manga/30656/" target="_blank" class="item-box"><img src="https://imgur.com/nC9QYtI.png" title="Vagabond"></a>
+                <a href="https://anilist.co/manga/30336/" target="_blank" class="item-box"><img src="https://imgur.com/e36y1NW.png" title="GTO"></a>
+                <a href="https://anilist.co/manga/54705/" target="_blank" class="item-box"><img src="https://imgur.com/gGZA0zR.png" title="Aku no Hana"></a>
+                <a href="https://anilist.co/manga/30936/" target="_blank" class="item-box"><img src="https://imgur.com/wi5ru2O.png" title="Homunculus"></a>
+                <a href="https://anilist.co/manga/37375/" target="_blank" class="item-box"><img src="https://imgur.com/Zg6JTrd.png" title="Kokou no Hito"></a>
             </div>
         </main>
 
         <aside class="mal-column">
-            <span class="stats-label">Anime Stats</span>
-            <div class="stat-item"><span>Days:</span> <span>1,209.4</span></div>
-            <div class="stat-item"><span>Mean Score:</span> <span>4.29</span></div>
-            <div class="stat-bar"><div class="stat-fill" style="width: 85%"></div></div>
+            <span class="stats-label">Anime Statistics</span>
+            <div class="stat-line"><span>Days:</span> <span>1,209.4</span></div>
+            <div class="stat-line"><span>Mean Score:</span> <span>4.29</span></div>
+            <div class="bar-bg"><div class="bar-fill" style="width: 85%"></div></div>
 
-            <span class="stats-label">Manga Stats</span>
-            <div class="stat-item"><span>Days:</span> <span>403.6</span></div>
-            <div class="stat-item"><span>Mean Score:</span> <span>4.82</span></div>
-            <div class="stat-bar"><div class="stat-fill" style="width: 60%; background: #24a32e;"></div></div>
+            <span class="stats-label">Manga Statistics</span>
+            <div class="stat-line"><span>Days:</span> <span>403.6</span></div>
+            <div class="stat-line"><span>Mean Score:</span> <span>4.82</span></div>
+            <div class="bar-bg"><div class="bar-fill" style="width: 62%; background: #24a32e; box-shadow: 0 0 10px #24a32e;"></div></div>
 
-            <span class="stats-label" style="color: var(--pink-accent)">Last Status</span>
-            <div class="stat-item"><span>Offline:</span> <span>700 years ago</span></div>
+            <span class="stats-label">Status</span>
+            <div class="stat-line"><span>Current:</span> <span style="color: #ff4b4b;">Offline</span></div>
+            <div class="stat-line"><span>Last Seen:</span> <span style="opacity: 0.6;">700y ago</span></div>
         </aside>
     </div>
 
+    <div id="notification">Address Copied to Vault</div>
+
     <script>
         function copyBTC() {
-            navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws");
-            alert("BTC Address Copied to Vault!");
+            navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => {
+                const note = document.getElementById("notification");
+                note.style.display = "block";
+                setTimeout(() => { note.style.display = "none"; }, 2500);
+            });
         }
     </script>
 </body>
