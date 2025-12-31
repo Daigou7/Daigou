@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daigou | New Concept</title>
+    <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap');
+
+        /* Variáveis de Cores para facilitar mudanças */
+        :root {
+            --pink-accent: #f7d1d7;
+            --blue-accent: #67c1f5;
+            --bg-glass: rgba(15, 15, 20, 0.75);
+            --border-glass: rgba(247, 209, 215, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #000 url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--pink-accent);
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* Vórtice de Fundo mais sutil */
+        .vortex {
+            position: fixed; top: 50%; left: 50%;
+            width: 250vmax; height: 250vmax;
+            background: repeating-conic-gradient(from 0deg, #000 0deg 15deg, #0d0607 15deg 30deg);
+            opacity: 0.35;
+            animation: rotateVortex 120s linear infinite;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 65%);
+            pointer-events: none;
+        }
+
+        @keyframes rotateVortex {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Layout em Container Principal */
+        .main-wrapper {
+            width: 1000px;
+            margin: 40px 0;
+            display: flex;
+            gap: 30px;
+            z-index: 10;
+        }
+
+        /* Coluna da Esquerda (Identidade) */
+        .left-panel {
+            flex: 0 0 260px;
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+            text-align: center;
+        }
+
+        .avatar-container {
+            position: relative;
+            padding: 8px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--border-glass);
+            margin-bottom: 20px;
+        }
+
+        .avatar-main {
+            width: 100%;
+            border-radius: 12px;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .profile-info {
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border-glass);
+        }
+
+        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+        .bio-text { font-size: 13px; font-style: italic; opacity: 0.8; line-height: 1.4; margin-bottom: 15px; }
+
+        /* Coluna da Direita (Conteúdo) */
+        .right-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(15px);
+            padding: 25px;
+            border-radius: 25px;
+            border: 1px solid var(--border-glass);
+            transition: transform 0.3s ease;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--blue-accent);
+        }
+
+        .line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(103, 193, 245, 0.4), transparent);
+            margin-left: 15px;
+        }
+
+        /* Grade de Itens mais compacta */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+            gap: 12px;
+        }
+
+        .grid-item {
+            aspect-ratio: 2/3;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+        }
+
+        .grid-item.square { aspect-ratio: 1/1; }
+
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .grid-item:hover {
+            transform: scale(1.1) translateY(-5px);
+            border-color: var(--pink-accent);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            z-index: 2;
+        }
+
+        /* Ícones de Bio */
+        .social-links { display: flex; justify-content: center; gap: 15px; }
+        .social-links img { width: 24px; filter: drop-shadow(0 0 5px var(--pink-accent)); transition: 0.3s; }
+        .social-links img:hover { transform: translateY(-3px); filter: brightness(1.2); }
+
+        #notification {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--pink-accent); color: #000; padding: 12px 30px;
+            border-radius: 50px; font-weight: 700; font-size: 13px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="vortex"></div>
+
+    <div class="main-wrapper">
+        <aside class="left-panel">
+            <div class="avatar-container">
+                <img src="https://imgur.com/pHJtwPT.gif" class="avatar-main">
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name">Daigou ☦</h1>
+                <p class="bio-text">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦</p>
+                <div class="social-links">
+                    <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png"></a>
+                    <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png"></a>
+                    <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="right-content">
+            
+            <section class="glass-card">
+                <div class="section-header">
+                    <h2 class="section-title">Waifus</h2>
+                    <div class="line"></div>
+                </div>
+                <div class="grid">
+                    <a href="https://anilist.co/character/120649/" class="grid-item square"><img src="https://imgur.com/9Z8MRSu.png" title="Kaguya"></a>
+                    <a href="https://anilist.co/character/34470/" class="grid-item square"><img src="https://imgur.com/YALUeUn.png" title="Kurisu"></a>
+                    <a href="https://anilist.co/character/144594/" class="grid-item square"><img src="https://imgur.com/7L27P94.png" title="Kobeni"></a>
+                    <a href="https://anilist.co/character/88572/" class="grid-item square"><img src="https://imgur.com/iOmt3Xb.png" title="Emilia"></a>
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <div class="section-header">
+                    <h2 class="section-title">Favorite Anime</h2>
+                    <div class="line"></div>
+                </div>
+                <div class="grid">
+                    <a href="#" class="grid-item"><img src="https://imgur.com/P1HogUg.png" title="Steins;Gate"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/d9zFEZu.png" title="Re:Zero"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/njmKBUI.png" title="Evangelion"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/PIox0ID.png" title="Mob Psycho"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/6Q38gYG.png" title="Trigun"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/KNJervC.png" title="Madoka Magica"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/JbDnQBm.png" title="Monogatari"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/Iwn43dp.png" title="Saiki Kusuo"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/SqG1E4O.png" title="Overlord"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/IOfxGtx.png" title="Dorohedoro"></a>
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <div class="section-header">
+                    <h2 class="section-title">Favorite Manga</h2>
+                    <div class="line"></div>
+                </div>
+                <div class="grid">
+                    <a href="#" class="grid-item"><img src="https://imgur.com/S2itjEq.png" title="Berserk"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/eUcGVum.png" title="Steel Ball Run"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/AVBfjQX.png" title="Vinland Saga"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/xrB46Ft.png" title="Kaguya-sama"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/vwLIPx2.png" title="Hunter x Hunter"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/nC9QYtI.png" title="Vagabond"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/e36y1NW.png" title="GTO"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/gGZA0zR.png" title="Aku no Hana"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/wi5ru2O.png" title="Homunculus"></a>
+                    <a href="#" class="grid-item"><img src="https://imgur.com/Zg6JTrd.png" title="Kokou no Hito"></a>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="notification">BTC Address Copied!</div>
+
+    <script>
+        function copyBTC() {
+            const btcAddress = "bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws";
+            navigator.clipboard.writeText(btcAddress).then(() => {
+                const note = document.getElementById("notification");
+                note.style.display = "block";
+                setTimeout(() => { note.style.display = "none"; }, 2500);
+            });
+        }
+    </script>
+</body>
+</html>
