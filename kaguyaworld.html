@@ -2,7 +2,8 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Kaguya Adventure - Infinite</title>
+    <title>Kaguya Adventure</title>
+    <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
         body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
         canvas { background: #5c94fc; border: 4px solid #fff; image-rendering: pixelated; }
@@ -18,7 +19,7 @@
             <span id="lifeText">LIFES = 3</span>
         </div>
         <div class="stat-row">
-            <span style="font-size: 30px; width: 35px; text-align: center;">🪙</span>
+            <span style="font-size: 30px; width: 35px; text-align: center;">$</span>
             <span id="moneyText">MONEY = 0</span>
         </div>
     </div>
@@ -36,8 +37,11 @@
     let money = 0;
     let lastGeneratedX = 800;
 
-    const imgIdle = new Image(); imgIdle.src = "https://imgur.com/5S20Ccp.png";
-    const imgJump = new Image(); imgJump.src = "https://imgur.com/NW9NZBS.png";
+    // Novos Sprites
+    const imgIdle = new Image(); 
+    imgIdle.src = "https://imgur.com/urbofgF.png"; // Sprite Parada Atualizado
+    const imgJump = new Image(); 
+    imgJump.src = "https://imgur.com/NW9NZBS.png"; // Sprite Pulando
 
     let player = {
         x: 100, y: 300, width: 40, height: 50, speed: 5,
@@ -55,9 +59,8 @@
             let platY = 150 + Math.random() * 150;
             platforms.push({ x: x, y: platY, width: platW, height: 20 });
 
-            // Spawn de Itens
             let chance = Math.random() * 100;
-            let item = { x: x + platW/2, y: platY - 40, type: '🪙', value: 1 };
+            let item = { x: x + platW/2, y: platY - 40, type: '$', value: 1 }; // Moeda agora é $
             
             if (chance < 0.1) { item.type = '💎'; item.value = 1000000; }
             else if (chance < 10) { item.type = '💰'; item.value = 10000; }
@@ -65,18 +68,17 @@
             
             collectibles.push(item);
 
-            // Spawn de Inimigos
             if (Math.random() > 0.5) {
                 enemies.push({
                     x: x, y: platY - 30, width: 30, height: 30,
-                    speed: 2, emoji: ["🐢", "🦔", "🦀"][Math.floor(Math.random()*3)],
+                    speed: 2 + Math.random(), 
+                    emoji: ["🐢", "🦔", "🦀"][Math.floor(Math.random()*3)],
                     range: platW - 30, startX: x
                 });
             }
         }
     }
 
-    // Inicializa os primeiros 2000px
     spawnProcedural(1000, 3000);
 
     function update() {
@@ -93,7 +95,6 @@
         player.velY += gravity;
         player.grounded = false;
 
-        // Gerar mais mapa conforme anda
         if (player.x + 1000 > lastGeneratedX) {
             spawnProcedural(lastGeneratedX, lastGeneratedX + 2000);
             lastGeneratedX += 2000;
@@ -105,7 +106,6 @@
         ctx.save();
         ctx.translate(-cameraX, 0);
 
-        // Plataformas e Colisão
         ctx.fillStyle = "#8b4513";
         platforms.forEach(p => {
             ctx.fillRect(p.x, p.y, p.width, p.height);
@@ -114,8 +114,8 @@
             else if (dir === "t") player.velY *= -0.5;
         });
 
-        // Coletáveis
         ctx.font = "25px Arial";
+        ctx.fillStyle = "yellow"; // Cor para o símbolo $
         collectibles.forEach((c, index) => {
             ctx.fillText(c.type, c.x, c.y);
             if (rectIntersect(player.x, player.y, player.width, player.height, c.x, c.y-20, 20, 20)) {
@@ -125,7 +125,6 @@
             }
         });
 
-        // Inimigos
         enemies.forEach(en => {
             en.x += en.speed;
             if (en.x > en.startX + en.range || en.x < en.startX) en.speed *= -1;
@@ -137,8 +136,9 @@
         player.x += player.velX;
         player.y += player.velY;
 
-        // Morte por queda
-        if (player.y > canvas.height) { takeDamage(); player.y = 0; player.x -= 100; }
+        if (player.y > canvas.height + 100) { 
+            takeDamage(); player.y = 100; player.velY = 0;
+        }
 
         let currentImg = player.jumping ? imgJump : imgIdle;
         if (player.invincible && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.5;
@@ -152,9 +152,8 @@
             player.lives--;
             document.getElementById("lifeText").innerText = "LIFES = " + player.lives;
             player.invincible = true;
-            player.velY = -10;
             if (player.lives <= 0) {
-                alert("Fim de Jogo! Total: " + money);
+                alert("Fim de Jogo! Total: " + money.toLocaleString('pt-BR'));
                 location.reload();
             }
             setTimeout(() => player.invincible = false, 1500);
