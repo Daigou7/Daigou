@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Kaguya World</title>
+    <style>
+        body { margin: 0; background: #1a1a1a; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: sans-serif; }
+        canvas { background: #5c94fc; border: 4px solid #000; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .ui { position: absolute; top: 20px; color: white; text-shadow: 2px 2px #000; font-size: 20px; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div class="ui">KAGUYA WORLD - Use as Setas e Espaço</div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.canvas.getContext("2d");
+
+        canvas.width = 800;
+        canvas.height = 400;
+
+        // Configurações do Jogo
+        const gravity = 0.8;
+        const friction = 0.8;
+
+        const player = {
+            x: 50,
+            y: 300,
+            width: 40,
+            height: 40,
+            speed: 5,
+            velX: 0,
+            velY: 0,
+            jumping: false,
+            grounded: false,
+            color: "#f7d1d7"
+        };
+
+        const keys = [];
+        const platforms = [
+            { x: 0, y: 380, width: 800, height: 20 }, // Chão
+            { x: 300, y: 280, width: 150, height: 20 },
+            { x: 500, y: 200, width: 150, height: 20 },
+            { x: 100, y: 200, width: 100, height: 20 }
+        ];
+
+        // "Sprite" da Kaguya (Simplificado para o código rodar direto)
+        function drawKaguya(x, y) {
+            // Corpo/Vestido
+            ctx.fillStyle = "#000";
+            ctx.fillRect(x, y + 10, 40, 30);
+            // Rosto
+            ctx.fillStyle = "#ffe0bd";
+            ctx.fillRect(x + 10, y, 20, 20);
+            // Cabelo
+            ctx.fillStyle = "#111";
+            ctx.fillRect(x + 5, y, 30, 8);
+            ctx.fillRect(x + 5, y, 8, 20);
+            ctx.fillRect(x + 27, y, 8, 20);
+            // Olhos Vermelhos
+            ctx.fillStyle = "red";
+            ctx.fillRect(x + 13, y + 8, 4, 4);
+            ctx.fillRect(x + 23, y + 8, 4, 4);
+            // Laço
+            ctx.fillStyle = "#ff0000";
+            ctx.fillRect(x + 15, y - 5, 10, 5);
+        }
+
+        function update() {
+            // Comandos
+            if (keys[38] || keys[32]) { // Cima ou Espaço
+                if (!player.jumping && player.grounded) {
+                    player.jumping = true;
+                    player.grounded = false;
+                    player.velY = -player.speed * 2.5;
+                }
+            }
+            if (keys[39]) { // Direita
+                if (player.velX < player.speed) player.velX++;
+            }
+            if (keys[37]) { // Esquerda
+                if (player.velX > -player.speed) player.velX--;
+            }
+
+            player.velX *= friction;
+            player.velY += gravity;
+
+            player.grounded = false;
+            for (let i = 0; i < platforms.length; i++) {
+                ctx.fillStyle = "#4a2511";
+                ctx.fillRect(platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
+
+                let dir = colCheck(player, platforms[i]);
+
+                if (dir === "l" || dir === "r") {
+                    player.velX = 0;
+                    player.jumping = false;
+                } else if (dir === "b") {
+                    player.grounded = true;
+                    player.jumping = false;
+                } else if (dir === "t") {
+                    player.velY *= -1;
+                }
+            }
+
+            if(player.grounded){
+                 player.velY = 0;
+            }
+
+            player.x += player.velX;
+            player.y += player.velY;
+
+            // Desenhar Personagem
+            drawKaguya(player.x, player.y);
+
+            requestAnimationFrame(update);
+        }
+
+        function colCheck(shapeA, shapeB) {
+            let vX = (shapeA.x + (shapeA.width / 2)) - (shapeB.x + (shapeB.width / 2)),
+                vY = (shapeA.y + (shapeA.height / 2)) - (shapeB.y + (shapeB.height / 2)),
+                hWidths = (shapeA.width / 2) + (shapeB.width / 2),
+                hHeights = (shapeA.height / 2) + (shapeB.height / 2),
+                colDir = null;
+
+            if (Math.abs(vX) < hWidths && Math.abs(vY) < hHeights) {
+                let oX = hWidths - Math.abs(vX), oY = hHeights - Math.abs(vY);
+                if (oX >= oY) {
+                    if (vY > 0) {
+                        colDir = "t";
+                        shapeA.y += oY;
+                    } else {
+                        colDir = "b";
+                        shapeA.y -= oY;
+                    }
+                } else {
+                    if (vX > 0) {
+                        colDir = "l";
+                        shapeA.x += oX;
+                    } else {
+                        colDir = "r";
+                        shapeA.x -= oX;
+                    }
+                }
+            }
+            return colDir;
+        }
+
+        window.addEventListener("keydown", function(e) { keys[e.keyCode] = true; });
+        window.addEventListener("keyup", function(e) { keys[e.keyCode] = false; });
+
+        ctx.canvas.width = 800;
+        ctx.canvas.height = 400;
+        
+        // Iniciar loop limpando a tela
+        function animate() {
+            ctx.clearRect(0,0,800,400);
+            update();
+        }
+        animate();
+
+    </script>
+</body>
+</html>
