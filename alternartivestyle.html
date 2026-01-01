@@ -3,262 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daigou</title>
+    <title>Daigou | OS</title>
     <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Quicksand:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Quicksand:wght@400;600&display=swap');
 
-        /* RESET GERAL */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        :root {
+            --bg-color: #0d0d0f;
+            --accent: #f7d1d7; /* Seu rosa claro */
+            --accent-dim: rgba(247, 209, 215, 0.1);
+            --text-main: #e0e0e0;
+            --folder-blue: #89b4fa;
+            --border-radius: 8px;
+            --window-bg: rgba(20, 20, 25, 0.85);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: default; }
+
         body {
-            background: #000 url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;
+            background: var(--bg-color) url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;
             background-size: cover;
-            color: #f7d1d7;
+            color: var(--text-main);
             font-family: 'Quicksand', sans-serif;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
         }
 
-        /* --- ESTILOS DA TELA DE BIOS --- */
+        /* --- BIOS BOOT ANIMATION --- */
         #bios-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: #000;
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-family: 'IBM Plex Mono', monospace; /* Fonte para terminal */
-            color: #00ff00; /* Texto verde típico de BIOS */
-            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-            font-size: 14px;
-            z-index: 9999;
-            opacity: 1;
-            transition: opacity 1s ease-out; /* Transição para sumir */
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            animation: fadeOut 0.5s ease 1.5s forwards;
         }
 
-        #bios-messages {
-            white-space: pre-wrap; /* Mantém quebras de linha e espaços */
-            max-width: 80%;
-            text-align: left;
-            margin-bottom: 30px;
-            height: 200px; /* Altura fixa para mensagens */
-            overflow: hidden;
+        .bios-logo {
+            width: 150px;
+            filter: drop-shadow(0 0 10px var(--accent));
+            margin-bottom: 20px;
         }
 
-        .bios-logo-container {
+        .bios-text { font-size: 14px; letter-spacing: 2px; }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* --- MAIN WINDOW (ARCH STYLE) --- */
+        .window {
+            width: 900px;
+            height: 650px;
+            background: var(--window-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            opacity: 0; /* Começa invisível */
-            transition: opacity 1s ease-in-out;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: windowAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.6s backwards;
         }
 
-        #kaguya-logo {
-            width: 150px; /* Tamanho ajustado para a Kaguya */
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(247, 209, 215, 0.5);
-        }
-
-        #daigou-logo-bios {
-            width: 200px; /* Tamanho da logo Daigou na BIOS */
-            height: auto;
-            filter: drop-shadow(0 0 10px rgba(247, 209, 215, 0.7));
-        }
-
-        /* CURSOR PISCANDO */
-        .blinking-cursor {
-            font-weight: 700;
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink {
-            from, to { visibility: hidden; }
-            50% { visibility: visible; }
-        }
-
-        /* --- ESTILOS DO SITE PRINCIPAL --- */
-        /* Animação de inicialização do sistema */
-        @keyframes windowFadeIn {
-            from { opacity: 0; transform: scale(0.97) translateY(10px); }
+        @keyframes windowAppear {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        .window {
-            width: 980px;
-            height: 750px;
-            background: rgba(10, 10, 12, 0.9); /* Transparência leve */
-            backdrop-filter: blur(15px); /* Efeito de vidro */
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(247, 209, 215, 0.2);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.9);
-            animation: windowFadeIn 0.5s ease-out; /* Nome diferente para não conflitar */
-            opacity: 0; /* Começa invisível, JS vai mostrar */
-            transform: scale(0.97) translateY(10px); /* Posição inicial para animação */
-        }
-
         .title-bar {
-            background: rgba(26, 26, 26, 0.8);
-            padding: 12px 20px;
+            padding: 12px 18px;
             display: flex;
             align-items: center;
-            border-top-left-radius: 11px;
-            border-top-right-radius: 11px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        .dots { display: flex; gap: 8px; margin-right: 20px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; }
-        .close { background: #ff5f56; }
-        .min { background: #ffbd2e; }
-        .max { background: #27c93f; }
-        .window-title { font-size: 11px; opacity: 0.5; flex: 1; text-align: center; letter-spacing: 2px; font-weight: bold; }
+        .dots { display: flex; gap: 8px; }
+        .dot { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+        .window-title { flex: 1; text-align: center; font-size: 11px; font-family: 'JetBrains Mono'; opacity: 0.4; text-transform: uppercase; }
 
         .window-content {
             flex: 1;
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 240px 1fr;
             overflow: hidden;
-            padding: 30px;
-            gap: 20px;
         }
 
-        .sidebar { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        /* --- SIDEBAR --- */
+        .sidebar {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
         .avatar-frame {
-            width: 160px; height: 160px;
-            padding: 8px;
-            background: repeating-linear-gradient(45deg, #f7d1d7, #f7d1d7 4px, #000 4px, #000 8px);
-            border-radius: 12px;
-            margin-bottom: 15px;
-            transition: transform 0.3s ease;
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            padding: 5px;
+            margin-bottom: 20px;
         }
-        .avatar-frame:hover { transform: scale(1.05); }
-        .avatar-frame img { width: 100%; height: 100%; border-radius: 6px; object-fit: cover; }
-        .logo-main { width: 120px; margin-bottom: 20px; opacity: 0.9; filter: drop-shadow(0 0 5px rgba(247,209,215,0.3)); }
+        .avatar-frame img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+        .logo-small { width: 100px; margin-bottom: 20px; filter: brightness(1.2); }
         
-        .bio { font-size: 12px; opacity: 0.8; line-height: 1.5; margin-bottom: 20px; white-space: pre-line; }
+        .bio { 
+            font-size: 11px; 
+            text-align: center; 
+            opacity: 0.7; 
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
 
-        .os-icons { display: flex; gap: 15px; margin-bottom: 25px; }
-        .os-icons img { width: 28px; transition: 0.3s; cursor: pointer; filter: drop-shadow(0 0 5px #f7d1d7); }
-        .os-icons img:hover { transform: translateY(-5px); filter: drop-shadow(0 0 10px #f7d1d7); }
+        .os-icons { display: flex; gap: 20px; margin-top: auto; }
+        .os-icons img { width: 22px; opacity: 0.6; transition: 0.3s; filter: invert(1); }
+        .os-icons img:hover { opacity: 1; transform: translateY(-2px); filter: drop-shadow(0 0 5px var(--accent)); }
 
-        .status-box { background: rgba(87, 203, 222, 0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(87, 203, 222, 0.15); width: 100%; }
-        .status-on { color: #57cbde; font-weight: bold; font-size: 13px; }
+        /* --- CONTENT AREA --- */
+        .explorer-area {
+            padding: 30px;
+            overflow-y: auto;
+        }
 
-        .explorer-area { overflow-y: auto; padding-right: 10px; }
         .explorer-area::-webkit-scrollbar { width: 4px; }
-        .explorer-area::-webkit-scrollbar-thumb { background: rgba(247,209,215,0.3); border-radius: 10px; }
+        .explorer-area::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 10px; }
 
-        .folder-section { margin-bottom: 10px; border-radius: 8px; background: rgba(255,255,255,0.02); }
+        .folder-section { margin-bottom: 15px; }
         
         .folder-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 6px;
+            gap: 10px;
+            padding: 10px;
+            border-radius: var(--border-radius);
             transition: 0.2s;
+            cursor: pointer;
         }
-        .folder-header:hover { background: rgba(255,255,255,0.05); }
-        
-        .folder-icon { 
-            width: 24px; 
-            height: 24px; 
-            background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center; 
-            background-size: contain; 
-        }
-        .folder-section.open .folder-icon { 
-            background-image: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue-open.svg'); 
-        }
-        
-        .folder-name { font-size: 14px; font-weight: bold; color: #67c1f5; }
+        .folder-header:hover { background: var(--accent-dim); }
+
+        .folder-icon { color: var(--folder-blue); font-size: 18px; }
+        .folder-name { font-size: 13px; font-weight: 600; font-family: 'JetBrains Mono'; }
 
         .folder-content {
             display: none;
-            padding: 15px 15px 15px 40px;
+            padding: 15px 0 15px 30px;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 15px;
+            gap: 20px;
         }
         .folder-section.open .folder-content { display: grid; }
 
-        /* Estilo dos itens com Legenda (Ideia 2) */
-        .item-card { 
+        .item-card {
+            text-decoration: none;
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-decoration: none;
+            gap: 8px;
             transition: 0.3s;
         }
 
-        .item-thumb {
-            width: 65px;
-            height: 65px;
-            border-radius: 8px;
+        .item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: #1a1a20;
             overflow: hidden;
-            border: 1px solid rgba(247,209,215,0.1);
+            border: 1px solid rgba(255,255,255,0.05);
             transition: 0.3s;
-            background: #000;
         }
-        .item-thumb.portrait { height: 90px; }
+        .item-image img { width: 100%; height: 100%; object-fit: cover; }
         
-        .item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .item-image.poster { height: 80px; }
 
         .item-label {
             font-size: 10px;
-            margin-top: 6px;
-            opacity: 0.7;
-            color: #f7d1d7;
+            font-family: 'JetBrains Mono';
+            color: var(--text-main);
+            opacity: 0.6;
             text-align: center;
-            max-width: 75px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
-        .item-card:hover .item-thumb { 
-            transform: scale(1.1) translateY(-2px); 
-            border-color: #f7d1d7; 
-            box-shadow: 0 5px 15px rgba(247,209,215,0.3); 
+        .item-card:hover .item-image {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
-        .item-card:hover .item-label { opacity: 1; }
+        .item-card:hover .item-label { opacity: 1; color: var(--accent); }
 
         #notification {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: #f7d1d7; color: #000; padding: 10px 25px; border-radius: 5px;
-            font-weight: bold; display: none; z-index: 1000;
+            position: fixed; top: 20px; right: 20px;
+            background: var(--window-bg);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            font-family: 'JetBrains Mono';
+            font-size: 12px;
+            display: none;
+            z-index: 10000;
         }
     </style>
 </head>
 <body>
 
     <div id="bios-screen">
-        <div id="bios-messages"></div>
-        <div class="bios-logo-container" id="logo-container">
-            <img id="kaguya-logo" src="https://imgur.com/QH009vp.png" alt="Kaguya Logo">
-            <img id="daigou-logo-bios" src="https://imgur.com/btg3Zph.png" alt="Daigou Logo">
-        </div>
+        <img src="https://imgur.com/btg3Zph.png" class="bios-logo">
+        <div class="bios-text">LOADING SYSTEM...</div>
+        <div style="font-size: 10px; margin-top: 10px; opacity: 0.5;">DAIGOU BIOS v2.0 - 2026</div>
     </div>
 
-    <div class="window" id="main-window">
+    <div class="window">
         <div class="title-bar">
             <div class="dots">
-                <div class="dot close"></div>
-                <div class="dot min"></div>
-                <div class="dot max"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
             </div>
-            <div class="window-title">C:\Users\Daigou\Desktop\Profile.exe</div>
+            <div class="window-title">daigou@arch ~ /home/profile</div>
         </div>
 
         <div class="window-content">
@@ -266,176 +236,85 @@
                 <div class="avatar-frame">
                     <img src="https://imgur.com/pHJtwPT.gif">
                 </div>
-                <img src="https://imgur.com/btg3Zph.png" class="logo-main">
+                <img src="https://imgur.com/btg3Zph.png" class="logo-small">
                 
-                <p class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦
-                Buy Bitcoin ₿ - A shield of economic Freedom</p>
+                <p class="bio">My body, my soul, and my spirit belong to Jesus Christ ☦<br><br>Buy Bitcoin ₿</p>
                 
                 <div class="os-icons">
                     <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png"></a>
                     <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png"></a>
                     <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
                 </div>
-
-                <div class="status-box">
-                    <div class="status-on">Currently Offline</div>
-                    <div style="font-size: 10px; opacity: 0.5;">Last Online 700 years ago</div>
-                </div>
             </aside>
 
             <main class="explorer-area">
                 <div class="folder-section open" onclick="toggleFolder(this)">
                     <div class="folder-header">
-                        <div class="folder-icon"></div>
-                        <span class="folder-name">My Projects</span>
-                    </div>
-                    <div class="folder-content">
-                        <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="item-card">
-                            <div class="item-thumb"><img src="https://imgur.com/yWGCBpw.png"></div>
-                            <span class="item-label">Github (Web)</span>
-                        </a>
-                        <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="item-card">
-                            <div class="item-thumb" style="filter: hue-rotate(290deg);"><img src="https://imgur.com/yWGCBpw.png"></div>
-                            <span class="item-label">Itch.io</span>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="folder-section" onclick="toggleFolder(this)">
-                    <div class="folder-header">
-                        <div class="folder-icon"></div>
-                        <span class="folder-name">Waifus</span>
+                        <span class="folder-icon">󰉋</span>
+                        <span class="folder-name">waifus/</span>
                     </div>
                     <div class="folder-content">
                         <a href="https://anilist.co/character/120649/" target="_blank" class="item-card">
-                            <div class="item-thumb"><img src="https://imgur.com/9Z8MRSu.png"></div>
-                            <span class="item-label">Kaguya</span>
+                            <div class="item-image"><img src="https://imgur.com/9Z8MRSu.png"></div>
+                            <span class="item-label">kaguya.png</span>
                         </a>
                         <a href="https://anilist.co/character/34470/" target="_blank" class="item-card">
-                            <div class="item-thumb"><img src="https://imgur.com/YALUeUn.png"></div>
-                            <span class="item-label">Kurisu</span>
+                            <div class="item-image"><img src="https://imgur.com/YALUeUn.png"></div>
+                            <span class="item-label">kurisu.png</span>
+                        </a>
+                        <a href="https://anilist.co/character/144594/" target="_blank" class="item-card">
+                            <div class="item-image"><img src="https://imgur.com/7L27P94.png"></div>
+                            <span class="item-label">kobeni.png</span>
                         </a>
                     </div>
                 </div>
 
                 <div class="folder-section" onclick="toggleFolder(this)">
                     <div class="folder-header">
-                        <div class="folder-icon"></div>
-                        <span class="folder-name">Favorite Games</span>
+                        <span class="folder-icon">󰉋</span>
+                        <span class="folder-name">favorites/</span>
                     </div>
                     <div class="folder-content">
                         <a href="https://store.steampowered.com/app/570940/" target="_blank" class="item-card">
-                            <div class="item-thumb"><img src="https://imgur.com/lcMd96p.png"></div>
-                            <span class="item-label">Dark Souls</span>
+                            <div class="item-image"><img src="https://imgur.com/lcMd96p.png"></div>
+                            <span class="item-label">dsouls.exe</span>
                         </a>
-                        <a href="https://yanderesimulator.com/" target="_blank" class="item-card">
-                            <div class="item-thumb"><img src="https://imgur.com/hdifxRI.png"></div>
-                            <span class="item-label">Yandere Sim</span>
+                        <a href="https://minecraft.net" target="_blank" class="item-card">
+                            <div class="item-image"><img src="https://imgur.com/ctWNET1.png"></div>
+                            <span class="item-label">mc.bin</span>
                         </a>
                     </div>
                 </div>
 
                 <div class="folder-section" onclick="toggleFolder(this)">
                     <div class="folder-header">
-                        <div class="folder-icon"></div>
-                        <span class="folder-name">Favorite Anime</span>
+                        <span class="folder-icon">󰉋</span>
+                        <span class="folder-name">my_projects/</span>
                     </div>
                     <div class="folder-content">
-                        <a href="https://anilist.co/anime/9253/" target="_blank" class="item-card">
-                            <div class="item-thumb portrait"><img src="https://imgur.com/P1HogUg.png"></div>
-                            <span class="item-label">Steins;Gate</span>
-                        </a>
-                        <a href="https://anilist.co/anime/21355/" target="_blank" class="item-card">
-                            <div class="item-thumb portrait"><img src="https://imgur.com/d9zFEZu.png"></div>
-                            <span class="item-label">Re:Zero</span>
+                        <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="item-card">
+                            <div class="item-image"><img src="https://imgur.com/yWGCBpw.png"></div>
+                            <span class="item-label">lunatic.love</span>
                         </a>
                     </div>
                 </div>
-
             </main>
         </div>
     </div>
 
-    <div id="notification">BTC Address Copied!</div>
+    <div id="notification">SUCCESS: Address copied to clipboard</div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const biosScreen = document.getElementById('bios-screen');
-            const biosMessages = document.getElementById('bios-messages');
-            const logoContainer = document.getElementById('logo-container');
-            const mainWindow = document.getElementById('main-window');
-
-            const messages = [
-                "BIOS POST v2.1.0.8 Copyright (C) 2024, Daigou Corp.\n",
-                "Checking memory... OK\n",
-                "Initializing Peripherals...\n",
-                "USB Controller: Present\n",
-                "PCI Devices: Detected\n",
-                "Booting from local drive...\n",
-                "GRUB loading... Welcome to DaigouOS.\n",
-                "Initializing graphical interface...\n"
-            ];
-
-            let messageIndex = 0;
-            let charIndex = 0;
-            let typingTimeout;
-
-            function typeMessage() {
-                if (messageIndex < messages.length) {
-                    if (charIndex < messages[messageIndex].length) {
-                        biosMessages.textContent += messages[messageIndex][charIndex];
-                        charIndex++;
-                        typingTimeout = setTimeout(typeMessage, 30); // Velocidade da digitação
-                    } else {
-                        biosMessages.textContent += '\n'; // Nova linha após cada mensagem
-                        messageIndex++;
-                        charIndex = 0;
-                        setTimeout(typeMessage, 500); // Pausa entre mensagens
-                    }
-                } else {
-                    // Todas as mensagens foram digitadas, agora mostra as logos
-                    showLogos();
-                }
-            }
-
-            function showLogos() {
-                logoContainer.style.opacity = 1;
-                setTimeout(() => {
-                    // Após as logos, transiciona para o site
-                    biosScreen.style.opacity = 0; // Faz a tela de BIOS sumir
-                    biosScreen.addEventListener('transitionend', () => {
-                        biosScreen.style.display = 'none'; // Remove a BIOS após sumir
-                        mainWindow.style.opacity = 1; // Mostra a janela principal
-                        mainWindow.style.transform = 'scale(1) translateY(0)'; // Animação da janela
-                    }, { once: true });
-                }, 3000); // Tempo que as logos ficam visíveis na BIOS
-            }
-
-            typeMessage(); // Inicia a sequência da BIOS
-        });
-
-
-        // Funções existentes (toggleFolder, copyBTC)
         function toggleFolder(element) {
             if (event.target.closest('.item-card')) return;
-            
-            const isOpen = element.classList.contains('open');
-            const folderIcon = element.querySelector('.folder-icon'); // Seleciona o div com a classe .folder-icon
-            
             element.classList.toggle('open');
-            
-            if (!isOpen) {
-                folderIcon.style.backgroundImage = "url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue-open.svg')";
-            } else {
-                folderIcon.style.backgroundImage = "url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg')";
-            }
         }
 
         function copyBTC() {
             navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => {
                 const note = document.getElementById("notification");
                 note.style.display = "block";
-                setTimeout(() => { note.style.display = "none"; }, 2500);
+                setTimeout(() => { note.style.display = "none"; }, 3000);
             });
         }
     </script>
