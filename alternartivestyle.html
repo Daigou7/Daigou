@@ -10,8 +10,8 @@
 
         :root {
             --accent: #f7d1d7;
-            --bg-overlay: rgba(10, 10, 12, 0.7);
-            --window-bg: rgba(20, 20, 25, 0.95);
+            --bg-overlay: rgba(10, 10, 12, 0.85);
+            --window-bg: rgba(15, 15, 18, 0.98);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,7 +26,7 @@
             overflow: hidden;
         }
 
-        /* --- BIOS FAST BOOT --- */
+        /* --- BIOS FAST BOOT (ROSA) --- */
         #bios-screen {
             position: fixed;
             inset: 0;
@@ -38,19 +38,19 @@
             align-items: center;
             animation: fadeOut 0.4s ease 1.2s forwards;
         }
-        .bios-logo { width: 120px; filter: drop-shadow(0 0 15px var(--accent)); margin-bottom: 20px; }
+        .bios-logo { width: 140px; filter: drop-shadow(0 0 15px var(--accent)); margin-bottom: 20px; }
 
         @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
-        /* --- DESKTOP LAYOUT --- */
+        /* --- DESKTOP GRID --- */
         .desktop {
             width: 100%;
             height: 100%;
             padding: 40px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 100px);
-            grid-template-rows: repeat(auto-fill, 120px);
-            grid-auto-flow: column;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            align-content: flex-start;
             gap: 20px;
         }
 
@@ -58,103 +58,142 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            width: 100px;
             cursor: pointer;
+            padding: 10px;
+            border: 1px solid transparent;
             transition: 0.2s;
-            text-decoration: none;
         }
-        .desktop-item:hover { background: rgba(247, 209, 215, 0.1); border-radius: 8px; }
+        .desktop-item:hover { 
+            background: rgba(247, 209, 215, 0.1); 
+            border-color: rgba(247, 209, 215, 0.1);
+            border-radius: 8px; 
+        }
 
         .folder-icon {
-            width: 64px;
-            height: 64px;
+            width: 50px;
+            height: 50px;
             background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center;
             background-size: contain;
-            filter: hue-rotate(300deg) saturate(0.5); /* Torna o azul mais pro rosa/pastel */
+            filter: hue-rotate(300deg) saturate(0.6) brightness(1.1);
         }
         .item-name {
             margin-top: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-family: 'JetBrains Mono', monospace;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8);
             text-align: center;
+            color: #fff;
         }
 
-        /* --- RIGHT SIDE WIDGET --- */
+        /* --- SIDE WIDGET --- */
         .side-widget {
             position: fixed;
-            right: 40px;
+            right: 50px;
             top: 50%;
             transform: translateY(-50%);
-            width: 280px;
+            width: 300px;
             background: var(--bg-overlay);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-right: 3px solid var(--accent);
-            text-align: right;
+            backdrop-filter: blur(15px);
+            padding: 40px 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(247, 209, 215, 0.15);
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        .widget-avatar { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--accent); margin-bottom: 20px; }
-        .widget-bio { font-size: 13px; line-height: 1.6; opacity: 0.9; margin-bottom: 20px; white-space: pre-line; }
+        .avatar-frame {
+            width: 140px; height: 140px;
+            padding: 6px;
+            background: repeating-linear-gradient(45deg, var(--accent), var(--accent) 4px, #000 4px, #000 8px);
+            border-radius: 12px;
+            margin: 0 auto 20px;
+        }
+        .avatar-frame img { width: 100%; height: 100%; border-radius: 6px; object-fit: cover; }
         
-        .widget-links { display: flex; gap: 15px; justify-content: flex-end; }
-        .widget-links img { width: 24px; filter: brightness(0) invert(1); transition: 0.3s; opacity: 0.7; }
-        .widget-links img:hover { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 5px var(--accent)); }
+        .logo-main { width: 120px; margin-bottom: 20px; opacity: 0.9; }
+        .widget-bio { font-size: 12px; line-height: 1.6; opacity: 0.8; margin-bottom: 25px; white-space: pre-line; color: var(--accent); }
 
-        /* --- WINDOW MODAL (PASTAS) --- */
+        .os-icons { display: flex; gap: 15px; justify-content: center; margin-bottom: 25px; }
+        .os-icons img { width: 28px; transition: 0.3s; cursor: pointer; filter: drop-shadow(0 0 5px var(--accent)); }
+        .os-icons img:hover { transform: translateY(-3px); }
+
+        .status-box { background: rgba(87, 203, 222, 0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(87, 203, 222, 0.15); width: 100%; }
+        .status-on { color: #57cbde; font-weight: bold; font-size: 13px; }
+
+        /* --- FOLDER WINDOWS --- */
         .window-modal {
             position: fixed;
             top: 50%;
-            left: 45%;
-            transform: translate(-50%, -50%) scale(0.9);
-            width: 600px;
-            max-height: 450px;
+            left: 42%;
+            transform: translate(-50%, -50%) scale(0.95);
+            width: 650px;
             background: var(--window-bg);
             border: 1px solid rgba(247, 209, 215, 0.2);
             border-radius: 12px;
             display: none;
             flex-direction: column;
             z-index: 1000;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-            transition: 0.3s;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.9);
         }
         .window-modal.active { display: flex; transform: translate(-50%, -50%) scale(1); }
 
         .modal-header {
-            padding: 15px;
-            background: rgba(255,255,255,0.03);
+            padding: 12px 20px;
+            background: #16161a;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-radius: 11px 11px 0 0;
+            border-bottom: 1px solid #222;
         }
-        .close-btn { color: var(--accent); cursor: pointer; font-family: 'JetBrains Mono'; font-weight: bold; }
+        .modal-title { font-size: 11px; font-family: 'JetBrains Mono'; opacity: 0.6; color: #fff; }
+        .close-btn { color: #ff5f56; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .close-btn:hover { transform: scale(1.2); }
 
         .modal-body {
             padding: 30px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 25px;
+            max-height: 500px;
             overflow-y: auto;
         }
 
-        /* --- ITENS DENTRO DA PASTA --- */
-        .file-item {
+        /* --- CONTENT ITEMS --- */
+        .item-card {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            transition: 0.2s;
+            transition: 0.3s;
         }
-        .file-img { width: 70px; height: 90px; border-radius: 4px; object-fit: cover; border: 1px solid transparent; }
-        .file-img.square { height: 70px; }
-        .file-item:hover .file-img { border-color: var(--accent); transform: translateY(-3px); }
-        .file-label { font-size: 10px; margin-top: 5px; color: var(--accent); opacity: 0.8; text-align: center; }
+        .item-image {
+            width: 80px; height: 110px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
+        }
+        .item-image.square { height: 80px; }
+        .item-image img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .item-label {
+            font-size: 10px;
+            margin-top: 10px;
+            color: var(--accent);
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            opacity: 0.8;
+        }
+
+        .item-card:hover .item-image { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 5px 15px rgba(247,209,215,0.2); }
+        .item-card:hover .item-label { opacity: 1; text-shadow: 0 0 5px var(--accent); }
 
         #notification {
-            position: fixed; bottom: 20px; left: 20px;
-            background: var(--accent); color: #000;
-            padding: 10px 20px; border-radius: 4px; font-weight: bold; display: none;
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--accent); color: #000; padding: 10px 25px; border-radius: 5px;
+            font-weight: bold; display: none; z-index: 10000; font-family: 'JetBrains Mono';
         }
     </style>
 </head>
@@ -162,109 +201,126 @@
 
     <div id="bios-screen">
         <img src="https://imgur.com/btg3Zph.png" class="bios-logo">
-        <div style="font-family: 'JetBrains Mono'; font-size: 12px;">SYSTEM.READY...</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 12px; color: var(--accent); letter-spacing: 2px;">DAIGOU_OS v2.0 BOOTING...</div>
     </div>
 
-    <main class="desktop">
+    <main class="desktop" id="main-desktop">
         <div class="desktop-item" onclick="openFolder('folder-waifus')">
             <div class="folder-icon"></div>
-            <span class="item-name">Waifus</span>
+            <span class="item-name">waifus/</span>
         </div>
-
         <div class="desktop-item" onclick="openFolder('folder-games')">
             <div class="folder-icon"></div>
-            <span class="item-name">Favorite Games</span>
+            <span class="item-name">games/</span>
         </div>
-
         <div class="desktop-item" onclick="openFolder('folder-anime')">
             <div class="folder-icon"></div>
-            <span class="item-name">Favorite Anime</span>
+            <span class="item-name">anime/</span>
         </div>
-
         <div class="desktop-item" onclick="openFolder('folder-mygames')">
             <div class="folder-icon"></div>
-            <span class="item-name">My Games</span>
+            <span class="item-name">projects/</span>
         </div>
     </main>
 
     <aside class="side-widget">
-        <img src="https://imgur.com/pHJtwPT.gif" class="widget-avatar">
-        <p class="widget-bio">
-            My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦
-            
-            Buy Bitcoin ₿ - A shield of economic Freedom
-        </p>
-        <div class="widget-links">
+        <div class="avatar-frame">
+            <img src="https://imgur.com/pHJtwPT.gif">
+        </div>
+        <img src="https://imgur.com/btg3Zph.png" class="logo-main">
+        
+        <p class="widget-bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦
+        Buy Bitcoin ₿ - A shield of economic Freedom</p>
+        
+        <div class="os-icons">
             <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png"></a>
             <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png"></a>
             <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
         </div>
+
+        <div class="status-box">
+            <div class="status-on">Currently Offline</div>
+            <div style="font-size: 10px; opacity: 0.5; color: #fff;">Last Online 700 years ago</div>
+        </div>
     </aside>
 
     <div id="folder-waifus" class="window-modal">
-        <div class="modal-header"><span>Waifus</span><span class="close-btn" onclick="closeFolder()">[X]</span></div>
+        <div class="modal-header"><span class="modal-title">~/desktop/waifus</span><span class="close-btn" onclick="closeFolder()">✖</span></div>
         <div class="modal-body">
-            <a href="https://anilist.co/character/120649/" target="_blank" class="file-item">
-                <img src="https://imgur.com/9Z8MRSu.png" class="file-img square"><span class="file-label">Kaguya</span>
+            <a href="https://anilist.co/character/120649/" target="_blank" class="item-card">
+                <div class="item-image square"><img src="https://imgur.com/9Z8MRSu.png"></div>
+                <span class="item-label">Kaguya.waifu</span>
             </a>
-            <a href="https://anilist.co/character/34470/" target="_blank" class="file-item">
-                <img src="https://imgur.com/YALUeUn.png" class="file-img square"><span class="file-label">Kurisu</span>
+            <a href="https://anilist.co/character/34470/" target="_blank" class="item-card">
+                <div class="item-image square"><img src="https://imgur.com/YALUeUn.png"></div>
+                <span class="item-label">Kurisu.waifu</span>
             </a>
-            <a href="https://anilist.co/character/144594/" target="_blank" class="file-item">
-                <img src="https://imgur.com/7L27P94.png" class="file-img square"><span class="file-label">Kobeni</span>
+            <a href="https://anilist.co/character/144594/" target="_blank" class="item-card">
+                <div class="item-image square"><img src="https://imgur.com/7L27P94.png"></div>
+                <span class="item-label">Kobeni.waifu</span>
             </a>
-            <a href="https://anilist.co/character/88572/" target="_blank" class="file-item">
-                <img src="https://imgur.com/iOmt3Xb.png" class="file-img square"><span class="file-label">Emilia</span>
+            <a href="https://anilist.co/character/88572/" target="_blank" class="item-card">
+                <div class="item-image square"><img src="https://imgur.com/iOmt3Xb.png"></div>
+                <span class="item-label">Emilia.waifu</span>
             </a>
         </div>
     </div>
 
     <div id="folder-games" class="window-modal">
-        <div class="modal-header"><span>Favorite Games</span><span class="close-btn" onclick="closeFolder()">[X]</span></div>
+        <div class="modal-header"><span class="modal-title">~/desktop/games</span><span class="close-btn" onclick="closeFolder()">✖</span></div>
         <div class="modal-body">
-            <a href="https://store.steampowered.com/app/570940/" target="_blank" class="file-item">
-                <img src="https://imgur.com/lcMd96p.png" class="file-img square"><span class="file-label">Dark Souls</span>
+            <a href="https://store.steampowered.com/app/570940/" target="_blank" class="item-card">
+                <div class="item-image square"><img src="https://imgur.com/lcMd96p.png"></div>
+                <span class="item-label">Dark Souls.game</span>
             </a>
-            <a href="https://minecraft.net" target="_blank" class="file-item">
-                <img src="https://imgur.com/ctWNET1.png" class="file-img square"><span class="file-label">Minecraft</span>
+            <a href="https://minecraft.net" target="_blank" class="item-card">
+                <div class="item-image square"><img src="https://imgur.com/ctWNET1.png"></div>
+                <span class="item-label">Minecraft.game</span>
             </a>
-            <a href="https://store.steampowered.com/app/17390/" target="_blank" class="file-item">
-                <img src="https://imgur.com/J4g8PTZ.png" class="file-img square"><span class="file-label">Spore</span>
+            <a href="https://store.steampowered.com/app/17390/" target="_blank" class="item-card">
+                <div class="item-image square"><img src="https://imgur.com/J4g8PTZ.png"></div>
+                <span class="item-label">Spore.game</span>
             </a>
-            <a href="https://yanderesimulator.com/" target="_blank" class="file-item">
-                <img src="https://imgur.com/hdifxRI.png" class="file-img square"><span class="file-label">Yandere Sim</span>
+            <a href="https://yanderesimulator.com/" target="_blank" class="item-card">
+                <div class="item-image square"><img src="https://imgur.com/hdifxRI.png"></div>
+                <span class="item-label">Yandere Sim.game</span>
             </a>
         </div>
     </div>
 
     <div id="folder-anime" class="window-modal">
-        <div class="modal-header"><span>Favorite Anime</span><span class="close-btn" onclick="closeFolder()">[X]</span></div>
+        <div class="modal-header"><span class="modal-title">~/desktop/anime</span><span class="close-btn" onclick="closeFolder()">✖</span></div>
         <div class="modal-body">
-            <a href="https://anilist.co/anime/9253/" target="_blank" class="file-item">
-                <img src="https://imgur.com/P1HogUg.png" class="file-img"><span class="file-label">Steins;Gate</span>
+            <a href="https://anilist.co/anime/9253/" target="_blank" class="item-card">
+                <div class="item-image"><img src="https://imgur.com/P1HogUg.png"></div>
+                <span class="item-label">Steins;Gate.anime</span>
             </a>
-            <a href="https://anilist.co/anime/21355/" target="_blank" class="file-item">
-                <img src="https://imgur.com/d9zFEZu.png" class="file-img"><span class="file-label">Re:Zero</span>
+            <a href="https://anilist.co/anime/21355/" target="_blank" class="item-card">
+                <div class="item-image"><img src="https://imgur.com/d9zFEZu.png"></div>
+                <span class="item-label">Re:Zero.anime</span>
             </a>
-            <a href="https://anilist.co/anime/30/" target="_blank" class="file-item">
-                <img src="https://imgur.com/njmKBUI.png" class="file-img"><span class="file-label">Evangelion</span>
+            <a href="https://anilist.co/anime/30/" target="_blank" class="item-card">
+                <div class="item-image"><img src="https://imgur.com/njmKBUI.png"></div>
+                <span class="item-label">Evangelion.anime</span>
             </a>
         </div>
     </div>
 
     <div id="folder-mygames" class="window-modal">
-        <div class="modal-header"><span>My Games</span><span class="close-btn" onclick="closeFolder()">[X]</span></div>
+        <div class="modal-header"><span class="modal-title">~/desktop/projects</span><span class="close-btn" onclick="closeFolder()">✖</span></div>
         <div class="modal-body">
-            <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="file-item">
-                <img src="https://imgur.com/yWGCBpw.png" class="file-img square"><span class="file-label">Github (Web)</span>
+            <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="item-card">
+                <div class="item-image square"><img src="https://imgur.com/yWGCBpw.png"></div>
+                <span class="item-label">Github_Web.src</span>
             </a>
-            <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="file-item">
-                <img src="https://imgur.com/yWGCBpw.png" class="file-img square"><span class="file-label">Itch.io</span>
+            <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="item-card">
+                <div class="item-image square"><img src="https://imgur.com/yWGCBpw.png"></div>
+                <span class="item-label">Itch_Page.src</span>
             </a>
         </div>
     </div>
 
-    <div id="notification">BTC Address Copied!</div>
+    <div id="notification">SUCCESS: BTC Address Copied</div>
 
     <script>
         function openFolder(id) {
@@ -275,6 +331,11 @@
         function closeFolder() {
             document.querySelectorAll('.window-modal').forEach(m => m.classList.remove('active'));
         }
+
+        // Fecha janelas ao clicar no desktop
+        document.getElementById('main-desktop').addEventListener('click', function(e) {
+            if (e.target.id === 'main-desktop') closeFolder();
+        });
 
         function copyBTC() {
             navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => {
