@@ -44,7 +44,6 @@
             text-shadow: 1px 1px 3px #000;
         }
 
-        /* ICONS */
         .music-icon { width: 55px; height: 55px; background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center; background-size: contain; filter: hue-rotate(300deg) saturate(0.8); }
         .ps4-icon { width: 55px; height: 55px; background: url('https://imgur.com/FeRrUbt.png') no-repeat center; background-size: contain; }
 
@@ -106,7 +105,7 @@
         }
 
         /* --- NOTIF --- */
-        #notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 10px 25px; border-radius: 5px; display: none; z-index: 11000; font-weight: bold; }
+        #notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 10px 25px; border-radius: 5px; display: none; z-index: 11000; font-weight: bold; text-align: center; max-width: 80%; }
     </style>
 </head>
 <body>
@@ -157,23 +156,17 @@
         let topZ = 1000;
         function openWin(id) { 
             const win = document.getElementById(id); 
-            if (win) { 
-                win.classList.add('active'); 
-                win.style.zIndex = ++topZ; 
-            } 
+            if (win) { win.classList.add('active'); win.style.zIndex = ++topZ; } 
         }
         function closeWin(id) { 
             const win = document.getElementById(id); 
-            if (win) { 
-                win.classList.remove('active'); 
-                if(id === 'win-player') document.getElementById('player-container').innerHTML = ''; 
-            } 
+            if (win) { win.classList.remove('active'); if(id === 'win-player') document.getElementById('player-container').innerHTML = ''; } 
         }
         function playList(id) { 
             document.getElementById('player-container').innerHTML = `<iframe width="100%" height="300" src="https://www.youtube.com/embed/videoseries?list=${id}&autoplay=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>`; 
             openWin('win-player'); 
         }
-        function showNotification(text) { const n = document.getElementById("notification"); n.innerText = text; n.style.display = "block"; setTimeout(() => n.style.display = "none", 2500); }
+        function showNotification(text) { const n = document.getElementById("notification"); n.innerText = text; n.style.display = "block"; setTimeout(() => n.style.display = "none", 3500); }
         
         function copyText(text) {
             navigator.clipboard.writeText(text).then(() => {
@@ -192,30 +185,39 @@
 
         // --- COMMANDS LOGIC ---
         const shortcuts = {
-            "blank": "\u200C",
-            "berserk": "𒉭",
-            "guts": "𒉭",
-            "cross": "☦",
-            "god": "☦",
-            "jesus": "☦",
-            "way": "☦",
-            "truth": "☦",
-            "life": "☦",
-            "email": "daigou@keemail.me",
-            "password": "nigger"
+            "blank": { type: "copy", value: "\u200C" },
+            "berserk": { type: "copy", value: "𒉭" },
+            "guts": { type: "copy", value: "𒉭" },
+            "cross": { type: "copy", value: "☦" },
+            "god": { type: "copy", value: "☦" },
+            "jesus": { type: "copy", value: "☦" },
+            "way": { type: "copy", value: "☦" },
+            "truth": { type: "copy", value: "☦" },
+            "life": { type: "copy", value: "☦" },
+            "email": { type: "copy", value: "daigou@keemail.me" },
+            "password": { type: "copy", value: "nigger lol" },
+            "id": { type: "copy", value: "https://steamcommunity.com/id/Daigou7/" },
+            "sacrifice": { type: "notif", value: "In this world, is the destiny of mankind controlled by some transcendental entity or law?" },
+            "cowboy": { type: "notif", value: "See you space cowboy..." },
+            "el-psy-kongroo": { type: "notif", value: "The Reading Steiner has been activated." },
+            "matrix": { type: "notif", value: "There is no spoon." },
+            "praise": { type: "notif", value: " \\[T]/ PRAISE THE SUN!" }
         };
 
         const cmdInput = document.getElementById('cmd-input');
         cmdInput.addEventListener('input', (e) => {
             const val = e.target.value.toLowerCase();
-            if (shortcuts[val]) {
-                copyText(shortcuts[val]);
+            const item = shortcuts[val];
+            if (item) {
+                if (item.type === "copy") {
+                    copyText(item.value);
+                } else {
+                    showNotification(item.value);
+                }
                 e.target.value = ""; 
             }
         });
-        cmdInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') e.target.value = "";
-        });
+        cmdInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') e.target.value = ""; });
 
         window.onload = () => {
             updateTime(); setInterval(updateTime, 1000);
