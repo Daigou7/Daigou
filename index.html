@@ -25,14 +25,10 @@
 
         /* --- EFEITO CRT SCANLINES --- */
         body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 20000;
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none;
+            content: " "; display: block; position: absolute; inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 20000; background-size: 100% 3px, 3px 100%; pointer-events: none;
         }
 
         /* --- BOOT SCREEN --- */
@@ -45,15 +41,13 @@
 
         /* --- DESKTOP --- */
         #desktop {
-            padding: 40px;
-            display: flex; flex-direction: column; flex-wrap: wrap;
+            padding: 40px; display: flex; flex-direction: column; flex-wrap: wrap;
             align-content: flex-start; gap: 25px; height: 100%;
         }
 
         .desktop-item {
             display: flex; flex-direction: column; align-items: center;
-            width: 110px; cursor: pointer; text-decoration: none; color: inherit;
-            z-index: 5;
+            width: 110px; cursor: pointer; text-decoration: none; color: inherit; z-index: 5;
         }
 
         .folder-icon {
@@ -64,7 +58,7 @@
 
         /* --- WINDOWS (DRAGGABLE) --- */
         .window {
-            position: absolute; top: 100px; left: 100px;
+            position: absolute; top: 15%; left: 15%;
             background: var(--window-bg);
             border: 1px solid rgba(247, 209, 215, 0.2);
             border-radius: 12px; display: none; flex-direction: column;
@@ -77,8 +71,7 @@
         .window-header {
             padding: 12px 15px; background: rgba(255,255,255,0.05);
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(247, 209, 215, 0.1);
-            cursor: move;
+            border-bottom: 1px solid rgba(247, 209, 215, 0.1); cursor: move;
         }
 
         .close-btn { color: #ff5f56; cursor: pointer; font-weight: bold; }
@@ -91,8 +84,8 @@
 
         /* --- TERMINAL STYLE --- */
         #terminal-body {
-            display: block; background: #000; font-size: 12px; color: #0f0;
-            height: 300px; font-family: 'JetBrains Mono', monospace; padding: 15px;
+            display: block; background: #000; font-size: 12px;
+            height: 300px; padding: 15px; border-radius: 0 0 12px 12px;
         }
         #term-output { white-space: pre-wrap; margin-bottom: 10px; color: var(--accent); }
         #term-input { 
@@ -116,8 +109,6 @@
             text-align: center; display: flex; flex-direction: column; align-items: center;
         }
 
-        .system-clock { font-size: 10px; opacity: 0.4; margin-bottom: 15px; letter-spacing: 2px; }
-
         .avatar-frame {
             width: 160px; height: 160px; border-radius: 12px; margin-bottom: 15px;
             overflow: hidden; border: 1px solid rgba(247, 209, 215, 0.2);
@@ -131,7 +122,7 @@
         .os-icons img { width: 28px; transition: 0.3s; cursor: pointer; }
         .os-icons img:hover { transform: translateY(-3px); }
 
-        .discord-status-text { font-size: 10px; opacity: 0.5; margin-bottom: 15px; }
+        .clock-display { font-size: 11px; opacity: 0.6; margin-bottom: 15px; letter-spacing: 1px; }
         
         .perf-metrics {
             display: flex; justify-content: space-around; width: 100%;
@@ -177,8 +168,9 @@
     </main>
 
     <aside class="side-card">
-        <div class="system-clock" id="clock">2026-01-01 00:00:00</div>
-        <div class="avatar-frame"><img src="https://imgur.com/pHJtwPT.gif"></div>
+        <div class="avatar-frame">
+            <img src="https://imgur.com/pHJtwPT.gif">
+        </div>
         <img src="https://imgur.com/btg3Zph.png" class="logo-main">
         <p class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦
         Buy Bitcoin ₿ - A shield of economic Freedom</p>
@@ -189,7 +181,7 @@
             <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
         </div>
 
-        <div class="discord-status-text">currently offline<br>last online 700 years ago</div>
+        <div class="clock-display" id="clock">00:00:00</div>
 
         <div class="perf-metrics">
             <span>FPS: <span id="fps-val">372</span></span>
@@ -203,7 +195,7 @@
             <div id="term-output">Welcome to Daigou OS Terminal. Type 'help' for commands.</div>
             <div style="display: flex;">
                 <span>> &nbsp;</span>
-                <input type="text" id="term-input" autofocus>
+                <input type="text" id="term-input">
             </div>
         </div>
     </div>
@@ -216,6 +208,11 @@
             <a href="https://anilist.co/anime/30/" target="_blank" class="file"><img src="https://imgur.com/njmKBUI.png">evangelion.anime</a>
             <a href="https://anilist.co/anime/21507/" target="_blank" class="file"><img src="https://imgur.com/PIox0ID.png">mobpsycho.anime</a>
             <a href="https://anilist.co/anime/6/" target="_blank" class="file"><img src="https://imgur.com/6Q38gYG.png">trigun.anime</a>
+            <a href="https://anilist.co/anime/9756/" target="_blank" class="file"><img src="https://imgur.com/KNJervC.png">madoka.anime</a>
+            <a href="https://anilist.co/anime/17074/" target="_blank" class="file"><img src="https://imgur.com/JbDnQBm.png">monogatari.anime</a>
+            <a href="https://anilist.co/anime/21471/" target="_blank" class="file"><img src="https://imgur.com/Iwn43dp.png">saikikusuo.anime</a>
+            <a href="https://anilist.co/anime/20832/" target="_blank" class="file"><img src="https://imgur.com/SqG1E4O.png">overlord.anime</a>
+            <a href="https://anilist.co/anime/108710/" target="_blank" class="file"><img src="https://imgur.com/IOfxGtx.png">dorohedoro.anime</a>
         </div>
     </div>
 
@@ -224,6 +221,14 @@
         <div class="window-body">
             <a href="https://anilist.co/manga/30002/" target="_blank" class="file"><img src="https://imgur.com/S2itjEq.png">berserk.manga</a>
             <a href="https://anilist.co/manga/31706/" target="_blank" class="file"><img src="https://imgur.com/eUcGVum.png">sbr.manga</a>
+            <a href="https://anilist.co/manga/30642/" target="_blank" class="file"><img src="https://imgur.com/AVBfjQX.png">vinland.manga</a>
+            <a href="https://anilist.co/manga/86635/" target="_blank" class="file"><img src="https://imgur.com/xrB46Ft.png">kaguyasama.manga</a>
+            <a href="https://anilist.co/manga/30026/" target="_blank" class="file"><img src="https://imgur.com/vwLIPx2.png">hxh.manga</a>
+            <a href="https://anilist.co/manga/30656/" target="_blank" class="file"><img src="https://imgur.com/nC9QYtI.png">vagabond.manga</a>
+            <a href="https://anilist.co/manga/30336/" target="_blank" class="file"><img src="https://imgur.com/e36y1NW.png">gto.manga</a>
+            <a href="https://anilist.co/manga/54705/" target="_blank" class="file"><img src="https://imgur.com/gGZA0zR.png">akunohana.manga</a>
+            <a href="https://anilist.co/manga/30936/" target="_blank" class="file"><img src="https://imgur.com/wi5ru2O.png">homunculus.manga</a>
+            <a href="https://anilist.co/manga/37375/" target="_blank" class="file"><img src="https://imgur.com/Zg6JTrd.png">kokounohito.manga</a>
         </div>
     </div>
 
@@ -231,6 +236,9 @@
         <div class="window-header"><span>~/waifus</span><span class="close-btn" onclick="closeWin('win-waifus')">✖</span></div>
         <div class="window-body">
             <a href="https://anilist.co/character/120649/" target="_blank" class="file"><img src="https://imgur.com/9Z8MRSu.png" class="square">kaguya.waifu</a>
+            <a href="https://anilist.co/character/34470/" target="_blank" class="file"><img src="https://imgur.com/YALUeUn.png" class="square">kurisu.waifu</a>
+            <a href="https://anilist.co/character/144594/" target="_blank" class="file"><img src="https://imgur.com/7L27P94.png" class="square">kobeni.waifu</a>
+            <a href="https://anilist.co/character/88572/" target="_blank" class="file"><img src="https://imgur.com/iOmt3Xb.png" class="square">emilia.waifu</a>
         </div>
     </div>
 
@@ -238,6 +246,9 @@
         <div class="window-header"><span>~/games</span><span class="close-btn" onclick="closeWin('win-games')">✖</span></div>
         <div class="window-body">
             <a href="https://store.steampowered.com/app/570940/" target="_blank" class="file"><img src="https://imgur.com/lcMd96p.png" class="square">darksouls.game</a>
+            <a href="https://minecraft.net" target="_blank" class="file"><img src="https://imgur.com/ctWNET1.png" class="square">minecraft.game</a>
+            <a href="https://store.steampowered.com/app/17390/" target="_blank" class="file"><img src="https://imgur.com/J4g8PTZ.png" class="square">spore.game</a>
+            <a href="https://yanderesimulator.com/" target="_blank" class="file"><img src="https://imgur.com/hdifxRI.png" class="square">yandere.game</a>
         </div>
     </div>
 
@@ -245,6 +256,7 @@
         <div class="window-header"><span>~/projects</span><span class="close-btn" onclick="closeWin('win-projects')">✖</span></div>
         <div class="window-body">
             <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">github.src</a>
+            <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">itchio.src</a>
         </div>
     </div>
 
@@ -255,20 +267,18 @@
         // --- RELÓGIO E MÉTRICAS ---
         function updateAll() {
             const now = new Date();
-            document.getElementById('clock').innerText = now.getFullYear() + "-" + 
-                String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0') + " " +
-                now.toTimeString().split(' ')[0];
-            
+            document.getElementById('clock').innerText = now.toTimeString().split(' ')[0];
             document.getElementById('fps-val').innerText = Math.floor(Math.random() * (400 - 350 + 1) + 350);
             document.getElementById('ping-val').innerText = Math.floor(Math.random() * (18 - 12 + 1) + 12);
         }
         setInterval(updateAll, 1000);
 
         // --- WINDOW MANAGEMENT ---
+        let topZ = 1000;
         function openWin(id) {
             const win = document.getElementById(id);
             win.classList.add('active');
-            win.style.zIndex = Math.floor(Date.now() / 1000);
+            win.style.zIndex = ++topZ;
         }
         function closeWin(id) { document.getElementById(id).classList.remove('active'); }
 
@@ -280,7 +290,7 @@
             header.onmousedown = (e) => {
                 isDragging = true;
                 offset = [win.offsetLeft - e.clientX, win.offsetTop - e.clientY];
-                win.style.zIndex = Math.floor(Date.now() / 1000);
+                win.style.zIndex = ++topZ;
             };
             document.onmousemove = (e) => {
                 if (isDragging) {
@@ -299,7 +309,7 @@
                 const cmd = termInput.value.toLowerCase().trim();
                 let res = "";
                 if (cmd === 'help') res = "Available: help, whoami, music, clear, exit";
-                else if (cmd === 'whoami') res = "User: Daigou\nStatus: Offline since 1326\nAlignment: Chaotic Good";
+                else if (cmd === 'whoami') res = "User: Daigou\nStatus: OS Online\nAlignment: Chaotic Good";
                 else if (cmd === 'music') { res = "Toggling Guts Theme..."; toggleMusic(); }
                 else if (cmd === 'clear') { termOutput.innerText = ""; termInput.value = ""; return; }
                 else if (cmd === 'exit') { closeWin('win-terminal'); termInput.value = ""; return; }
@@ -311,12 +321,12 @@
             }
         };
 
-        // --- COMANDOS TIPO ÁREA DE TRANSFERÊNCIA ---
+        // --- COMANDOS PELO TECLADO ---
         let inputBuffer = "";
         const commands = { "blank": "⠀", "cross": "☦", "guts": "𒉭", "berserk": "𒉭", "stigma": "𒉭" };
 
         window.addEventListener('keydown', (e) => {
-            if (e.target.tagName === 'INPUT') return; // Não interfere no terminal
+            if (e.target.tagName === 'INPUT') return;
             if (e.key.length > 1) return;
             inputBuffer += e.key.toLowerCase();
             if (inputBuffer.length > 15) inputBuffer = inputBuffer.slice(-15);
