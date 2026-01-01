@@ -59,7 +59,7 @@
             background: var(--window-bg);
             border: 1px solid rgba(247, 209, 215, 0.2);
             border-radius: 12px; display: none; flex-direction: column;
-            width: 580px; box-shadow: 0 40px 100px rgba(0,0,0,0.9); z-index: 1000;
+            width: 620px; box-shadow: 0 40px 100px rgba(0,0,0,0.9); z-index: 1000;
             backdrop-filter: blur(20px);
         }
 
@@ -76,22 +76,22 @@
         .window-body { 
             padding: 25px; 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
             gap: 20px; 
-            max-height: 500px;
+            max-height: 550px;
             overflow-y: auto;
         }
 
         .file {
             display: flex; flex-direction: column; align-items: center;
-            text-align: center; font-size: 10px; text-decoration: none; color: inherit;
+            text-align: center; font-size: 9px; text-decoration: none; color: inherit;
             transition: 0.2s;
         }
         .file:hover { transform: scale(1.1); }
         .file img { width: 65px; height: 90px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; border: 1px solid rgba(247,209,215,0.1); }
         .file img.square { height: 65px; }
 
-        /* --- SIDEBAR CARD (CORRIGIDO) --- */
+        /* --- SIDEBAR CARD --- */
         .side-card {
             position: fixed; right: 40px; top: 50%; transform: translateY(-50%);
             width: 280px; background: rgba(10, 10, 12, 0.9);
@@ -100,9 +100,8 @@
         }
 
         .avatar-frame {
-            width: 160px; height: 160px; padding: 0; /* Removido padding e background listrado */
-            border-radius: 12px; margin-bottom: 15px;
-            overflow: hidden;
+            width: 160px; height: 160px; border-radius: 12px; margin-bottom: 15px;
+            overflow: hidden; border: 1px solid rgba(247, 209, 215, 0.2);
         }
         .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
         
@@ -110,7 +109,7 @@
         .bio { font-family: 'Quicksand', sans-serif; font-size: 12px; opacity: 0.8; line-height: 1.5; margin-bottom: 20px; white-space: pre-line; }
 
         .os-icons { display: flex; gap: 15px; margin-bottom: 25px; }
-        .os-icons img { width: 28px; transition: 0.3s; cursor: pointer; }
+        .os-icons img { width: 28px; transition: 0.3s; cursor: pointer; filter: drop-shadow(0 0 5px #f7d1d7); }
         .os-icons img:hover { transform: translateY(-3px); }
 
         #notification {
@@ -171,14 +170,29 @@
             <a href="https://anilist.co/anime/9253/" target="_blank" class="file"><img src="https://imgur.com/P1HogUg.png">steinsgate.anime</a>
             <a href="https://anilist.co/anime/21355/" target="_blank" class="file"><img src="https://imgur.com/d9zFEZu.png">rezero.anime</a>
             <a href="https://anilist.co/anime/30/" target="_blank" class="file"><img src="https://imgur.com/njmKBUI.png">evangelion.anime</a>
+            <a href="https://anilist.co/anime/21507/" target="_blank" class="file"><img src="https://imgur.com/PIox0ID.png">mobpsycho.anime</a>
+            <a href="https://anilist.co/anime/6/" target="_blank" class="file"><img src="https://imgur.com/6Q38gYG.png">trigun.anime</a>
+            <a href="https://anilist.co/anime/9756/" target="_blank" class="file"><img src="https://imgur.com/KNJervC.png">madoka.anime</a>
+            <a href="https://anilist.co/anime/17074/" target="_blank" class="file"><img src="https://imgur.com/JbDnQBm.png">monogatari.anime</a>
+            <a href="https://anilist.co/anime/21471/" target="_blank" class="file"><img src="https://imgur.com/Iwn43dp.png">saikikusuo.anime</a>
+            <a href="https://anilist.co/anime/20832/" target="_blank" class="file"><img src="https://imgur.com/SqG1E4O.png">overlord.anime</a>
+            <a href="https://anilist.co/anime/108710/" target="_blank" class="file"><img src="https://imgur.com/IOfxGtx.png">dorohedoro.anime</a>
         </div>
     </div>
 
     <div id="win-mangas" class="window">
         <div class="window-header"><span>~/mangas</span><span class="close-btn" onclick="closeWin('win-mangas')">✖</span></div>
         <div class="window-body">
-            <div class="file"><img src="https://imgur.com/vHqB3qB.png">oshinoko.manga</div>
-            <div class="file"><img src="https://imgur.com/9Z8MRSu.png">kaguya.manga</div>
+            <a href="https://anilist.co/manga/30002/" target="_blank" class="file"><img src="https://imgur.com/S2itjEq.png">berserk.manga</a>
+            <a href="https://anilist.co/manga/31706/" target="_blank" class="file"><img src="https://imgur.com/eUcGVum.png">sbr.manga</a>
+            <a href="https://anilist.co/manga/30642/" target="_blank" class="file"><img src="https://imgur.com/AVBfjQX.png">vinland.manga</a>
+            <a href="https://anilist.co/manga/86635/" target="_blank" class="file"><img src="https://imgur.com/xrB46Ft.png">kaguyasama.manga</a>
+            <a href="https://anilist.co/manga/30026/" target="_blank" class="file"><img src="https://imgur.com/vwLIPx2.png">hxh.manga</a>
+            <a href="https://anilist.co/manga/30656/" target="_blank" class="file"><img src="https://imgur.com/nC9QYtI.png">vagabond.manga</a>
+            <a href="https://anilist.co/manga/30336/" target="_blank" class="file"><img src="https://imgur.com/e36y1NW.png">gto.manga</a>
+            <a href="https://anilist.co/manga/54705/" target="_blank" class="file"><img src="https://imgur.com/gGZA0zR.png">akunohana.manga</a>
+            <a href="https://anilist.co/manga/30936/" target="_blank" class="file"><img src="https://imgur.com/wi5ru2O.png">homunculus.manga</a>
+            <a href="https://anilist.co/manga/37375/" target="_blank" class="file"><img src="https://imgur.com/Zg6JTrd.png">kokounohito.manga</a>
         </div>
     </div>
 
@@ -195,10 +209,10 @@
     <div id="win-games" class="window">
         <div class="window-header"><span>~/games</span><span class="close-btn" onclick="closeWin('win-games')">✖</span></div>
         <div class="window-body">
-            <a href="https://store.steampowered.com/app/570940/" target="_blank" class="file"><img src="https://imgur.com/lcMd96p.png" class="square">darksouls.games</a>
-            <a href="https://minecraft.net" target="_blank" class="file"><img src="https://imgur.com/ctWNET1.png" class="square">minecraft.games</a>
-            <a href="https://store.steampowered.com/app/17390/" target="_blank" class="file"><img src="https://imgur.com/J4g8PTZ.png" class="square">spore.games</a>
-            <a href="https://yanderesimulator.com/" target="_blank" class="file"><img src="https://imgur.com/hdifxRI.png" class="square">yandere.games</a>
+            <a href="https://store.steampowered.com/app/570940/" target="_blank" class="file"><img src="https://imgur.com/lcMd96p.png" class="square">darksouls.game</a>
+            <a href="https://minecraft.net" target="_blank" class="file"><img src="https://imgur.com/ctWNET1.png" class="square">minecraft.game</a>
+            <a href="https://store.steampowered.com/app/17390/" target="_blank" class="file"><img src="https://imgur.com/J4g8PTZ.png" class="square">spore.game</a>
+            <a href="https://yanderesimulator.com/" target="_blank" class="file"><img src="https://imgur.com/hdifxRI.png" class="square">yandere.game</a>
         </div>
     </div>
 
