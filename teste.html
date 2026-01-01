@@ -7,6 +7,7 @@
         body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; color: #fff; font-family: 'Courier New', monospace; }
         canvas { border: 3px solid #4b0082; background: #050510; box-shadow: 0 0 30px #4b0082; position: relative; }
         
+        /* UI Layers */
         .ui-overlay { position: absolute; width: 600px; height: 700px; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.7); z-index: 20; padding-top: 50px; }
         .logo-img { width: 450px; margin-bottom: 5px; }
         .dev-img { width: 180px; margin-bottom: 30px; opacity: 0.8; }
@@ -25,7 +26,6 @@
         <img src="https://imgur.com/yWGCBpw.png" class="logo-img" alt="Lunatic Love Logo">
         <div style="font-size: 0.8em; margin-bottom: 5px;">created and developed by</div>
         <img src="https://imgur.com/btg3Zph.png" class="dev-img" alt="Developer Logo">
-        
         <button class="menu-btn" onclick="startGame()">START GAME</button>
         <button class="menu-btn" onclick="showOptions()">OPTIONS</button>
     </div>
@@ -54,13 +54,11 @@
         const ctx = canvas.getContext('2d');
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        // --- Starfield Background ---
+        // Stars Background
         let stars = [];
-        for(let i=0; i<100; i++) {
-            stars.push({ x: Math.random()*600, y: Math.random()*700, s: Math.random()*2 + 1 });
-        }
+        for(let i=0; i<100; i++) stars.push({ x: Math.random()*600, y: Math.random()*700, s: Math.random()*2 + 1 });
 
-        // --- Sound Engine ---
+        // SFX
         function playSFX(type) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
@@ -79,23 +77,13 @@
             }
         }
 
-        // --- Game Logic ---
         let state = 'menu';
         let difficulty = 2;
         let bulletSpeedMod = 1.2;
         let diagIndex = 0;
         let frame = 0;
 
-        const dialogues = [
-            { name: "Kaguya", text: "You really don't know when to give up, do you? This eternity is far beyond your reach.", portrait: 'kaguya_portrait' },
-            { name: "Miyuki Shirogane", text: "I told you... I would come for you no matter where you are.", portrait: 'miyuki_portrait' },
-            { name: "Kaguya", text: "How bold. Then show me that resolve. Prove that your heart can survive the moonlight!", portrait: 'kaguya_portrait' }
-        ];
-
-        let player = { x: 300, y: 600, hp: 5, bullets: [], invinc: 0 };
-        let kaguya = { x: 300, y: 150, hp: 1000, sprite: 'idle', bullets: [], timer: 0, angle: 0 };
-        let keys = {};
-
+        // Assets
         const sprites = {};
         const images = {
             idle: 'kaguya_idle.png',
@@ -116,7 +104,17 @@
             sprites[key] = img;
         }
 
-        // --- UI Handlers ---
+        const dialogues = [
+            { name: "Kaguya", text: "You really don't know when to give up, do you? This eternity is far beyond your reach.", speaker: 'kaguya' },
+            { name: "Miyuki Shirogane", text: "I told you... I would come for you no matter where you are.", speaker: 'miyuki' },
+            { name: "Kaguya", text: "How bold. Then show me that resolve. Prove that your heart can survive the moonlight!", speaker: 'kaguya' }
+        ];
+
+        let player = { x: 300, y: 600, hp: 5, bullets: [], invinc: 0 };
+        let kaguya = { x: 300, y: 150, hp: 1000, sprite: 'idle', bullets: [], timer: 0, angle: 0 };
+        let keys = {};
+
+        function startGame() { document.getElementById('main-menu').style.display = 'none'; state = 'dialogue'; showDialogue(); }
         function showOptions() { document.getElementById('main-menu').style.display = 'none'; document.getElementById('options-menu').style.display = 'flex'; }
         function hideOptions() { document.getElementById('options-menu').style.display = 'none'; document.getElementById('main-menu').style.display = 'flex'; }
         function setDifficulty(level) {
@@ -126,17 +124,12 @@
             document.getElementById('diff-'+level).classList.add('active-diff');
         }
 
-        function startGame() {
-            document.getElementById('main-menu').style.display = 'none';
-            state = 'dialogue'; showDialogue();
-        }
-
         function showDialogue() {
             document.getElementById('dialogue-box').style.display = 'block';
             const d = dialogues[diagIndex];
             document.getElementById('char-name').innerText = d.name;
             document.getElementById('char-text').innerText = d.text;
-            document.getElementById('char-name').style.color = d.name === "Kaguya" ? "#ff00ff" : "#00ffff";
+            document.getElementById('char-name').style.color = d.speaker === "kaguya" ? "#ff00ff" : "#00ffff";
         }
 
         window.addEventListener('keydown', e => {
@@ -151,27 +144,19 @@
         window.addEventListener('keyup', e => keys[e.key] = false);
 
         function update() {
-            // Background Stars
             stars.forEach(s => { s.y += s.s; if(s.y > 700) s.y = -10; });
-
             if (state !== 'fight') return;
             frame++;
 
-            // Movement
             let speed = keys['Shift'] ? 2 : 4.5;
             if (keys['ArrowLeft'] || keys['a']) player.x = Math.max(15, player.x - speed);
             if (keys['ArrowRight'] || keys['d']) player.x = Math.min(585, player.x + speed);
             if (keys['ArrowUp'] || keys['w']) player.y = Math.max(15, player.y - speed);
             if (keys['ArrowDown'] || keys['s']) player.y = Math.min(685, player.y + speed);
 
-            // Shooting
-            if ((keys['z'] || keys['Z']) && frame % 5 === 0) {
-                player.bullets.push({x: player.x, y: player.y - 10});
-                playSFX('shoot');
-            }
+            if ((keys['z'] || keys['Z']) && frame % 5 === 0) { player.bullets.push({x: player.x, y: player.y - 10}); playSFX('shoot'); }
             player.bullets.forEach((b, i) => { b.y -= 12; if(b.y < -20) player.bullets.splice(i, 1); });
 
-            // Kaguya AI
             if (kaguya.hp > 0) {
                 kaguya.timer++;
                 if (kaguya.timer % 150 === 0) {
@@ -189,9 +174,8 @@
                     }
                 }
                 if (player.invinc > 0) player.invinc--;
-            } else { state = 'victory'; }
+            } else state = 'victory';
 
-            // Collisions
             kaguya.bullets.forEach((b, i) => {
                 b.x += b.vx; b.y += b.vy;
                 if(b.x < -20 || b.x > 620 || b.y > 720) kaguya.bullets.splice(i, 1);
@@ -203,57 +187,45 @@
             });
 
             player.bullets.forEach((b, i) => {
-                if (Math.abs(b.x - kaguya.x) < 45 && Math.abs(b.y - kaguya.y) < 55) {
-                    kaguya.hp -= 2; player.bullets.splice(i, 1);
-                }
+                if (Math.abs(b.x - kaguya.x) < 45 && Math.abs(b.y - kaguya.y) < 55) { kaguya.hp -= 2; player.bullets.splice(i, 1); }
             });
         }
 
         function draw() {
             ctx.fillStyle = '#050510'; ctx.fillRect(0, 0, 600, 700);
-            
-            // Draw Stars
-            ctx.fillStyle = '#fff';
-            stars.forEach(s => ctx.fillRect(s.x, s.y, s.s/2, s.s/2));
+            ctx.fillStyle = '#fff'; stars.forEach(s => ctx.fillRect(s.x, s.y, s.s/2, s.s/2));
 
             if (state === 'dialogue') {
-                ctx.globalAlpha = 0.5;
+                const d = dialogues[diagIndex];
+                
+                // --- LÓGICA DE DESENHO DOS PORTRAITS ---
+                // Miyuki Portrait
+                ctx.globalAlpha = (d.speaker === 'miyuki') ? 1.0 : 0.3;
                 if (sprites.miyuki_portrait.complete) ctx.drawImage(sprites.miyuki_portrait, -50, 200, 400, 500);
+                
+                // Kaguya Portrait
+                ctx.globalAlpha = (d.speaker === 'kaguya') ? 1.0 : 0.3;
                 if (sprites.kaguya_portrait.complete) ctx.drawImage(sprites.kaguya_portrait, 250, 200, 400, 500);
+                
                 ctx.globalAlpha = 1.0;
             }
 
             if (state === 'fight' || state === 'victory') {
                 let s = sprites[kaguya.sprite];
                 if (s && s.complete) ctx.drawImage(s, kaguya.x - 60, kaguya.y - 60, 120, 120);
-                
-                kaguya.bullets.forEach(b => {
-                    ctx.fillStyle = '#ff00ff'; ctx.beginPath(); ctx.arc(b.x, b.y, 5, 0, Math.PI*2); ctx.fill();
-                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
-                });
-
+                kaguya.bullets.forEach(b => { ctx.fillStyle = '#ff00ff'; ctx.beginPath(); ctx.arc(b.x, b.y, 5, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.stroke(); });
                 if (player.invinc % 4 < 2) {
                     ctx.fillStyle = '#00ffff'; ctx.beginPath(); ctx.arc(player.x, player.y, 8, 0, Math.PI*2); ctx.fill();
                     ctx.fillStyle = 'red'; ctx.beginPath(); ctx.arc(player.x, player.y, 3, 0, Math.PI*2); ctx.fill();
                 }
-
                 player.bullets.forEach(b => { ctx.fillStyle = '#fff'; ctx.fillRect(b.x-2, b.y, 4, 15); });
-
-                // UI
                 ctx.fillStyle = 'red'; ctx.fillRect(50, 20, 500 * (kaguya.hp / 1000), 10);
                 ctx.strokeStyle = '#fff'; ctx.strokeRect(50, 20, 500, 10);
-                ctx.fillStyle = '#fff'; ctx.font = 'bold 16px Arial';
-                ctx.fillText("LIVES: " + player.hp, 20, 685);
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 16px Arial'; ctx.fillText("LIVES: " + player.hp, 20, 685);
             }
 
-            if (state === 'gameover') {
-                ctx.fillStyle = 'red'; ctx.font = '50px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("PICHUUN!", 300, 350);
-            }
-            if (state === 'victory') {
-                ctx.fillStyle = 'gold'; ctx.font = '50px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("KAGUYA DEFEATED", 300, 350);
-            }
+            if (state === 'gameover') { ctx.fillStyle = 'red'; ctx.font = '50px Arial'; ctx.textAlign = 'center'; ctx.fillText("PICHUUN!", 300, 350); }
+            if (state === 'victory') { ctx.fillStyle = 'gold'; ctx.font = '50px Arial'; ctx.textAlign = 'center'; ctx.fillText("KAGUYA DEFEATED", 300, 350); }
         }
 
         function loop() { update(); draw(); requestAnimationFrame(loop); }
