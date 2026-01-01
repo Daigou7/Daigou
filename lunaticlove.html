@@ -2,269 +2,193 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lunatic Love Build 0.1.6</title>
+    <title>Lunatic Love Build 0.1.12</title>
     <link rel="icon" type="image/png" href="https://imgur.com/yWGCBpw.png">
     <style>
         body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; color: #fff; font-family: 'Courier New', monospace; }
+        #game-container { display: flex; align-items: flex-start; gap: 20px; }
         canvas { border: 3px solid #4b0082; background: #050510; box-shadow: 0 0 30px #4b0082; }
-        
+        #sidebar { width: 180px; background: rgba(20, 0, 40, 0.8); border: 2px solid #8a2be2; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
+        .key-box { border: 1px solid #fff; padding: 5px; text-align: center; background: #333; font-weight: bold; }
+        .key-desc { font-size: 0.8em; color: #bbb; margin-top: 4px; text-align: center; }
+        .stat-box { border-left: 4px solid #ff00ff; padding-left: 10px; margin-top: 10px; }
+        .stat-label { font-size: 0.7em; color: #aaa; text-transform: uppercase; }
+        .stat-value { font-size: 1.2em; font-weight: bold; }
         .ui-overlay { position: absolute; width: 600px; height: 700px; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.85); z-index: 20; padding-top: 40px; }
-        .logo-img { width: 420px; margin-bottom: 5px; }
-        .dev-img { width: 160px; margin-bottom: 20px; }
-        
-        .menu-btn { background: #4b0082; border: 2px solid #fff; color: white; padding: 12px 30px; margin: 8px; cursor: pointer; font-family: 'Courier New', monospace; font-size: 1.1em; width: 220px; transition: 0.2s; }
-        .menu-btn:hover { background: #8a2be2; transform: scale(1.05); }
-        .active-diff { background: #fff !important; color: #000 !important; font-weight: bold; }
-        
-        #dialogue-box { position: absolute; bottom: 40px; width: 540px; height: 110px; background: rgba(0, 0, 0, 0.9); border: 2px solid #fff; padding: 15px; display: none; z-index: 30; }
-        #char-name { font-weight: bold; margin-bottom: 5px; font-size: 1.2em; }
+        .menu-btn { background: #4b0082; border: 2px solid #fff; color: white; padding: 12px 30px; cursor: pointer; font-family: 'Courier New', monospace; width: 200px; }
+        #dialogue-box { position: absolute; bottom: 40px; width: 540px; height: 120px; background: rgba(0, 0, 50, 0.95); border: 3px solid #fff; padding: 10px; display: none; z-index: 30; align-items: center; margin-left: 30px; }
+        #face-container { width: 100px; height: 100px; border: 2px solid #aaa; margin-right: 15px; flex-shrink: 0; }
+        #face-img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
-
-    <div id="main-menu" class="ui-overlay">
-        <img src="https://imgur.com/yWGCBpw.png" class="logo-img">
-        <div style="font-size: 0.7em; margin-bottom: 5px; letter-spacing: 1px;">CREATED AND DEVELOPED BY</div>
-        <img src="https://imgur.com/btg3Zph.png" class="dev-img">
-        <button class="menu-btn" onclick="startGame()">START GAME</button>
-        <button class="menu-btn" onclick="showOptions()">OPTIONS</button>
+    <div id="game-container">
+        <div style="position: relative;">
+            <div id="main-menu" class="ui-overlay">
+                <img src="https://imgur.com/yWGCBpw.png" style="width:400px">
+                <button class="menu-btn" onclick="startGame()">START GAME</button>
+            </div>
+            <div id="dialogue-box">
+                <div id="face-container"><img id="face-img" src=""></div>
+                <div id="text-container">
+                    <div id="char-name" style="font-weight:bold; border-bottom:1px solid #555">NAME</div>
+                    <div id="char-text">TEXT</div>
+                </div>
+            </div>
+            <canvas id="gameCanvas" width="600" height="700"></canvas>
+        </div>
+        <div id="sidebar">
+            <div style="text-align: center; color: #ff00ff; font-weight: bold; border-bottom: 1px solid #ff00ff; padding-bottom: 5px;">STATUS</div>
+            <div class="stat-box"><div class="stat-label">Lives</div><div id="ui-lives" class="stat-value">0</div></div>
+            <div class="stat-box"><div class="stat-label">Bombs</div><div id="ui-bombs" class="stat-value">0</div></div>
+            <div style="text-align: center; color: #00ffff; font-weight: bold; border-bottom: 1px solid #00ffff; padding-bottom: 5px; margin-top: 20px;">COMMANDS</div>
+            <div><div class="key-box">↑ ↓ ← →</div><div class="key-desc">Movement</div></div>
+            <div><div class="key-box">Z</div><div class="key-desc">Shoot</div></div>
+            <div><div class="key-box">X</div><div class="key-desc">Spell Card</div></div>
+            <div><div class="key-box">SHIFT</div><div class="key-desc">Slow</div></div>
+        </div>
     </div>
-
-    <div id="options-menu" class="ui-overlay" style="display:none;">
-        <h2 style="color: #ff00ff;">DIFFICULTY</h2>
-        <button class="menu-btn diff-opt" onclick="setDiff(0)">VERY EASY</button>
-        <button class="menu-btn diff-opt" onclick="setDiff(1)">EASY</button>
-        <button class="menu-btn diff-opt active-diff" onclick="setDiff(2)">MEDIUM</button>
-        <button class="menu-btn diff-opt" onclick="setDiff(3)">HARD</button>
-        <button class="menu-btn diff-opt" onclick="setDiff(4)">VERY HARD</button>
-        <button class="menu-btn diff-opt" onclick="setDiff(5)">BRUTAL</button>
-        <button class="menu-btn" style="margin-top:20px;" onclick="hideOptions()">BACK</button>
-    </div>
-
-    <div id="dialogue-box">
-        <div id="char-name">NAME</div>
-        <div id="char-text">TEXT</div>
-        <div style="position:absolute; bottom:5px; right:10px; font-size:0.7em; color: #aaa;">Press [Z] to continue</div>
-    </div>
-
-    <canvas id="gameCanvas" width="600" height="700"></canvas>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        const imgs = {
-            k_port: new Image(), m_port: new Image(), m_back: new Image(),
-            k_boss: new Image(), k_gameover: new Image(),
-            k_win1: new Image(), k_win2: new Image()
+        const k_imgs = {};
+        const k_urls = {
+            idle: 'https://imgur.com/eJtPITs.png',
+            defend: 'https://imgur.com/8VYfVnQ.png',
+            hit: 'https://imgur.com/I5eFRGd.png',
+            dead: 'https://imgur.com/1NDnHJe.png',
+            walk: 'https://imgur.com/SQCGCDm.png',
+            attack: 'https://imgur.com/Ty6yJaN.png',
+            push: 'https://imgur.com/R1PKVO3.png'
         };
-        imgs.k_port.src = 'https://imgur.com/fheByI4.png';
-        imgs.m_port.src = 'https://imgur.com/OLqSOVo.png';
-        imgs.m_back.src = 'https://imgur.com/s8t8Lml.png';
-        imgs.k_boss.src = 'https://imgur.com/fheByI4.png';
-        imgs.k_gameover.src = 'https://imgur.com/pHJtwPT.gif';
-        imgs.k_win1.src = 'https://imgur.com/4NDoDX3.png';
-        imgs.k_win2.src = 'https://imgur.com/XALOmdx.png';
+        Object.keys(k_urls).forEach(key => { k_imgs[key] = new Image(); k_imgs[key].src = k_urls[key]; });
+        
+        const m_back = new Image(); m_back.src = 'https://imgur.com/s8t8Lml.png';
+        const m_port = 'https://imgur.com/OLqSOVo.png';
+        const k_sad = 'https://imgur.com/pHJtwPT.gif';
 
-        const introDialogue = [
-            { name: "Kaguya", text: "You really don't know when to give up, do you? This eternity is far beyond your reach.", speaker: 'kaguya', img: imgs.k_port },
-            { name: "Miyuki Shirogane", text: "I told you... I would come for you no matter where you are.", speaker: 'miyuki', img: imgs.m_port },
-            { name: "Kaguya", text: "How bold. Then show me that resolve. Prove that your heart can survive the moonlight!", speaker: 'kaguya', img: imgs.k_port }
-        ];
+        let gameState = 'MENU', diagIdx = 0, frame = 0, deathTimer = 0, fadeAlpha = 0;
+        let keys = {}, player, boss;
 
-        const winDialogue = [
-            { name: "Kaguya", text: "Caramba... você realmente conseguiu... você fez tudo isso... por mim???", speaker: 'kaguya', img: imgs.k_win1 },
-            { name: "Miyuki Shirogane", text: "Mas é claro, não subestime o amor de um homem!", speaker: 'miyuki', img: imgs.m_port },
-            { name: "Kaguya", text: "A-a-a-amor???? VOCÊ DISSE AMOR????", speaker: 'kaguya', img: imgs.k_win2 },
-            { name: "Miyuki Shirogane", text: "Você já sabia, não é, Kaguya? Agora venha, eu quero te mostrar o mundo que posso te proporcionar!", speaker: 'miyuki', img: imgs.m_port },
-            { name: "", text: "E eles foram felizes para sempre <3", speaker: 'none', img: null }
-        ];
+        function startGame() {
+            player = { x: 300, y: 600, hp: 5, maxHp: 5, bombs: 3, bullets: [], inv: 0 };
+            boss = { x: 300, y: 150, hp: 1000, maxHp: 1000, bullets: [], angle: 0, state: 'idle', hitTimer: 0 };
+            document.getElementById('main-menu').style.display = 'none';
+            gameState = 'DIAL';
+            updateSidebar();
+            updateDialogue({ name: "Kaguya", text: "You really don't know when to give up, do you?", face: k_urls.idle });
+        }
 
-        let gameState = 'MENU';
-        let difficulty = 2;
-        let bulletMod = 1.2;
-        let diagIdx = 0;
-        let frame = 0;
-        let keys = {};
-        let stars = Array.from({length: 60}, () => ({x: Math.random()*600, y: Math.random()*700, s: Math.random()*2+1}));
-        let player, boss;
-
-        function resetGameObjects() {
-            player = { x: 300, y: 600, hp: 5, bombs: 3, bullets: [], inv: 0, bombActive: 0 };
-            boss = { x: 300, y: 150, hp: 1000, bullets: [], angle: 0, timer: 0 };
-            diagIdx = 0;
-            frame = 0;
+        function updateSidebar() {
+            if (!player) return;
+            document.getElementById('ui-lives').innerText = player.hp;
+            document.getElementById('ui-bombs').innerText = player.bombs;
         }
 
         window.onkeydown = (e) => {
-            const key = e.key.toLowerCase();
-            keys[key] = true;
-            
-            if (gameState === 'DIAL' && key === 'z') {
-                diagIdx++;
-                if (diagIdx >= introDialogue.length) {
-                    gameState = 'FIGHT';
-                    document.getElementById('dialogue-box').style.display = 'none';
-                } else updateDialogue(introDialogue[diagIdx]);
-            } 
-            else if (gameState === 'WIN' && key === 'z') {
-                diagIdx++;
-                if (diagIdx >= winDialogue.length) {
-                    returnToMenu();
-                } else updateDialogue(winDialogue[diagIdx]);
+            const k = e.key.toLowerCase();
+            keys[k] = true;
+            if (k === 'z' && (gameState === 'DIAL' || gameState === 'GAMEOVER')) {
+                if (gameState === 'DIAL') { gameState = 'FIGHT'; document.getElementById('dialogue-box').style.display = 'none'; }
+                else location.reload();
             }
-            else if (gameState === 'GAMEOVER' && key === 'z') {
-                returnToMenu();
-            }
-
-            if (gameState === 'FIGHT' && key === 'x' && player.bombs > 0 && player.bombActive <= 0) {
-                player.bombs--; player.bombActive = 120; boss.bullets = []; player.inv = 120;
+            if (k === 'x' && gameState === 'FIGHT' && player.bombs > 0) {
+                player.bombs--; player.inv = 120; boss.bullets = []; updateSidebar();
             }
         };
         window.onkeyup = (e) => keys[e.key.toLowerCase()] = false;
 
-        function startGame() {
-            resetGameObjects();
-            document.getElementById('main-menu').style.display = 'none';
-            gameState = 'DIAL';
-            updateDialogue(introDialogue[0]);
-        }
-
-        function returnToMenu() {
-            gameState = 'MENU';
-            document.getElementById('dialogue-box').style.display = 'none';
-            document.getElementById('main-menu').style.display = 'flex';
-        }
-
         function updateDialogue(d) {
-            document.getElementById('dialogue-box').style.display = d ? 'block' : 'none';
-            if(!d) return;
+            document.getElementById('dialogue-box').style.display = 'flex';
             document.getElementById('char-name').innerText = d.name;
             document.getElementById('char-text').innerText = d.text;
-            document.getElementById('char-name').style.color = d.speaker === 'kaguya' ? '#ff00ff' : '#00ffff';
+            document.getElementById('face-img').src = d.face;
         }
 
         function update() {
-            stars.forEach(s => { s.y += s.s; if(s.y > 700) s.y = -10; });
-            if (gameState !== 'FIGHT') return;
+            if (gameState === 'FIGHT') {
+                frame++; if (player.inv > 0) player.inv--;
+                let spd = keys['shift'] ? 2.5 : 5.5;
+                if (keys['arrowleft'] || keys['a']) player.x -= spd;
+                if (keys['arrowright'] || keys['d']) player.x += spd;
+                if (keys['arrowup'] || keys['w']) player.y -= spd;
+                if (keys['arrowdown'] || keys['s']) player.y += spd;
 
-            frame++;
-            if (player.inv > 0) player.inv--;
-            if (player.bombActive > 0) { player.bombActive--; boss.bullets = []; }
+                // Restrições de tela
+                player.x = Math.max(30, Math.min(570, player.x));
+                player.y = Math.max(30, Math.min(670, player.y));
 
-            let spd = keys['shift'] ? 2 : 4.5;
-            if (keys['arrowleft'] || keys['a']) player.x = Math.max(20, player.x - spd);
-            if (keys['arrowright'] || keys['d']) player.x = Math.min(580, player.x + spd);
-            if (keys['arrowup'] || keys['w']) player.y = Math.max(20, player.y - spd);
-            if (keys['arrowdown'] || keys['s']) player.y = Math.min(680, player.y + spd);
+                if (keys['z'] && frame % 5 === 0) player.bullets.push({x: player.x, y: player.y - 20});
+                player.bullets.forEach((b, i) => { b.y -= 14; if(b.y < -20) player.bullets.splice(i, 1); });
 
-            if (keys['z'] && frame % 5 === 0) player.bullets.push({x: player.x, y: player.y - 15});
-            player.bullets.forEach((b, i) => { b.y -= 12; if(b.y < -20) player.bullets.splice(i, 1); });
+                // Lógica da Kaguya
+                let dist = Math.hypot(player.x - boss.x, player.y - boss.y);
+                if (boss.hitTimer > 0) { boss.state = 'hit'; boss.hitTimer--; }
+                else if (dist < 80) boss.state = 'push';
+                else if (dist < 180) boss.state = 'defend';
+                else if (frame % 30 < 15) boss.state = 'attack';
+                else boss.state = 'idle';
 
-            if (boss.hp > 0) {
-                boss.timer++;
-                if (boss.timer % 120 === 0) { boss.x = 150 + Math.random()*300; boss.y = 80 + Math.random()*100; }
-                boss.angle += 0.05 * bulletMod;
-                let freq = boss.hp < 500 ? Math.max(1, 3 - difficulty) : Math.max(1, 5 - difficulty);
-                if (frame % freq === 0) {
-                    let count = boss.hp < 500 ? 12 : 6;
+                boss.angle += 0.05;
+                if (frame % 8 === 0) {
+                    let count = 6;
                     for(let i=0; i<count; i++) {
                         let a = boss.angle + (Math.PI*2/count * i);
-                        boss.bullets.push({x: boss.x, y: boss.y, vx: Math.cos(a)*3*bulletMod, vy: Math.sin(a)*3*bulletMod});
+                        boss.bullets.push({x: boss.x, y: boss.y, vx: Math.cos(a)*3.5, vy: Math.sin(a)*3.5});
                     }
                 }
-            } else {
-                gameState = 'WIN';
-                diagIdx = 0;
-                updateDialogue(winDialogue[0]);
+
+                boss.bullets.forEach((b, i) => {
+                    b.x += b.vx; b.y += b.vy;
+                    if (player.inv <= 0 && Math.hypot(b.x - player.x, b.y - player.y) < 10) {
+                        player.hp--; player.inv = 60; updateSidebar();
+                        if (player.hp <= 0) { gameState = 'DYING'; deathTimer = 60; }
+                    }
+                });
+
+                player.bullets.forEach((b, i) => {
+                    if (Math.hypot(b.x - boss.x, b.y - boss.y) < 50) {
+                        boss.hp -= 2; boss.hitTimer = 5; player.bullets.splice(i, 1);
+                        if (boss.hp <= 0) { gameState = 'WIN_SCENE'; boss.state = 'dead'; }
+                    }
+                });
             }
 
-            boss.bullets.forEach((b, i) => {
-                b.x += b.vx; b.y += b.vy;
-                if(b.x < -20 || b.x > 620 || b.y > 720) boss.bullets.splice(i, 1);
-                if (player.inv <= 0 && Math.hypot(b.x - player.x, b.y - player.y) < 6) {
-                    player.hp--; player.inv = 90;
-                    if (player.hp <= 0) {
-                        gameState = 'GAMEOVER';
-                        updateDialogue({ name: "Kaguya", text: "I thought you could really make it...", speaker: 'kaguya' });
-                    }
-                }
-            });
-
-            player.bullets.forEach((b, i) => {
-                if (Math.hypot(b.x - boss.x, b.y - boss.y) < 40) { boss.hp -= 2; player.bullets.splice(i, 1); }
-            });
+            if (gameState === 'DYING') {
+                deathTimer--; fadeAlpha = Math.min(1, fadeAlpha + 0.02);
+                if (deathTimer <= 0) { gameState = 'GAMEOVER'; updateDialogue({ name: "Kaguya", text: "I thought you could make it...", face: k_sad }); }
+            }
         }
 
         function draw() {
-            ctx.fillStyle = (gameState !== 'MENU' && boss && boss.hp < 500) ? '#150015' : '#050510';
-            ctx.fillRect(0, 0, 600, 700);
-            ctx.fillStyle = '#fff'; stars.forEach(s => ctx.fillRect(s.x, s.y, s.s/2, s.s/2));
+            ctx.fillStyle = '#050510'; ctx.fillRect(0, 0, 600, 700);
+            
+            if (gameState !== 'MENU') {
+                // Desenhar Boss
+                let img = k_imgs[boss.state] || k_imgs.idle;
+                ctx.drawImage(img, boss.x-45, boss.y-55, 90, 110);
 
-            if (gameState === 'DIAL') {
-                const d = introDialogue[diagIdx];
-                ctx.globalAlpha = d.speaker === 'miyuki' ? 1.0 : 0.4;
-                ctx.drawImage(imgs.m_port, 20, 150, 300, 450);
-                ctx.globalAlpha = d.speaker === 'kaguya' ? 1.0 : 0.4;
-                ctx.drawImage(imgs.k_port, 280, 150, 300, 450);
-            }
-
-            if (gameState === 'FIGHT' || gameState === 'WIN' || gameState === 'GAMEOVER') {
-                // Boss Sprite
-                if (gameState !== 'WIN' || diagIdx < winDialogue.length - 1) {
-                    ctx.drawImage(imgs.k_boss, boss.x-40, boss.y-40, 80, 110);
-                }
-                
-                if (gameState === 'GAMEOVER') {
-                    ctx.globalAlpha = 1.0;
-                    ctx.drawImage(imgs.k_gameover, 280, 150, 300, 450);
-                } 
-                else if (gameState === 'WIN') {
-                    const d = winDialogue[diagIdx];
-                    if (d.speaker === 'miyuki') {
-                        ctx.globalAlpha = 1.0; ctx.drawImage(imgs.m_port, 20, 150, 300, 450);
-                        ctx.globalAlpha = 0.4; ctx.drawImage(imgs.k_win1, 280, 150, 300, 450);
-                    } else if (d.speaker === 'kaguya') {
-                        ctx.globalAlpha = 0.4; ctx.drawImage(imgs.m_port, 20, 150, 300, 450);
-                        ctx.globalAlpha = 1.0; ctx.drawImage(d.img, 280, 150, 300, 450);
-                    }
-                }
-                else {
-                    // Player Fight
+                if (gameState === 'FIGHT' || gameState === 'DYING') {
+                    // Player
                     if (player.inv % 4 < 2) {
-                        ctx.drawImage(imgs.m_back, player.x-30, player.y-40, 60, 80);
-                        ctx.fillStyle = 'red'; ctx.beginPath(); ctx.arc(player.x, player.y, 4, 0, Math.PI*2); ctx.fill();
+                        ctx.drawImage(m_back, player.x-30, player.y-40, 60, 80);
+                        ctx.fillStyle = '#333'; ctx.fillRect(player.x-20, player.y-55, 40, 5);
+                        ctx.fillStyle = '#0f0'; ctx.fillRect(player.x-20, player.y-55, 40 * (player.hp/player.maxHp), 5);
                     }
-                    boss.bullets.forEach(b => {
-                        ctx.fillStyle = boss.hp < 500 ? '#00ffff' : '#ff00ff';
-                        ctx.beginPath(); ctx.arc(b.x, b.y, 6, 0, Math.PI*2); ctx.fill();
-                        ctx.strokeStyle = '#fff'; ctx.stroke();
-                    });
+                    // Bullets
+                    boss.bullets.forEach(b => { ctx.fillStyle = '#ff00ff'; ctx.beginPath(); ctx.arc(b.x, b.y, 6, 0, Math.PI*2); ctx.fill(); });
+                    player.bullets.forEach(b => { ctx.fillStyle = '#fff'; ctx.fillRect(b.x-2, b.y, 4, 15); });
+                    // Boss UI
+                    ctx.fillStyle = 'red'; ctx.fillRect(50, 20, 500 * (boss.hp/boss.maxHp), 10);
                 }
-                
-                // Common Fight UI
-                if(gameState === 'FIGHT') {
-                    player.bullets.forEach(b => { ctx.fillStyle = '#fff'; ctx.fillRect(b.x-2, b.y, 4, 20); });
-                    ctx.fillStyle = 'red'; ctx.fillRect(50, 20, 500 * (boss.hp/1000), 10);
-                    ctx.strokeStyle = '#fff'; ctx.strokeRect(50, 20, 500, 10);
-                }
-                ctx.globalAlpha = 1.0;
-                ctx.fillStyle = '#fff'; ctx.font = '16px Arial'; ctx.textAlign = 'left';
-                ctx.fillText(`LIVES: ${player.hp}  BOMBS: ${player.bombs}`, 20, 685);
             }
-        }
 
-        function showOptions() { document.getElementById('main-menu').style.display = 'none'; document.getElementById('options-menu').style.display = 'flex'; }
-        function hideOptions() { document.getElementById('options-menu').style.display = 'none'; document.getElementById('main-menu').style.display = 'flex'; }
-        function setDiff(val) {
-            difficulty = val;
-            bulletMod = [0.6, 0.9, 1.2, 1.8, 2.5, 4.0][val];
-            document.querySelectorAll('.diff-opt').forEach((b, i) => b.classList.toggle('active-diff', i === val));
+            if (fadeAlpha > 0) { ctx.fillStyle = `rgba(0,0,0,${fadeAlpha})`; ctx.fillRect(0, 0, 600, 700); }
+            requestAnimationFrame(() => { update(); draw(); });
         }
-
-        resetGameObjects();
-        function loop() { update(); draw(); requestAnimationFrame(loop); }
-        loop();
+        draw();
     </script>
 </body>
 </html>
