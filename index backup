@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daigou</title>
+    <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Quicksand:wght@400;700&display=swap');
+
+        :root {
+            --accent: #f7d1d7;
+            --window-bg: rgba(10, 10, 12, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000 url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            height: 100vh; width: 100vw; overflow: hidden;
+        }
+
+        /* --- BOOT SCREEN (KAGUYA ADDED) --- */
+        #boot-screen {
+            position: fixed; inset: 0; background: #000; z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            animation: fadeOut 0.5s ease 1.5s forwards;
+        }
+        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+
+        /* --- DESKTOP --- */
+        #desktop {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 25px;
+            height: 100%;
+        }
+
+        .desktop-item {
+            display: flex; flex-direction: column; align-items: center;
+            width: 110px; cursor: pointer; text-decoration: none; color: inherit;
+        }
+
+        .folder-icon {
+            width: 55px; height: 55px;
+            background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center;
+            background-size: contain; filter: hue-rotate(300deg) saturate(0.8);
+        }
+
+        /* --- WINDOWS --- */
+        .window {
+            position: fixed; top: 50%; left: 45%; transform: translate(-50%, -50%);
+            background: var(--window-bg);
+            border: 1px solid rgba(247, 209, 215, 0.2);
+            border-radius: 12px; display: none; flex-direction: column;
+            width: 650px; box-shadow: 0 40px 100px rgba(0,0,0,0.9); z-index: 1000;
+            backdrop-filter: blur(20px);
+        }
+
+        .window.active { display: flex; }
+
+        .window-header {
+            padding: 12px 15px; background: rgba(255,255,255,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(247, 209, 215, 0.1);
+        }
+
+        .close-btn { color: #ff5f56; cursor: pointer; font-family: sans-serif; font-weight: bold; }
+
+        .window-body { 
+            padding: 25px; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+            gap: 20px; 
+            max-height: 550px;
+            overflow-y: auto;
+        }
+
+        .file {
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; font-size: 9px; text-decoration: none; color: inherit;
+            transition: 0.2s;
+        }
+        .file:hover { transform: scale(1.1); }
+        .file img { width: 65px; height: 90px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; border: 1px solid rgba(247,209,215,0.1); }
+        .file img.square { height: 65px; }
+
+        /* --- SIDEBAR CARD --- */
+        .side-card {
+            position: fixed; right: 40px; top: 50%; transform: translateY(-50%);
+            width: 280px; background: rgba(10, 10, 12, 0.9);
+            padding: 30px; border-radius: 12px; border: 1px solid #333;
+            text-align: center; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .avatar-frame {
+            width: 160px; height: 160px; border-radius: 12px; margin-bottom: 15px;
+            overflow: hidden; border: 1px solid rgba(247, 209, 215, 0.2);
+        }
+        .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .logo-main { width: 120px; margin-bottom: 20px; opacity: 0.9; }
+        .bio { font-family: 'Quicksand', sans-serif; font-size: 12px; opacity: 0.8; line-height: 1.5; margin-bottom: 20px; white-space: pre-line; }
+
+        .os-icons { display: flex; gap: 15px; margin-bottom: 25px; }
+        .os-icons img { width: 28px; transition: 0.3s; cursor: pointer; }
+        .os-icons img:hover { transform: translateY(-3px); }
+
+        #notification {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #f7d1d7; color: #000; padding: 10px 25px; border-radius: 5px;
+            font-weight: bold; display: none; z-index: 11000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="boot-screen">
+        <img src="https://imgur.com/btg3Zph.png" style="width: 120px; margin-bottom: 20px;">
+        <div style="letter-spacing: 5px; font-size: 12px;">LOADING DAIGOU OS...</div>
+    </div>
+
+    <main id="desktop">
+        <div class="desktop-item" onclick="openWin('win-animes')">
+            <div class="folder-icon"></div>
+            <span>animes/</span>
+        </div>
+        <div class="desktop-item" onclick="openWin('win-mangas')">
+            <div class="folder-icon"></div>
+            <span>mangas/</span>
+        </div>
+        <div class="desktop-item" onclick="openWin('win-waifus')">
+            <div class="folder-icon"></div>
+            <span>waifus/</span>
+        </div>
+        <div class="desktop-item" onclick="openWin('win-games')">
+            <div class="folder-icon"></div>
+            <span>games/</span>
+        </div>
+        <div class="desktop-item" onclick="openWin('win-projects')">
+            <div class="folder-icon"></div>
+            <span>projects/</span>
+        </div>
+    </main>
+
+    <aside class="side-card">
+        <div class="avatar-frame">
+            <img src="https://imgur.com/pHJtwPT.gif">
+        </div>
+        <img src="https://imgur.com/btg3Zph.png" class="logo-main">
+        <p class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦
+        Buy Bitcoin ₿ - A shield of economic Freedom</p>
+        
+        <div class="os-icons">
+            <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png"></a>
+            <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png"></a>
+            <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
+        </div>
+    </aside>
+
+    <div id="win-animes" class="window">
+        <div class="window-header"><span>~/animes</span><span class="close-btn" onclick="closeWin('win-animes')">✖</span></div>
+        <div class="window-body">
+            <a href="https://anilist.co/anime/9253/" target="_blank" class="file"><img src="https://imgur.com/P1HogUg.png">steinsgate.anime</a>
+            <a href="https://anilist.co/anime/21355/" target="_blank" class="file"><img src="https://imgur.com/d9zFEZu.png">rezero.anime</a>
+            <a href="https://anilist.co/anime/30/" target="_blank" class="file"><img src="https://imgur.com/njmKBUI.png">evangelion.anime</a>
+            <a href="https://anilist.co/anime/21507/" target="_blank" class="file"><img src="https://imgur.com/PIox0ID.png">mobpsycho.anime</a>
+            <a href="https://anilist.co/anime/6/" target="_blank" class="file"><img src="https://imgur.com/6Q38gYG.png">trigun.anime</a>
+            <a href="https://anilist.co/anime/9756/" target="_blank" class="file"><img src="https://imgur.com/KNJervC.png">madoka.anime</a>
+            <a href="https://anilist.co/anime/17074/" target="_blank" class="file"><img src="https://imgur.com/JbDnQBm.png">monogatari.anime</a>
+            <a href="https://anilist.co/anime/21471/" target="_blank" class="file"><img src="https://imgur.com/Iwn43dp.png">saikikusuo.anime</a>
+            <a href="https://anilist.co/anime/20832/" target="_blank" class="file"><img src="https://imgur.com/SqG1E4O.png">overlord.anime</a>
+            <a href="https://anilist.co/anime/108710/" target="_blank" class="file"><img src="https://imgur.com/IOfxGtx.png">dorohedoro.anime</a>
+        </div>
+    </div>
+
+    <div id="win-mangas" class="window">
+        <div class="window-header"><span>~/mangas</span><span class="close-btn" onclick="closeWin('win-mangas')">✖</span></div>
+        <div class="window-body">
+            <a href="https://anilist.co/manga/30002/" target="_blank" class="file"><img src="https://imgur.com/S2itjEq.png">berserk.manga</a>
+            <a href="https://anilist.co/manga/31706/" target="_blank" class="file"><img src="https://imgur.com/eUcGVum.png">sbr.manga</a>
+            <a href="https://anilist.co/manga/30642/" target="_blank" class="file"><img src="https://imgur.com/AVBfjQX.png">vinland.manga</a>
+            <a href="https://anilist.co/manga/86635/" target="_blank" class="file"><img src="https://imgur.com/xrB46Ft.png">kaguyasama.manga</a>
+            <a href="https://anilist.co/manga/30026/" target="_blank" class="file"><img src="https://imgur.com/vwLIPx2.png">hxh.manga</a>
+            <a href="https://anilist.co/manga/30656/" target="_blank" class="file"><img src="https://imgur.com/nC9QYtI.png">vagabond.manga</a>
+            <a href="https://anilist.co/manga/30336/" target="_blank" class="file"><img src="https://imgur.com/e36y1NW.png">gto.manga</a>
+            <a href="https://anilist.co/manga/54705/" target="_blank" class="file"><img src="https://imgur.com/gGZA0zR.png">akunohana.manga</a>
+            <a href="https://anilist.co/manga/30936/" target="_blank" class="file"><img src="https://imgur.com/wi5ru2O.png">homunculus.manga</a>
+            <a href="https://anilist.co/manga/37375/" target="_blank" class="file"><img src="https://imgur.com/Zg6JTrd.png">kokounohito.manga</a>
+        </div>
+    </div>
+
+    <div id="win-waifus" class="window">
+        <div class="window-header"><span>~/waifus</span><span class="close-btn" onclick="closeWin('win-waifus')">✖</span></div>
+        <div class="window-body">
+            <a href="https://anilist.co/character/120649/" target="_blank" class="file"><img src="https://imgur.com/9Z8MRSu.png" class="square">kaguya.waifu</a>
+            <a href="https://anilist.co/character/34470/" target="_blank" class="file"><img src="https://imgur.com/YALUeUn.png" class="square">kurisu.waifu</a>
+            <a href="https://anilist.co/character/144594/" target="_blank" class="file"><img src="https://imgur.com/7L27P94.png" class="square">kobeni.waifu</a>
+            <a href="https://anilist.co/character/88572/" target="_blank" class="file"><img src="https://imgur.com/iOmt3Xb.png" class="square">emilia.waifu</a>
+        </div>
+    </div>
+
+    <div id="win-games" class="window">
+        <div class="window-header"><span>~/games</span><span class="close-btn" onclick="closeWin('win-games')">✖</span></div>
+        <div class="window-body">
+            <a href="https://store.steampowered.com/app/570940/" target="_blank" class="file"><img src="https://imgur.com/lcMd96p.png" class="square">darksouls.game</a>
+            <a href="https://minecraft.net" target="_blank" class="file"><img src="https://imgur.com/ctWNET1.png" class="square">minecraft.game</a>
+            <a href="https://store.steampowered.com/app/17390/" target="_blank" class="file"><img src="https://imgur.com/J4g8PTZ.png" class="square">spore.game</a>
+            <a href="https://yanderesimulator.com/" target="_blank" class="file"><img src="https://imgur.com/hdifxRI.png" class="square">yandere.game</a>
+        </div>
+    </div>
+
+    <div id="win-projects" class="window">
+        <div class="window-header"><span>~/projects</span><span class="close-btn" onclick="closeWin('win-projects')">✖</span></div>
+        <div class="window-body">
+            <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">github.src</a>
+            <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">itchio.src</a>
+        </div>
+    </div>
+
+    <div id="notification">BTC Address Copied!</div>
+
+    <script>
+        function openWin(id) {
+            document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+        function closeWin(id) { document.getElementById(id).classList.remove('active'); }
+        function copyBTC() {
+            navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => {
+                const note = document.getElementById("notification");
+                note.style.display = "block";
+                setTimeout(() => { note.style.display = "none"; }, 2500);
+            });
+        }
+    </script>
+</body>
+</html>
