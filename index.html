@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daigou OS</title>
+    <title>Daigou</title>
     <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Quicksand:wght@400;700&display=swap');
@@ -71,7 +71,7 @@
         .file img { width: 65px; height: 90px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; border: 1px solid rgba(247,209,215,0.1); }
         .file img.square { height: 65px; }
 
-        /* --- SIDEBAR CARD (GIFS RESTAURADOS) --- */
+        /* --- SIDEBAR CARD --- */
         .side-card {
             position: fixed; right: 40px; top: 50%; transform: translateY(-50%);
             width: 280px; height: 550px;
@@ -87,9 +87,6 @@
 
         /* --- NOTIF --- */
         #notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 10px 25px; border-radius: 5px; display: none; z-index: 11000; font-weight: bold; }
-        
-        .cat-emoji { position: absolute; font-size: 32px; animation: fall linear forwards; pointer-events: none; z-index: 5000; }
-        @keyframes fall { from { transform: translateY(-50px); } to { transform: translateY(calc(100vh - 45px)); } }
     </style>
 </head>
 <body>
@@ -151,6 +148,13 @@
         <a href="https://anilist.co/manga/37375/" target="_blank" class="file"><img src="https://imgur.com/Zg6JTrd.png">kokounohito.manga</a>
     </div></div>
 
+    <div id="win-waifus" class="window"><div class="window-header"><span>~/waifus</span><span class="close-btn" onclick="closeWin('win-waifus')">✖</span></div><div class="window-body">
+        <a href="https://anilist.co/character/120649/" target="_blank" class="file"><img src="https://imgur.com/9Z8MRSu.png" class="square">kaguya.waifu</a>
+        <a href="https://anilist.co/character/34470/" target="_blank" class="file"><img src="https://imgur.com/YALUeUn.png" class="square">kurisu.waifu</a>
+        <a href="https://anilist.co/character/144594/" target="_blank" class="file"><img src="https://imgur.com/7L27P94.png" class="square">kobeni.waifu</a>
+        <a href="https://anilist.co/character/88572/" target="_blank" class="file"><img src="https://imgur.com/iOmt3Xb.png" class="square">emilia.waifu</a>
+    </div></div>
+
     <div id="win-games" class="window"><div class="window-header"><span>~/games</span><span class="close-btn" onclick="closeWin('win-games')">✖</span></div><div class="window-body">
         <a href="https://store.steampowered.com/app/570940/" target="_blank" class="file"><img src="https://imgur.com/lcMd96p.png" class="square">darksouls.game</a>
         <a href="https://minecraft.net" target="_blank" class="file"><img src="https://imgur.com/ctWNET1.png" class="square">minecraft.game</a>
@@ -174,9 +178,24 @@
 
     <script>
         let topZ = 1000;
-        function openWin(id) { const win = document.getElementById(id); if (win) { win.classList.add('active'); win.style.zIndex = ++topZ; } }
-        function closeWin(id) { const win = document.getElementById(id); if (win) { win.classList.remove('active'); if(id === 'win-player') document.getElementById('player-container').innerHTML = ''; } }
-        function playList(id) { document.getElementById('player-container').innerHTML = `<iframe width="100%" height="300" src="https://www.youtube.com/embed/videoseries?list=${id}&autoplay=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>`; openWin('win-player'); }
+        function openWin(id) { 
+            const win = document.getElementById(id); 
+            if (win) { 
+                win.classList.add('active'); 
+                win.style.zIndex = ++topZ; 
+            } 
+        }
+        function closeWin(id) { 
+            const win = document.getElementById(id); 
+            if (win) { 
+                win.classList.remove('active'); 
+                if(id === 'win-player') document.getElementById('player-container').innerHTML = ''; 
+            } 
+        }
+        function playList(id) { 
+            document.getElementById('player-container').innerHTML = `<iframe width="100%" height="300" src="https://www.youtube.com/embed/videoseries?list=${id}&autoplay=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>`; 
+            openWin('win-player'); 
+        }
         function showNotification(text) { const n = document.getElementById("notification"); n.innerText = text; n.style.display = "block"; setTimeout(() => n.style.display = "none", 2500); }
         function copyBTC() { navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => showNotification("BTC Address Copied!")); }
         
@@ -196,14 +215,6 @@
                 document.onmousemove = (e) => { if (isDragging) { win.style.left = (e.clientX + offset[0]) + 'px'; win.style.top = (e.clientY + offset[1]) + 'px'; } };
                 document.onmouseup = () => isDragging = false;
             });
-
-            let buffer = "";
-            window.onkeydown = (e) => {
-                buffer += e.key.toLowerCase();
-                if (buffer.length > 10) buffer = buffer.slice(-10);
-                const cmds = { "blank": "⠀", "cross": "☦", "guts": "𒉭" };
-                for (let c in cmds) { if (buffer.endsWith(c)) { navigator.clipboard.writeText(cmds[c]).then(() => showNotification("Copied " + cmds[c])); buffer = ""; } }
-            };
         };
     </script>
 </body>
