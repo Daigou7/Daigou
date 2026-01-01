@@ -112,16 +112,16 @@
         .os-icons img { width: 28px; transition: 0.3s; cursor: pointer; }
         .os-icons img:hover { transform: translateY(-3px); }
 
-        /* --- NOVOS ELEMENTOS DO CARD --- */
-        .discord-status {
-            display: flex; align-items: center; gap: 8px; font-size: 10px; opacity: 0.7; margin-bottom: 5px;
+        /* --- STATUS E PERFORMANCE --- */
+        .discord-status-text {
+            font-size: 10px; opacity: 0.5; margin-bottom: 15px; line-height: 1.4;
         }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #747f8d; border: 2px solid #0a0a0c; }
         
-        .visitor-counter {
-            font-size: 11px; cursor: pointer; opacity: 0.6; transition: 0.3s; border-top: 1px solid rgba(247,209,215,0.1); padding-top: 10px; width: 100%;
+        .perf-metrics {
+            display: flex; justify-content: space-around; width: 100%;
+            border-top: 1px solid rgba(247,209,215,0.05);
+            padding-top: 15px; font-size: 9px; opacity: 0.4; letter-spacing: 1px;
         }
-        .visitor-counter:hover { opacity: 1; color: var(--accent); }
 
         #notification {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -174,26 +174,15 @@
             <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
         </div>
 
-        <div class="discord-status">
-            <div class="status-dot"></div>
-            <span>currently offline<br>last online 700 years ago</span>
+        <div class="discord-status-text">
+            currently offline<br>last online 700 years ago
         </div>
 
-        <div class="visitor-counter" onclick="openWin('win-stats')">
-            Total Visitors: 777
+        <div class="perf-metrics">
+            <span>FPS: <span id="fps-val">372</span></span>
+            <span>PING: <span id="ping-val">14</span>ms</span>
         </div>
     </aside>
-
-    <div id="win-stats" class="window">
-        <div class="window-header"><span>~/visitors_by_country</span><span class="close-btn" onclick="closeWin('win-stats')">✖</span></div>
-        <div class="window-body">
-            <div class="file"><img src="https://flagcdn.com/w160/br.png" class="square">Brazil.vst</div>
-            <div class="file"><img src="https://flagcdn.com/w160/us.png" class="square">USA.vst</div>
-            <div class="file"><img src="https://flagcdn.com/w160/jp.png" class="square">Japan.vst</div>
-            <div class="file"><img src="https://flagcdn.com/w160/de.png" class="square">Germany.vst</div>
-            <div class="file"><img src="https://flagcdn.com/w160/ru.png" class="square">Russia.vst</div>
-        </div>
-    </div>
 
     <div id="win-animes" class="window">
         <div class="window-header"><span>~/animes</span><span class="close-btn" onclick="closeWin('win-animes')">✖</span></div>
@@ -276,6 +265,20 @@
                 showNotification("BTC Address Copied!");
             });
         }
+
+        // --- MECÂNICA DE FPS E PING IMAGINÁRIO ---
+        function updateMetrics() {
+            const fpsVal = document.getElementById('fps-val');
+            const pingVal = document.getElementById('ping-val');
+            
+            setInterval(() => {
+                // Varia FPS entre 350 e 400
+                fpsVal.innerText = Math.floor(Math.random() * (400 - 350 + 1) + 350);
+                // Varia Ping entre 12 e 18
+                pingVal.innerText = Math.floor(Math.random() * (18 - 12 + 1) + 12);
+            }, 800);
+        }
+        updateMetrics();
 
         // --- MECÂNICA DE DIGITAÇÃO ---
         let inputBuffer = "";
