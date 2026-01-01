@@ -11,6 +11,7 @@
         :root {
             --accent: #f7d1d7;
             --window-bg: rgba(10, 10, 12, 0.95);
+            --text-main: #ffffff; /* Texto mais claro para visibilidade */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,7 +39,7 @@
         }
         @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
-        /* --- DESKTOP & ICONS --- */
+        /* --- DESKTOP --- */
         #desktop {
             padding: 40px; display: flex; flex-direction: column; flex-wrap: wrap;
             align-content: flex-start; gap: 25px; height: 100%;
@@ -47,19 +48,17 @@
         .desktop-item {
             display: flex; flex-direction: column; align-items: center;
             width: 110px; cursor: pointer; text-decoration: none; color: inherit; z-index: 5;
+            text-shadow: 1px 1px 3px #000;
         }
 
-        /* Ícone de Música no Canto Superior Direito */
-        .music-corner {
-            position: fixed; top: 40px; right: 350px; /* Ajustado para não bater na sidebar */
-        }
+        .music-corner { position: fixed; top: 40px; right: 350px; }
 
         .folder-icon {
             width: 55px; height: 55px;
             background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center;
             background-size: contain; filter: hue-rotate(300deg) saturate(0.8);
         }
-        
+
         .music-icon {
             width: 55px; height: 55px;
             background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center;
@@ -69,61 +68,50 @@
         /* --- WINDOWS --- */
         .window {
             position: absolute; top: 15%; left: 15%;
-            background: var(--window-bg);
-            border: 1px solid rgba(247, 209, 215, 0.2);
+            background: var(--window-bg); border: 1px solid rgba(247, 209, 215, 0.2);
             border-radius: 12px; display: none; flex-direction: column;
             width: 650px; box-shadow: 0 40px 100px rgba(0,0,0,0.9); z-index: 1000;
             backdrop-filter: blur(20px);
         }
-
         .window.active { display: flex; }
-
-        .window-header {
-            padding: 12px 15px; background: rgba(255,255,255,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(247, 209, 215, 0.1); cursor: move;
-        }
-
+        .window-header { padding: 12px 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; cursor: move; border-bottom: 1px solid rgba(247, 209, 215, 0.1); }
         .close-btn { color: #ff5f56; cursor: pointer; font-weight: bold; }
+        .window-body { padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px; max-height: 500px; overflow-y: auto; }
 
-        .window-body { 
-            padding: 25px; display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
-            gap: 20px; max-height: 500px; overflow-y: auto;
-        }
+        .file { display: flex; flex-direction: column; align-items: center; text-align: center; font-size: 9px; text-decoration: none; color: var(--text-main); transition: 0.2s; }
+        .file:hover { transform: scale(1.1); color: var(--accent); }
+        .file img { width: 65px; height: 90px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; border: 1px solid rgba(247,209,215,0.1); }
+        .file img.square { height: 65px; }
 
-        /* --- SIDEBAR --- */
+        /* --- SIDEBAR CARD + SAKURA --- */
         .side-card {
             position: fixed; right: 40px; top: 50%; transform: translateY(-50%);
             width: 280px; background: rgba(10, 10, 12, 0.9);
             padding: 30px; border-radius: 12px; border: 1px solid #333;
             text-align: center; display: flex; flex-direction: column; align-items: center;
+            overflow: hidden; /* Corta as pétalas que saem do card */
         }
 
-        .avatar-frame { width: 160px; height: 160px; border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid rgba(247, 209, 215, 0.2); }
+        /* Canvas da Sakura */
+        #sakura-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.7; }
+
+        .side-content { position: relative; z-index: 2; width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+        .avatar-frame { width: 160px; height: 160px; border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid rgba(247, 209, 215, 0.4); box-shadow: 0 0 15px rgba(247, 209, 215, 0.2); }
         .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
-        .logo-main { width: 120px; margin-bottom: 20px; opacity: 0.9; }
-        .bio { font-family: 'Quicksand', sans-serif; font-size: 12px; opacity: 0.8; line-height: 1.5; margin-bottom: 20px; white-space: pre-line; }
-
-        .os-icons { display: flex; gap: 15px; margin-bottom: 20px; }
-        .os-icons img { width: 28px; transition: 0.3s; cursor: pointer; }
-        .os-icons img:hover { transform: translateY(-3px); }
-
-        .clock-container { margin-bottom: 15px; }
-        .clock-display { font-size: 16px; opacity: 0.9; letter-spacing: 1px; font-weight: bold; }
-        .date-display { font-size: 11px; opacity: 0.5; letter-spacing: 2px; }
-
-        .perf-metrics { display: flex; justify-content: space-around; width: 100%; border-top: 1px solid rgba(247,209,215,0.05); padding-top: 15px; font-size: 9px; opacity: 0.4; }
-
-        #notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #f7d1d7; color: #000; padding: 10px 25px; border-radius: 5px; font-weight: bold; display: none; z-index: 11000; }
-
-        /* Player Styles */
-        .playlist-item { cursor: pointer; text-align: center; transition: 0.3s; }
-        .playlist-item:hover { transform: scale(1.05); }
-        .playlist-thumb { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; border: 1px solid rgba(247,209,215,0.2); margin-bottom: 8px; }
+        .logo-main { width: 120px; margin-bottom: 20px; filter: drop-shadow(0 0 5px rgba(247,209,215,0.5)); }
         
-        #win-player { width: 350px; height: auto; }
-        .player-content { padding: 10px; }
+        .bio { font-family: 'Quicksand', sans-serif; font-size: 13px; color: var(--text-main); font-weight: 500; line-height: 1.5; margin-bottom: 20px; text-shadow: 1px 1px 2px #000; }
+
+        .clock-display { font-size: 18px; color: var(--accent); font-weight: bold; margin-bottom: 2px; }
+        .date-display { font-size: 11px; color: var(--text-main); opacity: 0.8; letter-spacing: 2px; margin-bottom: 15px; }
+
+        #notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 10px 25px; border-radius: 5px; font-weight: bold; display: none; z-index: 11000; }
+        
+        /* Playlist Styles */
+        .playlist-item { cursor: pointer; text-align: center; transition: 0.3s; color: var(--text-main); }
+        .playlist-item img { width: 80px; height: 80px; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 5px; }
+        #win-player { width: 350px; }
     </style>
 </head>
 <body>
@@ -134,102 +122,166 @@
     </div>
 
     <main id="desktop">
-        <div class="desktop-item" onclick="openWin('win-animes')">
-            <div class="folder-icon"></div><span>animes/</span>
-        </div>
-        <div class="desktop-item" onclick="openWin('win-mangas')">
-            <div class="folder-icon"></div><span>mangas/</span>
-        </div>
-        <div class="desktop-item" onclick="openWin('win-waifus')">
-            <div class="folder-icon"></div><span>waifus/</span>
-        </div>
-        
-        <div class="desktop-item music-corner" onclick="openWin('win-music')">
-            <div class="music-icon"></div><span>music/</span>
-        </div>
+        <div class="desktop-item" onclick="openWin('win-animes')"><div class="folder-icon"></div><span>animes/</span></div>
+        <div class="desktop-item" onclick="openWin('win-mangas')"><div class="folder-icon"></div><span>mangas/</span></div>
+        <div class="desktop-item" onclick="openWin('win-waifus')"><div class="folder-icon"></div><span>waifus/</span></div>
+        <div class="desktop-item" onclick="openWin('win-games')"><div class="folder-icon"></div><span>games/</span></div>
+        <div class="desktop-item" onclick="openWin('win-projects')"><div class="folder-icon"></div><span>projects/</span></div>
+        <div class="desktop-item music-corner" onclick="openWin('win-music')"><div class="music-icon"></div><span>music/</span></div>
     </main>
 
     <aside class="side-card">
-        <div class="avatar-frame"><img src="https://imgur.com/pHJtwPT.gif"></div>
-        <img src="https://imgur.com/btg3Zph.png" class="logo-main">
-        <p class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦
-        Buy Bitcoin ₿ - A shield of economic Freedom</p>
-        <div class="os-icons">
-            <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png"></a>
-            <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png"></a>
-            <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
-        </div>
-        <div class="clock-container">
+        <canvas id="sakura-canvas"></canvas>
+        <div class="side-content">
+            <div class="avatar-frame"><img src="https://imgur.com/pHJtwPT.gif"></div>
+            <img src="https://imgur.com/btg3Zph.png" class="logo-main">
+            <p class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦
+            Buy Bitcoin ₿ - A shield of economic Freedom</p>
+            
+            <div class="os-icons">
+                <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png" width="28"></a>
+                <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png" width="28"></a>
+                <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png" width="28"></a>
+            </div>
+
             <div class="clock-display" id="clock">00:00:00</div>
             <div class="date-display" id="date">26年01月01日</div>
-        </div>
-        <div class="perf-metrics">
-            <span>FPS: <span id="fps-val">372</span></span>
-            <span>PING: <span id="ping-val">14</span>ms</span>
+
+            <div class="perf-metrics" style="display:flex; gap:20px; font-size:9px; opacity:0.6; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+                <span>FPS: <span id="fps-val">372</span></span>
+                <span>PING: <span id="ping-val">14</span>ms</span>
+            </div>
         </div>
     </aside>
-
-    <div id="win-music" class="window">
-        <div class="window-header"><span>~/music</span><span class="close-btn" onclick="closeWin('win-music')">✖</span></div>
-        <div class="window-body">
-            <div class="playlist-item" onclick="playList('PLxxxxxxx1')"> <img src="https://imgur.com/yWGCBpw.png" class="playlist-thumb">
-                <span>Vibe 1.mp3</span>
-            </div>
-            <div class="playlist-item" onclick="playList('PLxxxxxxx2')">
-                <img src="https://imgur.com/P1HogUg.png" class="playlist-thumb">
-                <span>Cyberpunk.mp3</span>
-            </div>
-        </div>
-    </div>
-
-    <div id="win-player" class="window">
-        <div class="window-header"><span>Now Playing</span><span class="close-btn" onclick="closeWin('win-player')">✖</span></div>
-        <div class="player-content" id="player-container">
-            </div>
-    </div>
 
     <div id="win-animes" class="window">
         <div class="window-header"><span>~/animes</span><span class="close-btn" onclick="closeWin('win-animes')">✖</span></div>
         <div class="window-body">
             <a href="https://anilist.co/anime/9253/" target="_blank" class="file"><img src="https://imgur.com/P1HogUg.png">steinsgate.anime</a>
             <a href="https://anilist.co/anime/21355/" target="_blank" class="file"><img src="https://imgur.com/d9zFEZu.png">rezero.anime</a>
+            <a href="https://anilist.co/anime/30/" target="_blank" class="file"><img src="https://imgur.com/njmKBUI.png">evangelion.anime</a>
+            <a href="https://anilist.co/anime/21507/" target="_blank" class="file"><img src="https://imgur.com/PIox0ID.png">mobpsycho.anime</a>
+            <a href="https://anilist.co/anime/6/" target="_blank" class="file"><img src="https://imgur.com/6Q38gYG.png">trigun.anime</a>
+            <a href="https://anilist.co/anime/9756/" target="_blank" class="file"><img src="https://imgur.com/KNJervC.png">madoka.anime</a>
+            <a href="https://anilist.co/anime/17074/" target="_blank" class="file"><img src="https://imgur.com/JbDnQBm.png">monogatari.anime</a>
+            <a href="https://anilist.co/anime/21471/" target="_blank" class="file"><img src="https://imgur.com/Iwn43dp.png">saikikusuo.anime</a>
+            <a href="https://anilist.co/anime/20832/" target="_blank" class="file"><img src="https://imgur.com/SqG1E4O.png">overlord.anime</a>
+            <a href="https://anilist.co/anime/108710/" target="_blank" class="file"><img src="https://imgur.com/IOfxGtx.png">dorohedoro.anime</a>
         </div>
+    </div>
+
+    <div id="win-mangas" class="window">
+        <div class="window-header"><span>~/mangas</span><span class="close-btn" onclick="closeWin('win-mangas')">✖</span></div>
+        <div class="window-body">
+            <a href="https://anilist.co/manga/30002/" target="_blank" class="file"><img src="https://imgur.com/S2itjEq.png">berserk.manga</a>
+            <a href="https://anilist.co/manga/31706/" target="_blank" class="file"><img src="https://imgur.com/eUcGVum.png">sbr.manga</a>
+            <a href="https://anilist.co/manga/30642/" target="_blank" class="file"><img src="https://imgur.com/AVBfjQX.png">vinland.manga</a>
+            <a href="https://anilist.co/manga/86635/" target="_blank" class="file"><img src="https://imgur.com/xrB46Ft.png">kaguyasama.manga</a>
+            <a href="https://anilist.co/manga/30026/" target="_blank" class="file"><img src="https://imgur.com/vwLIPx2.png">hxh.manga</a>
+            <a href="https://anilist.co/manga/30656/" target="_blank" class="file"><img src="https://imgur.com/nC9QYtI.png">vagabond.manga</a>
+            <a href="https://anilist.co/manga/30336/" target="_blank" class="file"><img src="https://imgur.com/e36y1NW.png">gto.manga</a>
+            <a href="https://anilist.co/manga/54705/" target="_blank" class="file"><img src="https://imgur.com/gGZA0zR.png">akunohana.manga</a>
+            <a href="https://anilist.co/manga/30936/" target="_blank" class="file"><img src="https://imgur.com/wi5ru2O.png">homunculus.manga</a>
+            <a href="https://anilist.co/manga/37375/" target="_blank" class="file"><img src="https://imgur.com/Zg6JTrd.png">kokounohito.manga</a>
+        </div>
+    </div>
+
+    <div id="win-waifus" class="window">
+        <div class="window-header"><span>~/waifus</span><span class="close-btn" onclick="closeWin('win-waifus')">✖</span></div>
+        <div class="window-body">
+            <a href="https://anilist.co/character/120649/" target="_blank" class="file"><img src="https://imgur.com/9Z8MRSu.png" class="square">kaguya.waifu</a>
+            <a href="https://anilist.co/character/34470/" target="_blank" class="file"><img src="https://imgur.com/YALUeUn.png" class="square">kurisu.waifu</a>
+            <a href="https://anilist.co/character/144594/" target="_blank" class="file"><img src="https://imgur.com/7L27P94.png" class="square">kobeni.waifu</a>
+            <a href="https://anilist.co/character/88572/" target="_blank" class="file"><img src="https://imgur.com/iOmt3Xb.png" class="square">emilia.waifu</a>
+        </div>
+    </div>
+
+    <div id="win-games" class="window">
+        <div class="window-header"><span>~/games</span><span class="close-btn" onclick="closeWin('win-games')">✖</span></div>
+        <div class="window-body">
+            <a href="https://store.steampowered.com/app/570940/" target="_blank" class="file"><img src="https://imgur.com/lcMd96p.png" class="square">darksouls.game</a>
+            <a href="https://minecraft.net" target="_blank" class="file"><img src="https://imgur.com/ctWNET1.png" class="square">minecraft.game</a>
+            <a href="https://store.steampowered.com/app/17390/" target="_blank" class="file"><img src="https://imgur.com/J4g8PTZ.png" class="square">spore.game</a>
+            <a href="https://yanderesimulator.com/" target="_blank" class="file"><img src="https://imgur.com/hdifxRI.png" class="square">yandere.game</a>
+        </div>
+    </div>
+
+    <div id="win-projects" class="window">
+        <div class="window-header"><span>~/projects</span><span class="close-btn" onclick="closeWin('win-projects')">✖</span></div>
+        <div class="window-body">
+            <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">github.src</a>
+            <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">itchio.src</a>
+        </div>
+    </div>
+
+    <div id="win-music" class="window">
+        <div class="window-header"><span>~/music</span><span class="close-btn" onclick="closeWin('win-music')">✖</span></div>
+        <div class="window-body">
+            <div class="playlist-item" onclick="playList('PLID_AQUI')"><img src="https://imgur.com/yWGCBpw.png"><span>Playlist 1</span></div>
+        </div>
+    </div>
+
+    <div id="win-player" class="window">
+        <div class="window-header"><span>Now Playing</span><span class="close-btn" onclick="closeWin('win-player')">✖</span></div>
+        <div id="player-container" style="padding:10px;"></div>
     </div>
 
     <div id="notification">BTC Address Copied!</div>
 
     <script>
-        let topZ = 1000;
+        // --- SAKURA EFFECT ---
+        const canvas = document.getElementById('sakura-canvas');
+        const ctx = canvas.getContext('2d');
+        let petals = [];
 
-        function showNotification(text) {
-            const note = document.getElementById("notification");
-            if (note) { note.innerText = text; note.style.display = "block"; setTimeout(() => note.style.display = "none", 2500); }
+        function initSakura() {
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+            for (let i = 0; i < 25; i++) petals.push(new Petal());
         }
 
-        function copyBTC() {
-            navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => showNotification("BTC Address Copied!"));
-        }
-
-        function openWin(id) {
-            const win = document.getElementById(id);
-            if (win) { win.classList.add('active'); win.style.zIndex = ++topZ; }
-        }
-
-        function closeWin(id) {
-            const win = document.getElementById(id);
-            if (win) {
-                win.classList.remove('active');
-                if(id === 'win-player') document.getElementById('player-container').innerHTML = ''; // Para a música ao fechar
+        class Petal {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.w = 5 + Math.random() * 5;
+                this.h = 5 + Math.random() * 5;
+                this.opacity = Math.random();
+                this.speed = 0.5 + Math.random();
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.w/2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(247, 209, 215, ${this.opacity})`;
+                ctx.fill();
+            }
+            update() {
+                this.y += this.speed;
+                this.x += Math.sin(this.y/20);
+                if (this.y > canvas.height) { this.y = -10; this.x = Math.random() * canvas.width; }
+                this.draw();
             }
         }
 
-        // FUNÇÃO PARA CARREGAR PLAYLIST DO YOUTUBE
-        function playList(id) {
-            const container = document.getElementById('player-container');
-            // Embed do YouTube otimizado para mini-player
-            container.innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=${id}&autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            openWin('win-player');
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            petals.forEach(p => p.update());
+            requestAnimationFrame(animate);
         }
+
+        // --- CORE FUNCTIONS ---
+        let topZ = 1000;
+        function openWin(id) { const win = document.getElementById(id); if (win) { win.classList.add('active'); win.style.zIndex = ++topZ; } }
+        function closeWin(id) { 
+            const win = document.getElementById(id); 
+            if (win) {
+                win.classList.remove('active');
+                if(id === 'win-player') document.getElementById('player-container').innerHTML = '';
+            }
+        }
+        function copyBTC() { navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => showNotification("BTC Address Copied!")); }
+        function showNotification(t) { const n = document.getElementById("notification"); n.innerText = t; n.style.display="block"; setTimeout(()=>n.style.display="none", 2500); }
+        function playList(id) { document.getElementById('player-container').innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=${id}&autoplay=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>`; openWin('win-player'); }
 
         function updateAll() {
             const now = new Date();
@@ -238,30 +290,32 @@
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
             document.getElementById('date').innerText = `${year}年${month}月${day}日`;
-            document.getElementById('fps-val').innerText = Math.floor(Math.random() * (400 - 350 + 1) + 350);
-            document.getElementById('ping-val').innerText = Math.floor(Math.random() * (18 - 12 + 1) + 12);
+            document.getElementById('fps-val').innerText = Math.floor(Math.random() * 50 + 350);
+            document.getElementById('ping-val').innerText = Math.floor(Math.random() * 5 + 12);
         }
 
         window.addEventListener('load', () => {
+            initSakura();
+            animate();
             updateAll();
             setInterval(updateAll, 1000);
 
-            // Drag and Drop
             document.querySelectorAll('.window').forEach(win => {
                 const header = win.querySelector('.window-header');
                 let isDragging = false, offset = [0,0];
-                header.onmousedown = (e) => {
-                    isDragging = true;
-                    offset = [win.offsetLeft - e.clientX, win.offsetTop - e.clientY];
-                    win.style.zIndex = ++topZ;
-                };
-                document.onmousemove = (e) => {
-                    if (isDragging) {
-                        win.style.left = (e.clientX + offset[0]) + 'px';
-                        win.style.top = (e.clientY + offset[1]) + 'px';
-                    }
-                };
+                header.onmousedown = (e) => { isDragging = true; offset = [win.offsetLeft - e.clientX, win.offsetTop - e.clientY]; win.style.zIndex = ++topZ; };
+                document.onmousemove = (e) => { if (isDragging) { win.style.left = (e.clientX + offset[0]) + 'px'; win.style.top = (e.clientY + offset[1]) + 'px'; } };
                 document.onmouseup = () => isDragging = false;
+            });
+
+            // Teclado
+            let buffer = "";
+            const cmds = { "blank": "⠀", "cross": "☦", "guts": "𒉭" };
+            window.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT') return;
+                buffer += e.key.toLowerCase();
+                if (buffer.length > 10) buffer = buffer.slice(-10);
+                for (let c in cmds) { if (buffer.endsWith(c)) { navigator.clipboard.writeText(cmds[c]).then(()=>showNotification("Copied "+cmds[c])); } }
             });
         });
     </script>
