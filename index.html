@@ -84,7 +84,7 @@
         .logo-main { width: 120px; margin-bottom: 20px; }
         .bio { font-family: 'Quicksand', sans-serif; font-size: 13px; color: #fff; line-height: 1.5; margin-bottom: 20px; }
 
-        /* COMMAND INPUT (PASS) */
+        /* COMMAND INPUT */
         #cmd-input {
             margin-top: 15px;
             background: rgba(255, 255, 255, 0.05);
@@ -174,7 +174,14 @@
             openWin('win-player'); 
         }
         function showNotification(text) { const n = document.getElementById("notification"); n.innerText = text; n.style.display = "block"; setTimeout(() => n.style.display = "none", 2500); }
-        function copyBTC() { navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => showNotification("BTC Address Copied!")); }
+        
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification("Copied!");
+            });
+        }
+
+        function copyBTC() { copyText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws"); }
         
         function updateTime() {
             const now = new Date();
@@ -185,26 +192,25 @@
 
         // --- COMMANDS LOGIC ---
         const shortcuts = {
-            "blank": { char: "\u200C", name: "ZWNJ" },
-            "berserk": { char: "𒉭", name: "Berserk Mark" },
-            "guts": { char: "𒉭", name: "Berserk Mark" },
-            "cross": { char: "☦", name: "Orthodox Cross" },
-            "god": { char: "☦", name: "Orthodox Cross" },
-            "jesus": { char: "☦", name: "Orthodox Cross" },
-            "way": { char: "☦", name: "Orthodox Cross" },
-            "truth": { char: "☦", name: "Orthodox Cross" },
-            "life": { char: "☦", name: "Orthodox Cross" }
+            "blank": "\u200C",
+            "berserk": "𒉭",
+            "guts": "𒉭",
+            "cross": "☦",
+            "god": "☦",
+            "jesus": "☦",
+            "way": "☦",
+            "truth": "☦",
+            "life": "☦",
+            "email": "daigou@keemail.me",
+            "password": "lol are u serious?"
         };
 
         const cmdInput = document.getElementById('cmd-input');
         cmdInput.addEventListener('input', (e) => {
             const val = e.target.value.toLowerCase();
             if (shortcuts[val]) {
-                const item = shortcuts[val];
-                navigator.clipboard.writeText(item.char).then(() => {
-                    showNotification(`${item.name} Copied!`);
-                    e.target.value = ""; 
-                });
+                copyText(shortcuts[val]);
+                e.target.value = ""; 
             }
         });
         cmdInput.addEventListener('keypress', (e) => {
