@@ -1,17 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daigou OS</title>
-    <link rel="icon" type="image/png" href="https://imgur.com/yWGCBpw.png">
+    <title>Daigou</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Quicksand:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 
         :root {
             --accent: #f7d1d7;
-            --bar-bg: rgba(10, 10, 12, 0.9);
-            --window-bg: rgba(15, 15, 18, 0.98);
+            --window-bg: rgba(15, 15, 18, 0.95);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,181 +18,159 @@
             background-size: cover;
             color: var(--accent);
             font-family: 'JetBrains Mono', monospace;
-            height: 100vh; overflow: hidden;
-            display: flex; flex-direction: column;
+            height: 100vh; width: 100vw; overflow: hidden;
         }
 
-        /* --- TOP BAR --- */
-        .top-bar {
-            height: 32px; background: var(--bar-bg); border-bottom: 1px solid rgba(247, 209, 215, 0.2);
-            display: flex; justify-content: space-between; align-items: center; padding: 0 15px; font-size: 11px; z-index: 5000;
+        /* --- BOOT SCREEN --- */
+        #boot-screen {
+            position: fixed; inset: 0; background: #000; z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            animation: fadeOut 0.5s ease 1.5s forwards;
         }
+        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
         /* --- DESKTOP --- */
-        .desktop { flex: 1; padding: 40px; display: flex; flex-direction: column; gap: 20px; align-content: flex-start; flex-wrap: wrap; }
-        .desktop-item { display: flex; flex-direction: column; align-items: center; width: 100px; cursor: pointer; padding: 10px; border-radius: 8px; }
-        .desktop-item:hover { background: rgba(247, 209, 215, 0.1); }
-        .folder-icon { width: 50px; height: 50px; background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center; background-size: contain; filter: hue-rotate(300deg) saturate(0.6); }
-
-        /* --- WINDOW MODALS --- */
-        .window-modal {
-            position: fixed; top: 50%; left: 45%; transform: translate(-50%, -50%);
-            background: var(--window-bg); border: 1px solid rgba(247, 209, 215, 0.2);
-            border-radius: 10px; display: none; flex-direction: column;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.9); z-index: 6000;
+        #desktop {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 25px;
+            height: 100%;
         }
-        .window-modal.active { display: flex; }
-        .modal-header { padding: 10px 20px; background: rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
+
+        .desktop-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 110px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .folder-icon {
+            width: 55px; height: 55px;
+            background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center;
+            background-size: contain; filter: hue-rotate(300deg) saturate(0.8);
+        }
+
+        /* --- WINDOWS --- */
+        .window {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--window-bg);
+            border: 1px solid rgba(247, 209, 215, 0.3);
+            border-radius: 8px; display: none; flex-direction: column;
+            width: 450px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); z-index: 1000;
+        }
+
+        .window.active { display: flex; }
+
+        .window-header {
+            padding: 10px 15px; background: rgba(255,255,255,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(247, 209, 215, 0.1);
+        }
+
         .close-btn { color: #ff5f56; cursor: pointer; }
 
-        .modal-body { padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px; }
+        .window-body { padding: 25px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 
-        /* --- GAME UI INTEGRATION --- */
-        #game-execution-window { width: 880px; height: 780px; }
-        .game-layout { display: flex; background: #000; padding: 20px; gap: 20px; font-family: 'Courier New', monospace; }
-        #sidebar-game { width: 140px; background: rgba(20, 0, 40, 0.8); border: 2px solid #8a2be2; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-        .stat-box { border-left: 3px solid #ff00ff; padding-left: 8px; margin-bottom: 5px; }
-        .stat-value { font-size: 1.2em; font-weight: bold; color: #fff; }
-        .key-box { border: 1px solid #fff; padding: 2px; text-align: center; background: #333; font-size: 0.8em; color: #fff; }
-        
-        canvas { border: 3px solid #4b0082; background: #050510; }
-        .game-overlay { position: absolute; width: 600px; height: 700px; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.9); z-index: 20; padding-top: 40px; }
-        .menu-btn { background: #4b0082; border: 2px solid #fff; color: white; padding: 10px; margin: 5px; cursor: pointer; width: 220px; }
+        .file {
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; font-size: 11px; text-decoration: none; color: inherit;
+        }
 
-        /* --- WIDGET --- */
-        .side-widget { position: fixed; right: 40px; top: 60px; width: 280px; background: rgba(10, 10, 12, 0.75); padding: 30px; border-radius: 15px; border-left: 2px solid var(--accent); text-align: center; }
-        .avatar { width: 120px; height: 120px; border: 2px solid var(--accent); margin: 0 auto 15px; }
+        .file img { width: 50px; border-radius: 4px; margin-bottom: 5px; }
+
+        /* --- ASIDE WIDGET --- */
+        .side-widget {
+            position: fixed; right: 40px; top: 60px; width: 260px;
+            background: rgba(10, 10, 12, 0.7); backdrop-filter: blur(8px);
+            padding: 25px; border-radius: 12px; border-left: 3px solid var(--accent);
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-    <header class="top-bar">
-        <div class="bar-left"><span style="color:#67c1f5"></span> <small>daigou@arch</small></div>
-        <div class="bar-right" id="clock">00:00:00</div>
-    </header>
+    <div id="boot-screen">
+        <img src="https://imgur.com/btg3Zph.png" style="width:120px; margin-bottom: 20px;">
+        <div style="letter-spacing: 5px; font-size: 12px;">LOADING DAIGOU OS...</div>
+    </div>
 
-    <main class="desktop" onclick="if(event.target==this)closeFolder()">
-        <div class="desktop-item" onclick="openFolder('folder-projects')">
+    <main id="desktop">
+        <div class="desktop-item" onclick="openWin('win-animes')">
             <div class="folder-icon"></div>
-            <span style="font-size:11px">projects/</span>
+            <span>animes/</span>
+        </div>
+
+        <div class="desktop-item" onclick="openWin('win-mangas')">
+            <div class="folder-icon"></div>
+            <span>mangas/</span>
+        </div>
+
+        <div class="desktop-item" onclick="openWin('win-waifus')">
+            <div class="folder-icon"></div>
+            <span>waifus/</span>
+        </div>
+
+        <div class="desktop-item" onclick="openWin('win-projects')">
+            <div class="folder-icon"></div>
+            <span>projects/</span>
         </div>
     </main>
 
-    <div id="folder-projects" class="window-modal">
-        <div class="modal-header"><span>~/projects</span><span class="close-btn" onclick="closeFolder()">✖</span></div>
-        <div class="modal-body">
-            <div class="desktop-item" onclick="launchGame()">
-                <img src="https://imgur.com/yWGCBpw.png" style="width:45px">
-                <span style="font-size:10px; margin-top:5px">LunaticLove</span>
-            </div>
-            <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="desktop-item" style="text-decoration:none; color:inherit;">
-                <img src="https://imgur.com/yWGCBpw.png" style="width:45px; opacity:0.6">
-                <span style="font-size:10px; margin-top:5px">itch_io.url</span>
+    <div id="win-animes" class="window">
+        <div class="window-header"><span>~/animes</span><span class="close-btn" onclick="closeWin('win-animes')">✖</span></div>
+        <div class="window-body">
+            <a href="https://myanimelist.net/anime/37999/" target="_blank" class="file"><img src="https://imgur.com/9Z8MRSu.png">kaguya.anime</a>
+            <a href="https://myanimelist.net/anime/38524/" target="_blank" class="file"><img src="https://imgur.com/vHqB3qB.png">oshinoko.anime</a>
+            <a href="https://myanimelist.net/anime/21511/" target="_blank" class="file"><img src="https://imgur.com/btg3Zph.png">kancolle.anime</a>
+        </div>
+    </div>
+
+    <div id="win-mangas" class="window">
+        <div class="window-header"><span>~/mangas</span><span class="close-btn" onclick="closeWin('win-mangas')">✖</span></div>
+        <div class="window-body">
+            <div class="file"><img src="https://imgur.com/vHqB3qB.png">oshinoko.manga</div>
+            <div class="file"><img src="https://imgur.com/9Z8MRSu.png">kaguya.manga</div>
+        </div>
+    </div>
+
+    <div id="win-waifus" class="window">
+        <div class="window-header"><span>~/waifus</span><span class="close-btn" onclick="closeWin('win-waifus')">✖</span></div>
+        <div class="window-body">
+            <a href="https://anilist.co/character/120649/" target="_blank" class="file"><img src="https://imgur.com/9Z8MRSu.png">kaguya.waifu</a>
+        </div>
+    </div>
+
+    <div id="win-projects" class="window">
+        <div class="window-header"><span>~/projects</span><span class="close-btn" onclick="closeWin('win-projects')">✖</span></div>
+        <div class="window-body">
+            <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="file">
+                <img src="https://imgur.com/yWGCBpw.png">
+                <span>LunaticLove.url</span>
             </a>
         </div>
     </div>
 
-    <div id="game-execution-window" class="window-modal">
-        <div class="modal-header"><span>./LunaticLove</span><span class="close-btn" onclick="stopGame()">✖</span></div>
-        <div class="game-layout">
-            <div id="sidebar-game">
-                <div style="text-align: center; color: #ff00ff; font-size: 12px; border-bottom: 1px solid #ff00ff;">STATUS</div>
-                <div class="stat-box"><div style="font-size:10px; color:#aaa;">LIVES</div><div id="ui-lives" class="stat-value">0</div></div>
-                <div class="stat-box"><div style="font-size:10px; color:#aaa;">BOMBS</div><div id="ui-bombs" class="stat-value">0</div></div>
-                <div style="text-align: center; color: #00ffff; font-size: 12px; margin-top:10px;">KEYS</div>
-                <div class="key-box">Z: Shoot</div>
-                <div class="key-box">X: Bomb</div>
-                <div class="key-box">SHIFT: Focus</div>
-            </div>
-
-            <div style="position: relative;">
-                <div id="game-menu" class="game-overlay">
-                    <img src="https://imgur.com/yWGCBpw.png" style="width:250px; margin-bottom:30px;">
-                    <button class="menu-btn" onclick="initGame()">START_BINARY</button>
-                </div>
-                <canvas id="gameCanvas" width="600" height="700"></canvas>
-            </div>
-        </div>
-    </div>
-
     <aside class="side-widget">
-        <div class="avatar"><img src="https://imgur.com/pHJtwPT.gif" style="width:100%; height:100%; object-fit:cover;"></div>
-        <p style="font-size:12px">Buy Bitcoin ₿</p>
+        <div style="width:100px; height:100px; border:2px solid var(--accent); margin:0 auto 15px; overflow:hidden;">
+            <img src="https://imgur.com/pHJtwPT.gif" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        <p style="font-size:12px;">Buy Bitcoin ₿</p>
     </aside>
 
     <script>
-        function openFolder(id) { closeFolder(); document.getElementById(id).classList.add('active'); }
-        function closeFolder() { document.querySelectorAll('.window-modal').forEach(m => m.classList.remove('active')); }
-        
-        // GAME LOGIC INTEGRATION
-        let isGameRunning = false;
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        let player, boss, gameState = 'MENU', frame = 0, keys = {};
-
-        function launchGame() {
-            closeFolder();
-            document.getElementById('game-execution-window').classList.add('active');
+        function openWin(id) {
+            document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
-
-        function stopGame() {
-            isGameRunning = false;
-            closeFolder();
-            document.getElementById('game-menu').style.display = 'flex';
+        function closeWin(id) {
+            document.getElementById(id).classList.remove('active');
         }
-
-        function initGame() {
-            document.getElementById('game-menu').style.display = 'none';
-            player = { x: 300, y: 600, hp: 5, bombs: 3, bullets: [], inv: 0 };
-            boss = { x: 300, y: 150, hp: 1000, maxHp: 1000, bullets: [], angle: 0 };
-            gameState = 'FIGHT';
-            if(!isGameRunning) { isGameRunning = true; gameLoop(); }
-            updateUI();
-        }
-
-        function updateUI() {
-            document.getElementById('ui-lives').innerText = player.hp;
-            document.getElementById('ui-bombs').innerText = player.bombs;
-        }
-
-        window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
-        window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
-
-        function gameLoop() {
-            if(!isGameRunning) return;
-            if(gameState === 'FIGHT') {
-                frame++;
-                let spd = keys['shift'] ? 3 : 6;
-                if(keys['arrowleft']) player.x -= spd;
-                if(keys['arrowright']) player.x += spd;
-                if(keys['arrowup']) player.y -= spd;
-                if(keys['arrowdown']) player.y += spd;
-
-                // Simple Pattern para teste
-                if(frame % 20 === 0) {
-                    for(let i=0; i<8; i++) {
-                        let a = frame/10 + (Math.PI*2/8 * i);
-                        boss.bullets.push({x: boss.x, y: boss.y, vx: Math.cos(a)*4, vy: Math.sin(a)*4});
-                    }
-                }
-                boss.bullets.forEach((b, i) => {
-                    b.x += b.vx; b.y += b.vy;
-                    if(Math.hypot(b.x-player.x, b.y-player.y) < 10) { player.hp--; updateUI(); boss.bullets.splice(i,1); }
-                });
-            }
-            render();
-            requestAnimationFrame(gameLoop);
-        }
-
-        function render() {
-            ctx.fillStyle = '#050510'; ctx.fillRect(0,0,600,700);
-            if(gameState === 'FIGHT') {
-                ctx.fillStyle = '#fff'; ctx.fillRect(player.x-10, player.y-10, 20, 20);
-                ctx.fillStyle = '#ff00ff'; boss.bullets.forEach(b => ctx.fillRect(b.x, b.y, 4, 4));
-            }
-        }
-
-        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
     </script>
 </body>
 </html>
