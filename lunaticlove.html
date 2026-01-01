@@ -2,22 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lunatic Love Build 0.1.12</title>
+    <title>Lunatic Love Build 0.1.14</title>
     <link rel="icon" type="image/png" href="https://imgur.com/yWGCBpw.png">
     <style>
         body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; color: #fff; font-family: 'Courier New', monospace; }
         #game-container { display: flex; align-items: flex-start; gap: 20px; }
         canvas { border: 3px solid #4b0082; background: #050510; box-shadow: 0 0 30px #4b0082; }
-        #sidebar { width: 180px; background: rgba(20, 0, 40, 0.8); border: 2px solid #8a2be2; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-        .key-box { border: 1px solid #fff; padding: 5px; text-align: center; background: #333; font-weight: bold; }
-        .key-desc { font-size: 0.8em; color: #bbb; margin-top: 4px; text-align: center; }
-        .stat-box { border-left: 4px solid #ff00ff; padding-left: 10px; margin-top: 10px; }
+        #sidebar { width: 180px; background: rgba(20, 0, 40, 0.8); border: 2px solid #8a2be2; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .key-box { border: 1px solid #fff; padding: 3px; text-align: center; background: #333; font-weight: bold; font-size: 0.9em; }
+        .key-desc { font-size: 0.75em; color: #bbb; text-align: center; margin-bottom: 5px; }
+        .stat-box { border-left: 4px solid #ff00ff; padding-left: 10px; margin-bottom: 10px; }
         .stat-label { font-size: 0.7em; color: #aaa; text-transform: uppercase; }
-        .stat-value { font-size: 1.2em; font-weight: bold; }
-        .ui-overlay { position: absolute; width: 600px; height: 700px; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.85); z-index: 20; padding-top: 40px; }
-        .menu-btn { background: #4b0082; border: 2px solid #fff; color: white; padding: 12px 30px; cursor: pointer; font-family: 'Courier New', monospace; width: 200px; }
+        .stat-value { font-size: 1.1em; font-weight: bold; }
+        
+        .ui-overlay { position: absolute; width: 600px; height: 700px; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.9); z-index: 20; padding-top: 40px; }
+        .menu-btn { background: #4b0082; border: 2px solid #fff; color: white; padding: 10px; margin: 5px; cursor: pointer; font-family: 'Courier New', monospace; width: 220px; transition: 0.2s; }
+        .menu-btn:hover { background: #8a2be2; }
+        .active-diff { background: #fff !important; color: #000 !important; font-weight: bold; }
+
         #dialogue-box { position: absolute; bottom: 40px; width: 540px; height: 120px; background: rgba(0, 0, 50, 0.95); border: 3px solid #fff; padding: 10px; display: none; z-index: 30; align-items: center; margin-left: 30px; }
-        #face-container { width: 100px; height: 100px; border: 2px solid #aaa; margin-right: 15px; flex-shrink: 0; }
+        #face-container { width: 100px; height: 100px; border: 2px solid #aaa; margin-right: 15px; flex-shrink: 0; overflow: hidden; background: #000; }
         #face-img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
@@ -25,9 +29,23 @@
     <div id="game-container">
         <div style="position: relative;">
             <div id="main-menu" class="ui-overlay">
-                <img src="https://imgur.com/yWGCBpw.png" style="width:400px">
+                <img src="https://imgur.com/yWGCBpw.png" style="width:350px; margin-bottom: 20px;">
                 <button class="menu-btn" onclick="startGame()">START GAME</button>
+                <button class="menu-btn" onclick="toggleOptions(true)">DIFFICULTY</button>
+                <div id="current-diff-display" style="margin-top:10px; font-size:0.8em; color:#aaa;">Difficulty: Medium</div>
             </div>
+
+            <div id="options-menu" class="ui-overlay" style="display:none;">
+                <h2 style="color: #ff00ff;">SELECT DIFFICULTY</h2>
+                <button class="menu-btn diff-opt" onclick="setDiff(0)">VERY EASY</button>
+                <button class="menu-btn diff-opt" onclick="setDiff(1)">EASY</button>
+                <button class="menu-btn diff-opt active-diff" onclick="setDiff(2)">MEDIUM</button>
+                <button class="menu-btn diff-opt" onclick="setDiff(3)">HARD</button>
+                <button class="menu-btn diff-opt" onclick="setDiff(4)">LUNATIC</button>
+                <button class="menu-btn diff-opt" onclick="setDiff(5)">BRUTAL</button>
+                <button class="menu-btn" style="margin-top:20px; background:#444;" onclick="toggleOptions(false)">BACK</button>
+            </div>
+
             <div id="dialogue-box">
                 <div id="face-container"><img id="face-img" src=""></div>
                 <div id="text-container">
@@ -37,15 +55,16 @@
             </div>
             <canvas id="gameCanvas" width="600" height="700"></canvas>
         </div>
+
         <div id="sidebar">
             <div style="text-align: center; color: #ff00ff; font-weight: bold; border-bottom: 1px solid #ff00ff; padding-bottom: 5px;">STATUS</div>
             <div class="stat-box"><div class="stat-label">Lives</div><div id="ui-lives" class="stat-value">0</div></div>
             <div class="stat-box"><div class="stat-label">Bombs</div><div id="ui-bombs" class="stat-value">0</div></div>
-            <div style="text-align: center; color: #00ffff; font-weight: bold; border-bottom: 1px solid #00ffff; padding-bottom: 5px; margin-top: 20px;">COMMANDS</div>
-            <div><div class="key-box">↑ ↓ ← →</div><div class="key-desc">Movement</div></div>
-            <div><div class="key-box">Z</div><div class="key-desc">Shoot</div></div>
+            <div style="text-align: center; color: #00ffff; font-weight: bold; border-bottom: 1px solid #00ffff; padding-bottom: 5px;">COMMANDS</div>
+            <div><div class="key-box">↑ ↓ ← →</div><div class="key-desc">Move</div></div>
+            <div><div class="key-box">Z</div><div class="key-desc">Shoot / Next</div></div>
             <div><div class="key-box">X</div><div class="key-desc">Spell Card</div></div>
-            <div><div class="key-box">SHIFT</div><div class="key-desc">Slow</div></div>
+            <div><div class="key-box">SHIFT</div><div class="key-desc">Focus Mode</div></div>
         </div>
     </div>
 
@@ -55,30 +74,49 @@
 
         const k_imgs = {};
         const k_urls = {
-            idle: 'https://imgur.com/eJtPITs.png',
-            defend: 'https://imgur.com/8VYfVnQ.png',
-            hit: 'https://imgur.com/I5eFRGd.png',
-            dead: 'https://imgur.com/1NDnHJe.png',
-            walk: 'https://imgur.com/SQCGCDm.png',
-            attack: 'https://imgur.com/Ty6yJaN.png',
+            idle: 'https://imgur.com/eJtPITs.png', defend: 'https://imgur.com/8VYfVnQ.png',
+            hit: 'https://imgur.com/I5eFRGd.png', dead: 'https://imgur.com/1NDnHJe.png',
+            walk: 'https://imgur.com/SQCGCDm.png', attack: 'https://imgur.com/Ty6yJaN.png',
             push: 'https://imgur.com/R1PKVO3.png'
         };
         Object.keys(k_urls).forEach(key => { k_imgs[key] = new Image(); k_imgs[key].src = k_urls[key]; });
-        
         const m_back = new Image(); m_back.src = 'https://imgur.com/s8t8Lml.png';
-        const m_port = 'https://imgur.com/OLqSOVo.png';
-        const k_sad = 'https://imgur.com/pHJtwPT.gif';
+        const portraits = {
+            k_normal: 'https://imgur.com/fheByI4.png', k_sad: 'https://imgur.com/pHJtwPT.gif', m_normal: 'https://imgur.com/OLqSOVo.png'
+        };
 
         let gameState = 'MENU', diagIdx = 0, frame = 0, deathTimer = 0, fadeAlpha = 0;
         let keys = {}, player, boss;
+        
+        // Configurações de Dificuldade
+        let difficulty = 2;
+        const diffSettings = [
+            { name: "Very Easy", bSpd: 0.6, bFreq: 25, bCount: 3, pDmg: 10 },
+            { name: "Easy",      bSpd: 0.8, bFreq: 15, bCount: 4, pDmg: 4 },
+            { name: "Medium",    bSpd: 1.2, bFreq: 10, bCount: 6, pDmg: 2 },
+            { name: "Hard",      bSpd: 1.8, bFreq: 7,  bCount: 8, pDmg: 1.5 },
+            { name: "Lunatic",   bSpd: 2.5, bFreq: 4,  bCount: 12, pDmg: 1 },
+            { name: "Brutal",    bSpd: 4.5, bFreq: 2,  bCount: 16, pDmg: 0.5 }
+        ];
+
+        function toggleOptions(show) {
+            document.getElementById('main-menu').style.display = show ? 'none' : 'flex';
+            document.getElementById('options-menu').style.display = show ? 'flex' : 'none';
+        }
+
+        function setDiff(val) {
+            difficulty = val;
+            document.querySelectorAll('.diff-opt').forEach((btn, i) => btn.classList.toggle('active-diff', i === val));
+            document.getElementById('current-diff-display').innerText = "Difficulty: " + diffSettings[val].name;
+        }
 
         function startGame() {
             player = { x: 300, y: 600, hp: 5, maxHp: 5, bombs: 3, bullets: [], inv: 0 };
             boss = { x: 300, y: 150, hp: 1000, maxHp: 1000, bullets: [], angle: 0, state: 'idle', hitTimer: 0 };
             document.getElementById('main-menu').style.display = 'none';
-            gameState = 'DIAL';
+            gameState = 'DIAL'; diagIdx = 0;
             updateSidebar();
-            updateDialogue({ name: "Kaguya", text: "You really don't know when to give up, do you?", face: k_urls.idle });
+            updateDialogue({ name: "Kaguya", text: "You really don't know when to give up, do you?", face: portraits.k_normal });
         }
 
         function updateSidebar() {
@@ -88,15 +126,15 @@
         }
 
         window.onkeydown = (e) => {
-            const k = e.key.toLowerCase();
-            keys[k] = true;
+            const k = e.key.toLowerCase(); keys[k] = true;
             if (k === 'z' && (gameState === 'DIAL' || gameState === 'GAMEOVER')) {
-                if (gameState === 'DIAL') { gameState = 'FIGHT'; document.getElementById('dialogue-box').style.display = 'none'; }
-                else location.reload();
+                if (gameState === 'DIAL') {
+                    diagIdx++;
+                    if (diagIdx >= 3) { gameState = 'FIGHT'; document.getElementById('dialogue-box').style.display = 'none'; }
+                    else updateDialogue([{name:"Kaguya", text:"...", face:portraits.k_normal}, {name:"Miyuki", text:"I told you I'd come.", face:portraits.m_normal}, {name:"Kaguya", text:"Then prove it!", face:portraits.k_normal}][diagIdx]);
+                } else location.reload();
             }
-            if (k === 'x' && gameState === 'FIGHT' && player.bombs > 0) {
-                player.bombs--; player.inv = 120; boss.bullets = []; updateSidebar();
-            }
+            if (k === 'x' && gameState === 'FIGHT' && player.bombs > 0) { player.bombs--; player.inv = 120; boss.bullets = []; updateSidebar(); }
         };
         window.onkeyup = (e) => keys[e.key.toLowerCase()] = false;
 
@@ -105,25 +143,24 @@
             document.getElementById('char-name').innerText = d.name;
             document.getElementById('char-text').innerText = d.text;
             document.getElementById('face-img').src = d.face;
+            document.getElementById('char-name').style.color = d.name === "Kaguya" ? "#ff00ff" : "#00ffff";
         }
 
         function update() {
             if (gameState === 'FIGHT') {
                 frame++; if (player.inv > 0) player.inv--;
+                let cfg = diffSettings[difficulty];
                 let spd = keys['shift'] ? 2.5 : 5.5;
                 if (keys['arrowleft'] || keys['a']) player.x -= spd;
                 if (keys['arrowright'] || keys['d']) player.x += spd;
                 if (keys['arrowup'] || keys['w']) player.y -= spd;
                 if (keys['arrowdown'] || keys['s']) player.y += spd;
-
-                // Restrições de tela
                 player.x = Math.max(30, Math.min(570, player.x));
                 player.y = Math.max(30, Math.min(670, player.y));
 
                 if (keys['z'] && frame % 5 === 0) player.bullets.push({x: player.x, y: player.y - 20});
                 player.bullets.forEach((b, i) => { b.y -= 14; if(b.y < -20) player.bullets.splice(i, 1); });
 
-                // Lógica da Kaguya
                 let dist = Math.hypot(player.x - boss.x, player.y - boss.y);
                 if (boss.hitTimer > 0) { boss.state = 'hit'; boss.hitTimer--; }
                 else if (dist < 80) boss.state = 'push';
@@ -131,12 +168,11 @@
                 else if (frame % 30 < 15) boss.state = 'attack';
                 else boss.state = 'idle';
 
-                boss.angle += 0.05;
-                if (frame % 8 === 0) {
-                    let count = 6;
-                    for(let i=0; i<count; i++) {
-                        let a = boss.angle + (Math.PI*2/count * i);
-                        boss.bullets.push({x: boss.x, y: boss.y, vx: Math.cos(a)*3.5, vy: Math.sin(a)*3.5});
+                boss.angle += 0.05 * cfg.bSpd;
+                if (frame % cfg.bFreq === 0) {
+                    for(let i=0; i < cfg.bCount; i++) {
+                        let a = boss.angle + (Math.PI*2/cfg.bCount * i);
+                        boss.bullets.push({x: boss.x, y: boss.y, vx: Math.cos(a)*3.5*cfg.bSpd, vy: Math.sin(a)*3.5*cfg.bSpd});
                     }
                 }
 
@@ -146,45 +182,35 @@
                         player.hp--; player.inv = 60; updateSidebar();
                         if (player.hp <= 0) { gameState = 'DYING'; deathTimer = 60; }
                     }
+                    if(b.x < -50 || b.x > 650 || b.y < -50 || b.y > 750) boss.bullets.splice(i,1);
                 });
 
                 player.bullets.forEach((b, i) => {
                     if (Math.hypot(b.x - boss.x, b.y - boss.y) < 50) {
-                        boss.hp -= 2; boss.hitTimer = 5; player.bullets.splice(i, 1);
+                        boss.hp -= cfg.pDmg; boss.hitTimer = 5; player.bullets.splice(i, 1);
                         if (boss.hp <= 0) { gameState = 'WIN_SCENE'; boss.state = 'dead'; }
                     }
                 });
             }
-
-            if (gameState === 'DYING') {
-                deathTimer--; fadeAlpha = Math.min(1, fadeAlpha + 0.02);
-                if (deathTimer <= 0) { gameState = 'GAMEOVER'; updateDialogue({ name: "Kaguya", text: "I thought you could make it...", face: k_sad }); }
-            }
+            if (gameState === 'DYING') { deathTimer--; fadeAlpha = Math.min(1, fadeAlpha + 0.02); if (deathTimer <= 0) { gameState = 'GAMEOVER'; updateDialogue({ name: "Kaguya", text: "I thought you could make it...", face: portraits.k_sad }); } }
         }
 
         function draw() {
             ctx.fillStyle = '#050510'; ctx.fillRect(0, 0, 600, 700);
-            
             if (gameState !== 'MENU') {
-                // Desenhar Boss
                 let img = k_imgs[boss.state] || k_imgs.idle;
                 ctx.drawImage(img, boss.x-45, boss.y-55, 90, 110);
-
                 if (gameState === 'FIGHT' || gameState === 'DYING') {
-                    // Player
                     if (player.inv % 4 < 2) {
                         ctx.drawImage(m_back, player.x-30, player.y-40, 60, 80);
                         ctx.fillStyle = '#333'; ctx.fillRect(player.x-20, player.y-55, 40, 5);
                         ctx.fillStyle = '#0f0'; ctx.fillRect(player.x-20, player.y-55, 40 * (player.hp/player.maxHp), 5);
                     }
-                    // Bullets
                     boss.bullets.forEach(b => { ctx.fillStyle = '#ff00ff'; ctx.beginPath(); ctx.arc(b.x, b.y, 6, 0, Math.PI*2); ctx.fill(); });
                     player.bullets.forEach(b => { ctx.fillStyle = '#fff'; ctx.fillRect(b.x-2, b.y, 4, 15); });
-                    // Boss UI
                     ctx.fillStyle = 'red'; ctx.fillRect(50, 20, 500 * (boss.hp/boss.maxHp), 10);
                 }
             }
-
             if (fadeAlpha > 0) { ctx.fillStyle = `rgba(0,0,0,${fadeAlpha})`; ctx.fillRect(0, 0, 600, 700); }
             requestAnimationFrame(() => { update(); draw(); });
         }
