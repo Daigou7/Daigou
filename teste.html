@@ -2,247 +2,200 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kaguya Boss Fight</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        canvas { border: 2px solid #6a0572; background-color: #0d0d1e; display: block; image-rendering: pixelated; }
-        #loading-screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Courier New', Courier, monospace; 
-            font-size: 2em;
-            flex-direction: column;
-            z-index: 100;
-        }
+        body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; color: #fff; font-family: 'Courier New', monospace; }
+        canvas { border: 3px solid #4b0082; background: #050510; box-shadow: 0 0 20px #4b0082; }
+        #ui-layer { position: absolute; pointer-events: none; width: 600px; height: 700px; }
     </style>
 </head>
 <body>
-    <div id="loading-screen">
-        LOADING ASSETS...<br>
-        <span style="font-size: 0.5em; color: gray;">If stuck, check file names or console (F12).</span>
-    </div>
     <canvas id="gameCanvas" width="600" height="700"></canvas>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const loadingScreen = document.getElementById('loading-screen');
 
-        const GAME_WIDTH = canvas.width;
-        const GAME_HEIGHT = canvas.height;
-        const PLAYER_SPEED = 4.5;
-        const PLAYER_FOCUS_SPEED = 2;
-        const PLAYER_HP = 5;
-        const KAGUYA_HP = 500;
-
-        let player = {
-            x: GAME_WIDTH / 2, y: GAME_HEIGHT - 100,
-            width: 32, height: 32, hitboxRadius: 3,
-            dx: 0, dy: 0,
-            bullets: [], fireCooldown: 0,
-            hp: PLAYER_HP, invincible: 0
-        };
-
+        // --- Game Constants ---
+        const GAME_WIDTH = 600;
+        const GAME_HEIGHT = 700;
+        
+        // --- State Management ---
+        let player = { x: 300, y: 600, hp: 5, hitbox: 3, speed: 4.5, bullets: [], invinc: 0 };
         let kaguya = {
-            x: GAME_WIDTH / 2, y: 120,
-            width: 90, height: 90,
-            hp: KAGUYA_HP, maxHp: KAGUYA_HP,
-            state: 'idle',
-            damageTimer: 0,
-            attackTimer: 0,
-            teleportTimer: 0,
-            bullets: [],
-            angle: 0
+            x: 300, y: 150, hp: 1000, maxHp: 1000,
+            state: 'idle', // idle, attack, teleport, damage, dead
+            sprite: 'idle',
+            timer: 0, bullets: [], angle: 0
         };
 
-        let gamePaused = false;
-        let gameOver = false;
-        let gameWon = false;
-        let frameCount = 0;
+        let keys = {};
+        let frame = 0;
 
-        const assets = {};
-        const imagesToLoad = [
-            { name: 'kaguya_idle', url: 'kaguya_idle.png' },
-            { name: 'kaguya_damage', url: 'kaguya_damage.png' },
-            { name: 'kaguya_dead', url: 'kaguya_dead.png' },
-            { name: 'kaguya_teleport', url: 'kaguya_walk.png' } 
-        ];
-        let loadedImages = 0;
-        let gameStarted = false;
+        // --- Asset Loading ---
+        const sprites = {};
+        const images = {
+            idle: 'kaguya_idle.png',
+            damage: 'kaguya_damage.png',
+            dead: 'kaguya_dead.png',
+            teleport: 'kaguya_teleport.png',
+            attack1: 'kaguya_attack1.png',
+            attack2: 'kaguya_attack2.png',
+            attack3: 'kaguya_attack3.png'
+        };
 
-        function tryStartGame() {
-            if (!gameStarted) {
-                gameStarted = true;
-                loadingScreen.style.display = 'none';
-                gameLoop();
-            }
+        let loadedCount = 0;
+        for (let key in images) {
+            const img = new Image();
+            img.src = images[key];
+            img.onload = () => { loadedCount++; };
+            img.onerror = () => { loadedCount++; console.log("Missing: " + images[key]); };
+            sprites[key] = img;
         }
 
-        imagesToLoad.forEach(img => {
-            const image = new Image();
-            image.src = img.url;
-            image.onload = () => {
-                loadedImages++;
-                assets[img.name] = image;
-                if (loadedImages === imagesToLoad.length) tryStartGame();
-            };
-            image.onerror = () => {
-                loadedImages++;
-                if (loadedImages === imagesToLoad.length) tryStartGame();
-            };
-        });
-
-        setTimeout(() => { if (!gameStarted) tryStartGame(); }, 2000);
-
-        const keys = {};
-        window.addEventListener('keydown', e => {
-            keys[e.key] = true;
-            if (e.key === 'p' || e.key === 'P') gamePaused = !gamePaused;
-        });
+        window.addEventListener('keydown', e => keys[e.key] = true);
         window.addEventListener('keyup', e => keys[e.key] = false);
 
         function update() {
-            if (gamePaused || gameOver || gameWon) return;
-            frameCount++;
-
-            let speed = keys['Shift'] ? PLAYER_FOCUS_SPEED : PLAYER_SPEED;
-            player.dx = 0; player.dy = 0;
-            if (keys['ArrowLeft'] || keys['a']) player.dx = -speed;
-            if (keys['ArrowRight'] || keys['d']) player.dx = speed;
-            if (keys['ArrowUp'] || keys['w']) player.dy = -speed;
-            if (keys['ArrowDown'] || keys['s']) player.dy = speed;
+            frame++;
             
-            player.x = Math.max(10, Math.min(GAME_WIDTH - 10, player.x + player.dx));
-            player.y = Math.max(10, Math.min(GAME_HEIGHT - 10, player.y + player.dy));
+            // Player Movement
+            let moveSpeed = keys['Shift'] ? 2 : player.speed;
+            if ((keys['ArrowLeft'] || keys['a']) && player.x > 10) player.x -= moveSpeed;
+            if ((keys['ArrowRight'] || keys['d']) && player.x < GAME_WIDTH - 10) player.x += moveSpeed;
+            if ((keys['ArrowUp'] || keys['w']) && player.y > 20) player.y -= moveSpeed;
+            if ((keys['ArrowDown'] || keys['s']) && player.y < GAME_HEIGHT - 20) player.y += moveSpeed;
 
-            if ((keys['z'] || keys['Z']) && player.fireCooldown <= 0) {
-                player.bullets.push({x: player.x - 10, y: player.y, speed: 12, angle: -0.1});
-                player.bullets.push({x: player.x, y: player.y - 5, speed: 12, angle: 0});
-                player.bullets.push({x: player.x + 10, y: player.y, speed: 12, angle: 0.1});
-                player.fireCooldown = 6;
+            // Player Shooting
+            if ((keys['z'] || keys['Z']) && frame % 5 === 0) {
+                player.bullets.push({x: player.x, y: player.y - 10});
             }
-            if (player.fireCooldown > 0) player.fireCooldown--;
-            if (player.invincible > 0) player.invincible--;
+            player.bullets.forEach((b, i) => { b.y -= 10; if(b.y < 0) player.bullets.splice(i, 1); });
 
-            for (let i = player.bullets.length - 1; i >= 0; i--) {
-                let b = player.bullets[i];
-                b.x += Math.sin(b.angle) * b.speed;
-                b.y -= Math.cos(b.angle) * b.speed;
-                if (b.y < -50) player.bullets.splice(i, 1);
-            }
-
+            // Kaguya AI & Sprites
             if (kaguya.hp > 0) {
-                if (kaguya.damageTimer > 0) kaguya.damageTimer--;
-                kaguya.teleportTimer++;
-                if (kaguya.teleportTimer > 300) {
-                    kaguya.state = 'teleporting';
-                    if (kaguya.teleportTimer > 360) {
-                        kaguya.x = 100 + Math.random() * (GAME_WIDTH - 200);
-                        kaguya.y = 50 + Math.random() * 100;
-                        kaguya.state = 'idle';
-                        kaguya.teleportTimer = 0;
-                        for(let i=0; i<36; i++) {
-                             kaguya.bullets.push({x: kaguya.x, y: kaguya.y, speed: 4, angle: (Math.PI * 2 / 36) * i, color: '#FF00FF', radius: 6});
+                kaguya.timer++;
+                
+                // State: Teleport logic
+                if (kaguya.timer % 300 === 0) {
+                    kaguya.state = 'teleport';
+                    kaguya.sprite = 'teleport';
+                } else if (kaguya.timer % 300 === 40) {
+                    kaguya.x = 100 + Math.random() * 400;
+                    kaguya.y = 100 + Math.random() * 100;
+                    kaguya.state = 'attack';
+                }
+
+                // State: Attack Cycle
+                if (kaguya.state === 'attack') {
+                    kaguya.angle += 0.1;
+                    // Cycle through your new attack sprites
+                    if (frame % 60 < 20) kaguya.sprite = 'attack1';
+                    else if (frame % 60 < 40) kaguya.sprite = 'attack2';
+                    else kaguya.sprite = 'attack3';
+
+                    // Shoot patterns
+                    if (frame % 5 === 0) {
+                        for(let i=0; i<4; i++) {
+                            let a = kaguya.angle + (Math.PI/2 * i);
+                            kaguya.bullets.push({x: kaguya.x, y: kaguya.y, vx: Math.cos(a)*3, vy: Math.sin(a)*3, c: '#ff00ff'});
                         }
                     }
+                } else if (kaguya.state === 'idle') {
+                    kaguya.sprite = 'idle';
                 }
-                if (kaguya.state !== 'teleporting') {
-                    kaguya.angle += 0.04;
-                    if (frameCount % 4 === 0) {
-                        kaguya.bullets.push({x: kaguya.x, y: kaguya.y, speed: 3, angle: kaguya.angle, color: 'cyan', radius: 4});
-                        kaguya.bullets.push({x: kaguya.x, y: kaguya.y, speed: 3, angle: kaguya.angle + Math.PI, color: 'white', radius: 4});
-                    }
-                }
+
+                if (player.invinc > 0) player.invinc--;
             } else {
                 kaguya.state = 'dead';
-                if (!gameWon) setTimeout(() => gameWon = true, 100);
+                kaguya.sprite = 'dead';
             }
 
-            for (let i = kaguya.bullets.length - 1; i >= 0; i--) {
-                let b = kaguya.bullets[i];
-                b.x += Math.cos(b.angle) * b.speed;
-                b.y += Math.sin(b.angle) * b.speed;
-                if (b.x < -50 || b.x > GAME_WIDTH + 50 || b.y < -50 || b.y > GAME_HEIGHT + 50) kaguya.bullets.splice(i, 1);
-            }
-
-            checkCollisions();
-        }
-
-        function checkCollisions() {
-            if (player.invincible <= 0 && !gameWon && !gameOver) {
-                for (let b of kaguya.bullets) {
-                    let dist = Math.sqrt((player.x - b.x)**2 + (player.y - b.y)**2);
-                    if (dist < player.hitboxRadius + b.radius) {
-                        player.hp--; player.invincible = 90; player.bullets = [];
-                        if (player.hp <= 0) gameOver = true;
-                    }
+            // Bullet Physics
+            kaguya.bullets.forEach((b, i) => {
+                b.x += b.vx; b.y += b.vy;
+                if(b.x < 0 || b.x > GAME_WIDTH || b.y > GAME_HEIGHT) kaguya.bullets.splice(i, 1);
+                
+                // Collision with Player
+                let dist = Math.sqrt((b.x - player.x)**2 + (b.y - player.y)**2);
+                if (dist < player.hitbox + 4 && player.invinc <= 0) {
+                    player.hp--;
+                    player.invinc = 60;
                 }
-            }
-            if (kaguya.state !== 'teleporting' && kaguya.state !== 'dead') {
-                for (let i = player.bullets.length - 1; i >= 0; i--) {
-                    let b = player.bullets[i];
-                    if (b.x > kaguya.x - 40 && b.x < kaguya.x + 40 && b.y > kaguya.y - 50 && b.y < kaguya.y + 50) {
-                        kaguya.hp--; kaguya.damageTimer = 5; player.bullets.splice(i, 1);
-                    }
+            });
+
+            // Player Bullets vs Kaguya
+            player.bullets.forEach((b, i) => {
+                if (b.x > kaguya.x - 40 && b.x < kaguya.x + 40 && b.y > kaguya.y - 40 && b.y < kaguya.y + 40 && kaguya.state !== 'teleport') {
+                    kaguya.hp -= 2;
+                    kaguya.sprite = 'damage';
+                    player.bullets.splice(i, 1);
                 }
-            }
+            });
         }
 
         function draw() {
-            ctx.fillStyle = '#1a1a2e';
-            ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-            if (kaguya.state === 'dead') {
-                if (assets.kaguya_dead) ctx.drawImage(assets.kaguya_dead, kaguya.x - 64, kaguya.y - 64, 128, 128);
-            } else if (kaguya.state === 'teleporting') {
-                ctx.globalAlpha = 0.6;
-                if (assets.kaguya_teleport) ctx.drawImage(assets.kaguya_teleport, kaguya.x - 45, kaguya.y - 45, 90, 90);
-                ctx.globalAlpha = 1.0;
+            // Draw Kaguya
+            let curSprite = sprites[kaguya.sprite];
+            if (curSprite && curSprite.complete) {
+                ctx.drawImage(curSprite, kaguya.x - 60, kaguya.y - 60, 120, 120);
             } else {
-                let sprite = (kaguya.damageTimer > 0 && assets.kaguya_damage) ? assets.kaguya_damage : assets.kaguya_idle;
-                if (sprite) ctx.drawImage(sprite, kaguya.x - 45, kaguya.y - 45, 90, 90);
+                // Fallback if images fail
+                ctx.fillStyle = 'purple';
+                ctx.fillRect(kaguya.x - 20, kaguya.y - 20, 40, 40);
+                ctx.fillStyle = 'white';
+                ctx.fillText("IMAGE MISSING: " + kaguya.sprite, kaguya.x - 50, kaguya.y + 40);
             }
 
-            kaguya.bullets.forEach(b => { ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2); ctx.fillStyle = b.color; ctx.fill(); });
+            // Draw Bullets
+            kaguya.bullets.forEach(b => {
+                ctx.fillStyle = b.c;
+                ctx.beginPath(); ctx.arc(b.x, b.y, 5, 0, Math.PI*2); ctx.fill();
+            });
 
-            if (!gameOver) {
-                ctx.fillStyle = player.invincible % 10 > 5 ? 'transparent' : 'red';
-                ctx.beginPath(); ctx.arc(player.x, player.y, 5, 0, Math.PI*2); ctx.fill(); 
-                if (keys['Shift']) { ctx.strokeStyle = 'white'; ctx.beginPath(); ctx.arc(player.x, player.y, 20, 0, Math.PI*2); ctx.stroke(); }
+            // Draw Player
+            if (player.invinc % 4 < 2) {
+                ctx.fillStyle = '#00ffff';
+                ctx.beginPath(); ctx.arc(player.x, player.y, 8, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'red'; // Hitbox
+                ctx.beginPath(); ctx.arc(player.x, player.y, player.hitbox, 0, Math.PI*2); ctx.fill();
             }
 
-            ctx.fillStyle = '#ffff00';
-            player.bullets.forEach(b => ctx.fillRect(b.x - 2, b.y - 8, 4, 16));
+            player.bullets.forEach(b => {
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(b.x-2, b.y, 4, 15);
+            });
 
-            ctx.fillStyle = 'black'; ctx.fillRect(20, 20, GAME_WIDTH - 40, 10);
-            ctx.fillStyle = 'red'; ctx.fillRect(20, 20, (GAME_WIDTH - 40) * (kaguya.hp / KAGUYA_HP), 10);
-            ctx.strokeStyle = 'white'; ctx.strokeRect(20, 20, GAME_WIDTH - 40, 10);
-
-            ctx.fillStyle = 'white'; ctx.font = '16px Arial'; ctx.textAlign = 'left';
-            ctx.fillText(`LIVES: ${player.hp}`, 20, GAME_HEIGHT - 20);
-
-            if (gamePaused) {
-                ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0,0,GAME_WIDTH, GAME_HEIGHT);
-                ctx.fillStyle = 'white'; ctx.font = '40px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("PAUSED", GAME_WIDTH/2, GAME_HEIGHT/2);
-            }
-            if (gameWon) {
-                ctx.fillStyle = 'gold'; ctx.font = '40px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("KAGUYA DEFEATED!", GAME_WIDTH/2, GAME_HEIGHT/2);
-            }
-            if (gameOver) {
-                ctx.fillStyle = 'red'; ctx.font = '40px Arial'; ctx.textAlign = 'center';
+            // UI - English
+            ctx.fillStyle = 'red';
+            ctx.fillRect(50, 20, (GAME_WIDTH - 100) * (kaguya.hp / kaguya.maxHp), 10);
+            ctx.strokeStyle = '#fff';
+            ctx.strokeRect(50, 20, GAME_WIDTH - 100, 10);
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = '18px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText("LIVES: " + player.hp, 20, GAME_HEIGHT - 20);
+            
+            if (player.hp <= 0) {
+                ctx.fillStyle = 'red'; ctx.font = '50px Arial'; ctx.textAlign = 'center';
                 ctx.fillText("GAME OVER", GAME_WIDTH/2, GAME_HEIGHT/2);
+            }
+            if (kaguya.hp <= 0) {
+                ctx.fillStyle = 'gold'; ctx.font = '50px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("KAGUYA DEFEATED", GAME_WIDTH/2, GAME_HEIGHT/2);
             }
         }
 
-        function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        loop();
     </script>
 </body>
 </html>
