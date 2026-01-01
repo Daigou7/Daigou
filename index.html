@@ -1,51 +1,47 @@
 <style>
-    /* --- CSS DO AVATAR CORRIGIDO --- */
-    .avatar-frame { 
-        width: 160px; 
-        height: 160px; 
-        border-radius: 12px; 
-        margin-bottom: 15px; 
-        overflow: hidden; 
-        border: 1px solid rgba(247, 209, 215, 0.5); 
-        background: transparent; /* Remove o fundo preto */
+    /* --- ESTILO DOS GATINHOS --- */
+    .cat-emoji {
+        position: absolute;
+        font-size: 32px;
+        animation: fall linear forwards;
+        pointer-events: none;
+        z-index: 5000;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
     }
 
-    .avatar-frame img { 
-        width: 100%; 
-        height: 100%; 
-        object-fit: cover; /* Preenche o quadrado sem deixar bordas */
-        object-position: center; 
-    }
-
-    /* Estilo das thumbnails de música */
-    .playlist-thumb { 
-        width: 100px; 
-        height: 100px; 
-        border-radius: 8px; 
-        border: 1px solid rgba(247,209,215,0.3); 
-        margin-bottom: 8px; 
-        background: #111; 
-        object-fit: cover;
+    @keyframes fall {
+        from { transform: translateY(-50px) rotate(0deg); }
+        to { transform: translateY(calc(100vh - 40px)) rotate(10deg); }
     }
 </style>
 
-<div id="win-music" class="window">
-    <div class="window-header"><span>~/music</span><span class="close-btn" onclick="closeWin('win-music')">✖</span></div>
-    <div class="window-body">
-        <div class="playlist-item" onclick="playList('PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC')">
-            <img src="https://i.imgur.com/fheByI4.png" class="playlist-thumb"><span>Anime_Hits.mp3</span>
-        </div>
-        <div class="playlist-item" onclick="playList('PLuJXaOWHQNoTeLG7B9LPm7lSy2pBjEQww')">
-            <img src="https://i.imgur.com/fheByI4.png" class="playlist-thumb"><span>OSTs.mp3</span>
-        </div>
-        <div class="playlist-item" onclick="playList('PLuJXaOWHQNoSPXr0hMsQeWzE5ycT8EmvQ')">
-            <img src="https://i.imgur.com/fheByI4.png" class="playlist-thumb"><span>Atmospheric.mp3</span>
-        </div>
-        <div class="playlist-item" onclick="playList('PLuJXaOWHQNoRetJglA-ZrtjbGz054kEyN')">
-            <img src="https://i.imgur.com/fheByI4.png" class="playlist-thumb"><span>Phonk.mp3</span>
-        </div>
-        <div class="playlist-item" onclick="playList('PLuJXaOWHQNoRV1uZ_rxqK8-6QhP3RmFOu')">
-            <img src="https://i.imgur.com/fheByI4.png" class="playlist-thumb"><span>Disturbed.mp3</span>
-        </div>
-    </div>
-</div>
+<script>
+    // --- FUNÇÃO DA CHUVA DE GATOS ATUALIZADA ---
+    let fallingCatsInterval;
+    function startCatRain() {
+        if (fallingCatsInterval) return; 
+        let catCount = 0;
+        fallingCatsInterval = setInterval(() => {
+            if (catCount >= 35) { 
+                clearInterval(fallingCatsInterval);
+                fallingCatsInterval = null;
+                return;
+            }
+
+            const cat = document.createElement('div');
+            cat.classList.add('cat-emoji');
+            cat.innerText = '🐈'; // Apenas o gato inteiro
+            cat.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+            cat.style.animationDuration = (1.5 + Math.random() * 2) + 's'; 
+            document.body.appendChild(cat);
+            catCount++;
+
+            // Quando terminar de cair, ele fixa no fundo
+            cat.addEventListener('animationend', () => {
+                cat.style.top = (window.innerHeight - 40) + 'px'; 
+                cat.style.animation = 'none';
+            });
+
+        }, 150); 
+    }
+</script>
