@@ -23,7 +23,7 @@
             height: 100vh; width: 100vw; overflow: hidden;
         }
 
-        /* --- BOOT SCREEN (KAGUYA ADDED) --- */
+        /* --- BOOT SCREEN --- */
         #boot-screen {
             position: fixed; inset: 0; background: #000; z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -108,9 +108,20 @@
         .logo-main { width: 120px; margin-bottom: 20px; opacity: 0.9; }
         .bio { font-family: 'Quicksand', sans-serif; font-size: 12px; opacity: 0.8; line-height: 1.5; margin-bottom: 20px; white-space: pre-line; }
 
-        .os-icons { display: flex; gap: 15px; margin-bottom: 25px; }
+        .os-icons { display: flex; gap: 15px; margin-bottom: 20px; }
         .os-icons img { width: 28px; transition: 0.3s; cursor: pointer; }
         .os-icons img:hover { transform: translateY(-3px); }
+
+        /* --- NOVOS ELEMENTOS DO CARD --- */
+        .discord-status {
+            display: flex; align-items: center; gap: 8px; font-size: 10px; opacity: 0.7; margin-bottom: 5px;
+        }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #747f8d; border: 2px solid #0a0a0c; }
+        
+        .visitor-counter {
+            font-size: 11px; cursor: pointer; opacity: 0.6; transition: 0.3s; border-top: 1px solid rgba(247,209,215,0.1); padding-top: 10px; width: 100%;
+        }
+        .visitor-counter:hover { opacity: 1; color: var(--accent); }
 
         #notification {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -162,7 +173,27 @@
             <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png"></a>
             <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
         </div>
+
+        <div class="discord-status">
+            <div class="status-dot"></div>
+            <span>currently offline<br>last online 700 years ago</span>
+        </div>
+
+        <div class="visitor-counter" onclick="openWin('win-stats')">
+            Total Visitors: 777
+        </div>
     </aside>
+
+    <div id="win-stats" class="window">
+        <div class="window-header"><span>~/visitors_by_country</span><span class="close-btn" onclick="closeWin('win-stats')">✖</span></div>
+        <div class="window-body">
+            <div class="file"><img src="https://flagcdn.com/w160/br.png" class="square">Brazil.vst</div>
+            <div class="file"><img src="https://flagcdn.com/w160/us.png" class="square">USA.vst</div>
+            <div class="file"><img src="https://flagcdn.com/w160/jp.png" class="square">Japan.vst</div>
+            <div class="file"><img src="https://flagcdn.com/w160/de.png" class="square">Germany.vst</div>
+            <div class="file"><img src="https://flagcdn.com/w160/ru.png" class="square">Russia.vst</div>
+        </div>
+    </div>
 
     <div id="win-animes" class="window">
         <div class="window-header"><span>~/animes</span><span class="close-btn" onclick="closeWin('win-animes')">✖</span></div>
@@ -232,13 +263,46 @@
             document.getElementById(id).classList.add('active');
         }
         function closeWin(id) { document.getElementById(id).classList.remove('active'); }
+        
+        function showNotification(text) {
+            const note = document.getElementById("notification");
+            note.innerText = text;
+            note.style.display = "block";
+            setTimeout(() => { note.style.display = "none"; }, 2500);
+        }
+
         function copyBTC() {
             navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => {
-                const note = document.getElementById("notification");
-                note.style.display = "block";
-                setTimeout(() => { note.style.display = "none"; }, 2500);
+                showNotification("BTC Address Copied!");
             });
         }
+
+        // --- MECÂNICA DE DIGITAÇÃO ---
+        let inputBuffer = "";
+        const commands = {
+            "blank": "⠀",
+            "cross": "☦",
+            "guts": "𒉭",
+            "berserk": "𒉭",
+            "stigma": "𒉭"
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key.length > 1) return;
+            inputBuffer += e.key.toLowerCase();
+            if (inputBuffer.length > 15) inputBuffer = inputBuffer.slice(-15);
+
+            for (const cmd in commands) {
+                if (inputBuffer.endsWith(cmd)) {
+                    const textToCopy = commands[cmd];
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        showNotification(`"${textToCopy}" copied!`);
+                    });
+                    inputBuffer = "";
+                    break;
+                }
+            }
+        });
     </script>
 </body>
 </html>
