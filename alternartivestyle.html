@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daigou OS</title>
-    <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
+    <link rel="icon" type="image/png" href="https://imgur.com/yWGCBpw.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Quicksand:wght@400;700&display=swap');
 
@@ -20,284 +20,182 @@
             background: #000 url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;
             background-size: cover;
             color: var(--accent);
-            font-family: 'JetBrains Mono', monospace; /* Fonte mais "geek" por padrão */
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            font-family: 'JetBrains Mono', monospace;
+            height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
-        /* --- BIOS FAST BOOT --- */
-        #bios-screen {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            animation: fadeOut 0.4s ease 1.2s forwards;
-        }
-        .bios-logo { width: 140px; filter: drop-shadow(0 0 15px var(--accent)); margin-bottom: 20px; }
-
-        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
-
-        /* --- ARCH TOP BAR (POLYBAR STYLE) --- */
+        /* --- TOP BAR --- */
         .top-bar {
-            height: 32px;
-            background: var(--bar-bg);
-            border-bottom: 1px solid rgba(247, 209, 215, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 15px;
-            font-size: 11px;
-            z-index: 5000;
+            height: 32px; background: var(--bar-bg); border-bottom: 1px solid rgba(247, 209, 215, 0.2);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 15px; font-size: 11px; z-index: 5000;
         }
 
-        .bar-left, .bar-right { display: flex; gap: 15px; align-items: center; }
-        .bar-center { position: absolute; left: 50%; transform: translateX(-50%); font-weight: bold; }
-        
-        .tag { background: rgba(247, 209, 215, 0.1); padding: 2px 8px; border-radius: 4px; }
-        .tag.active { background: var(--accent); color: #000; }
-
-        /* --- DESKTOP AREA --- */
-        .desktop {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            flex-wrap: wrap;
-            align-content: flex-start;
-            gap: 15px;
-        }
-
-        .desktop-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 90px;
-            cursor: pointer;
-            padding: 10px;
-            transition: 0.2s;
-            border-radius: 6px;
-        }
+        /* --- DESKTOP --- */
+        .desktop { flex: 1; padding: 40px; display: flex; flex-direction: column; gap: 20px; align-content: flex-start; flex-wrap: wrap; }
+        .desktop-item { display: flex; flex-direction: column; align-items: center; width: 100px; cursor: pointer; padding: 10px; border-radius: 8px; }
         .desktop-item:hover { background: rgba(247, 209, 215, 0.1); }
+        .folder-icon { width: 50px; height: 50px; background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center; background-size: contain; filter: hue-rotate(300deg) saturate(0.6); }
 
-        .folder-icon {
-            width: 48px; height: 48px;
-            background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center;
-            background-size: contain;
-            filter: hue-rotate(300deg) saturate(0.6);
-        }
-        .item-name { margin-top: 8px; font-size: 10px; color: #fff; text-align: center; }
-
-        /* --- SIDE WIDGET (CONKY STYLE) --- */
-        .side-widget {
-            position: fixed;
-            right: 40px;
-            top: 60px;
-            width: 280px;
-            background: rgba(10, 10, 12, 0.7);
-            backdrop-filter: blur(10px);
-            padding: 30px 20px;
-            border-radius: 12px;
-            border-left: 2px solid var(--accent);
-            text-align: center;
-        }
-
-        .avatar-frame {
-            width: 120px; height: 120px;
-            padding: 5px;
-            background: repeating-linear-gradient(45deg, var(--accent), var(--accent) 4px, #000 4px, #000 8px);
-            border-radius: 10px;
-            margin: 0 auto 15px;
-        }
-        .avatar-frame img { width: 100%; height: 100%; border-radius: 5px; object-fit: cover; }
-        .widget-bio { font-size: 11px; line-height: 1.5; margin-bottom: 20px; color: var(--accent); font-family: 'Quicksand'; }
-
-        .os-icons { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; }
-        .os-icons img { width: 24px; filter: drop-shadow(0 0 3px var(--accent)); transition: 0.3s; }
-        .os-icons img:hover { transform: translateY(-2px); }
-
-        .status-box { background: rgba(87, 203, 222, 0.05); padding: 8px; border-radius: 6px; border: 1px solid rgba(87, 203, 222, 0.15); }
-        .status-on { color: #57cbde; font-size: 11px; font-weight: bold; }
-
-        /* --- MODAL WINDOWS --- */
+        /* --- WINDOW MODALS --- */
         .window-modal {
-            position: fixed;
-            top: 50%; left: 45%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            background: var(--window-bg);
-            border: 1px solid rgba(247, 209, 215, 0.2);
-            border-radius: 8px;
-            display: none;
-            flex-direction: column;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-            z-index: 6000;
+            position: fixed; top: 50%; left: 45%; transform: translate(-50%, -50%);
+            background: var(--window-bg); border: 1px solid rgba(247, 209, 215, 0.2);
+            border-radius: 10px; display: none; flex-direction: column;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.9); z-index: 6000;
         }
         .window-modal.active { display: flex; }
+        .modal-header { padding: 10px 20px; background: rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
+        .close-btn { color: #ff5f56; cursor: pointer; }
 
-        .modal-header {
-            padding: 8px 15px;
-            background: rgba(255,255,255,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #333;
-        }
-        .close-btn { color: #ff5f56; cursor: pointer; font-weight: bold; }
+        .modal-body { padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px; }
 
-        .modal-body {
-            padding: 25px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
+        /* --- GAME UI INTEGRATION --- */
+        #game-execution-window { width: 880px; height: 780px; }
+        .game-layout { display: flex; background: #000; padding: 20px; gap: 20px; font-family: 'Courier New', monospace; }
+        #sidebar-game { width: 140px; background: rgba(20, 0, 40, 0.8); border: 2px solid #8a2be2; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .stat-box { border-left: 3px solid #ff00ff; padding-left: 8px; margin-bottom: 5px; }
+        .stat-value { font-size: 1.2em; font-weight: bold; color: #fff; }
+        .key-box { border: 1px solid #fff; padding: 2px; text-align: center; background: #333; font-size: 0.8em; color: #fff; }
+        
+        canvas { border: 3px solid #4b0082; background: #050510; }
+        .game-overlay { position: absolute; width: 600px; height: 700px; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.9); z-index: 20; padding-top: 40px; }
+        .menu-btn { background: #4b0082; border: 2px solid #fff; color: white; padding: 10px; margin: 5px; cursor: pointer; width: 220px; }
 
-        .item-card { text-decoration: none; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
-        .item-image { width: 70px; height: 95px; border-radius: 4px; border: 1px solid #333; transition: 0.3s; overflow: hidden; }
-        .item-image.square { height: 70px; }
-        .item-image img { width: 100%; height: 100%; object-fit: cover; }
-        .item-label { font-size: 9px; margin-top: 8px; color: var(--accent); text-align: center; }
-
-        .item-card:hover .item-image { border-color: var(--accent); transform: scale(1.05); }
-
-        #notification {
-            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
-            background: var(--accent); color: #000; padding: 8px 20px; border-radius: 4px;
-            font-weight: bold; display: none; z-index: 10000; font-size: 12px;
-        }
+        /* --- WIDGET --- */
+        .side-widget { position: fixed; right: 40px; top: 60px; width: 280px; background: rgba(10, 10, 12, 0.75); padding: 30px; border-radius: 15px; border-left: 2px solid var(--accent); text-align: center; }
+        .avatar { width: 120px; height: 120px; border: 2px solid var(--accent); margin: 0 auto 15px; }
     </style>
 </head>
 <body>
 
-    <div id="bios-screen">
-        <img src="https://imgur.com/btg3Zph.png" class="bios-logo">
-        <div style="font-size: 12px; letter-spacing: 3px;">INITIALIZING...</div>
-    </div>
-
     <header class="top-bar">
-        <div class="bar-left">
-            <span style="color: #fff; font-weight: bold;"></span> <div class="tag active">1</div>
-            <div class="tag">2</div>
-            <div class="tag">3</div>
-        </div>
-        <div class="bar-center">daigou@arch</div>
-        <div class="bar-right">
-            <span> 100%</span>
-            <span> 80%</span>
-            <span id="clock">00:00:00</span>
-        </div>
+        <div class="bar-left"><span style="color:#67c1f5"></span> <small>daigou@arch</small></div>
+        <div class="bar-right" id="clock">00:00:00</div>
     </header>
 
-    <main class="desktop" id="desktop-area">
-        <div class="desktop-item" onclick="openFolder('folder-waifus')">
+    <main class="desktop" onclick="if(event.target==this)closeFolder()">
+        <div class="desktop-item" onclick="openFolder('folder-projects')">
             <div class="folder-icon"></div>
-            <span class="item-name">waifus/</span>
-        </div>
-        <div class="desktop-item" onclick="openFolder('folder-games')">
-            <div class="folder-icon"></div>
-            <span class="item-name">games/</span>
-        </div>
-        <div class="desktop-item" onclick="openFolder('folder-anime')">
-            <div class="folder-icon"></div>
-            <span class="item-name">anime/</span>
-        </div>
-        <div class="desktop-item" onclick="openFolder('folder-mygames')">
-            <div class="folder-icon"></div>
-            <span class="item-name">projects/</span>
+            <span style="font-size:11px">projects/</span>
         </div>
     </main>
 
+    <div id="folder-projects" class="window-modal">
+        <div class="modal-header"><span>~/projects</span><span class="close-btn" onclick="closeFolder()">✖</span></div>
+        <div class="modal-body">
+            <div class="desktop-item" onclick="launchGame()">
+                <img src="https://imgur.com/yWGCBpw.png" style="width:45px">
+                <span style="font-size:10px; margin-top:5px">LunaticLove</span>
+            </div>
+            <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="desktop-item" style="text-decoration:none; color:inherit;">
+                <img src="https://imgur.com/yWGCBpw.png" style="width:45px; opacity:0.6">
+                <span style="font-size:10px; margin-top:5px">itch_io.url</span>
+            </a>
+        </div>
+    </div>
+
+    <div id="game-execution-window" class="window-modal">
+        <div class="modal-header"><span>./LunaticLove</span><span class="close-btn" onclick="stopGame()">✖</span></div>
+        <div class="game-layout">
+            <div id="sidebar-game">
+                <div style="text-align: center; color: #ff00ff; font-size: 12px; border-bottom: 1px solid #ff00ff;">STATUS</div>
+                <div class="stat-box"><div style="font-size:10px; color:#aaa;">LIVES</div><div id="ui-lives" class="stat-value">0</div></div>
+                <div class="stat-box"><div style="font-size:10px; color:#aaa;">BOMBS</div><div id="ui-bombs" class="stat-value">0</div></div>
+                <div style="text-align: center; color: #00ffff; font-size: 12px; margin-top:10px;">KEYS</div>
+                <div class="key-box">Z: Shoot</div>
+                <div class="key-box">X: Bomb</div>
+                <div class="key-box">SHIFT: Focus</div>
+            </div>
+
+            <div style="position: relative;">
+                <div id="game-menu" class="game-overlay">
+                    <img src="https://imgur.com/yWGCBpw.png" style="width:250px; margin-bottom:30px;">
+                    <button class="menu-btn" onclick="initGame()">START_BINARY</button>
+                </div>
+                <canvas id="gameCanvas" width="600" height="700"></canvas>
+            </div>
+        </div>
+    </div>
+
     <aside class="side-widget">
-        <div class="avatar-frame">
-            <img src="https://imgur.com/pHJtwPT.gif">
-        </div>
-        <img src="https://imgur.com/btg3Zph.png" style="width: 100px; margin-bottom: 15px;">
-        <p class="widget-bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br><br>Buy Bitcoin ₿</p>
-        <div class="os-icons">
-            <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png"></a>
-            <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png"></a>
-            <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png"></a>
-        </div>
-        <div class="status-box">
-            <div class="status-on">Currently Offline</div>
-        </div>
+        <div class="avatar"><img src="https://imgur.com/pHJtwPT.gif" style="width:100%; height:100%; object-fit:cover;"></div>
+        <p style="font-size:12px">Buy Bitcoin ₿</p>
     </aside>
 
-    <div id="folder-waifus" class="window-modal">
-        <div class="modal-header"><span>waifus/</span><span class="close-btn" onclick="closeFolder()">[x]</span></div>
-        <div class="modal-body">
-            <a href="https://anilist.co/character/120649/" target="_blank" class="item-card"><div class="item-image square"><img src="https://imgur.com/9Z8MRSu.png"></div><span class="item-label">Kaguya.waifu</span></a>
-            <a href="https://anilist.co/character/34470/" target="_blank" class="item-card"><div class="item-image square"><img src="https://imgur.com/YALUeUn.png"></div><span class="item-label">Kurisu.waifu</span></a>
-            <a href="https://anilist.co/character/144594/" target="_blank" class="item-card"><div class="item-image square"><img src="https://imgur.com/7L27P94.png"></div><span class="item-label">Kobeni.waifu</span></a>
-            <a href="https://anilist.co/character/88572/" target="_blank" class="item-card"><div class="item-image square"><img src="https://imgur.com/iOmt3Xb.png"></div><span class="item-label">Emilia.waifu</span></a>
-        </div>
-    </div>
-
-    <div id="folder-games" class="window-modal">
-        <div class="modal-header"><span>games/</span><span class="close-btn" onclick="closeFolder()">[x]</span></div>
-        <div class="modal-body">
-            <a href="https://store.steampowered.com/app/570940/" target="_blank" class="item-card"><div class="item-image square"><img src="https://imgur.com/lcMd96p.png"></div><span class="item-label">Dark Souls.game</span></a>
-            <a href="https://minecraft.net" target="_blank" class="item-card"><div class="item-image square"><img src="https://imgur.com/ctWNET1.png"></div><span class="item-label">Minecraft.game</span></a>
-            <a href="https://store.steampowered.com/app/17390/" target="_blank" class="item-card"><div class="item-image square"><img src="https://imgur.com/J4g8PTZ.png"></div><span class="item-label">Spore.game</span></a>
-            <a href="https://yanderesimulator.com/" target="_blank" class="item-card"><div class="item-image square"><img src="https://imgur.com/hdifxRI.png"></div><span class="item-label">Yandere Sim.game</span></a>
-        </div>
-    </div>
-
-    <div id="folder-anime" class="window-modal">
-        <div class="modal-header"><span>anime/</span><span class="close-btn" onclick="closeFolder()">[x]</span></div>
-        <div class="modal-body">
-            <a href="https://anilist.co/anime/9253/" target="_blank" class="item-card"><div class="item-image"><img src="https://imgur.com/P1HogUg.png"></div><span class="item-label">Steins;Gate.anime</span></a>
-            <a href="https://anilist.co/anime/21355/" target="_blank" class="item-card"><div class="item-image"><img src="https://imgur.com/d9zFEZu.png"></div><span class="item-label">Re:Zero.anime</span></a>
-            <a href="https://anilist.co/anime/30/" target="_blank" class="item-card"><div class="item-image"><img src="https://imgur.com/njmKBUI.png"></div><span class="item-label">Evangelion.anime</span></a>
-        </div>
-    </div>
-
-    <div id="folder-mygames" class="window-modal">
-        <div class="modal-header"><span>projects/</span><span class="close-btn" onclick="closeFolder()">[x]</span></div>
-        <div class="modal-body">
-            <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="item-card"><div class="item-image square"><img src="https://imgur.com/yWGCBpw.png"></div><span class="item-label">Github_Web.src</span></a>
-            <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="item-card"><div class="item-image square"><img src="https://imgur.com/yWGCBpw.png"></div><span class="item-label">Itch_Page.src</span></a>
-        </div>
-    </div>
-
-    <div id="notification">BTC Address Copied!</div>
-
     <script>
-        function openFolder(id) {
+        function openFolder(id) { closeFolder(); document.getElementById(id).classList.add('active'); }
+        function closeFolder() { document.querySelectorAll('.window-modal').forEach(m => m.classList.remove('active')); }
+        
+        // GAME LOGIC INTEGRATION
+        let isGameRunning = false;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let player, boss, gameState = 'MENU', frame = 0, keys = {};
+
+        function launchGame() {
             closeFolder();
-            document.getElementById(id).classList.add('active');
+            document.getElementById('game-execution-window').classList.add('active');
         }
 
-        function closeFolder() {
-            document.querySelectorAll('.window-modal').forEach(m => m.classList.remove('active'));
+        function stopGame() {
+            isGameRunning = false;
+            closeFolder();
+            document.getElementById('game-menu').style.display = 'flex';
         }
 
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('pt-BR');
+        function initGame() {
+            document.getElementById('game-menu').style.display = 'none';
+            player = { x: 300, y: 600, hp: 5, bombs: 3, bullets: [], inv: 0 };
+            boss = { x: 300, y: 150, hp: 1000, maxHp: 1000, bullets: [], angle: 0 };
+            gameState = 'FIGHT';
+            if(!isGameRunning) { isGameRunning = true; gameLoop(); }
+            updateUI();
         }
-        setInterval(updateClock, 1000);
-        updateClock();
 
-        document.getElementById('desktop-area').addEventListener('click', function(e) {
-            if (e.target.id === 'desktop-area') closeFolder();
-        });
-
-        function copyBTC() {
-            navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => {
-                const note = document.getElementById("notification");
-                note.style.display = "block";
-                setTimeout(() => { note.style.display = "none"; }, 2500);
-            });
+        function updateUI() {
+            document.getElementById('ui-lives').innerText = player.hp;
+            document.getElementById('ui-bombs').innerText = player.bombs;
         }
+
+        window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+        window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+        function gameLoop() {
+            if(!isGameRunning) return;
+            if(gameState === 'FIGHT') {
+                frame++;
+                let spd = keys['shift'] ? 3 : 6;
+                if(keys['arrowleft']) player.x -= spd;
+                if(keys['arrowright']) player.x += spd;
+                if(keys['arrowup']) player.y -= spd;
+                if(keys['arrowdown']) player.y += spd;
+
+                // Simple Pattern para teste
+                if(frame % 20 === 0) {
+                    for(let i=0; i<8; i++) {
+                        let a = frame/10 + (Math.PI*2/8 * i);
+                        boss.bullets.push({x: boss.x, y: boss.y, vx: Math.cos(a)*4, vy: Math.sin(a)*4});
+                    }
+                }
+                boss.bullets.forEach((b, i) => {
+                    b.x += b.vx; b.y += b.vy;
+                    if(Math.hypot(b.x-player.x, b.y-player.y) < 10) { player.hp--; updateUI(); boss.bullets.splice(i,1); }
+                });
+            }
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function render() {
+            ctx.fillStyle = '#050510'; ctx.fillRect(0,0,600,700);
+            if(gameState === 'FIGHT') {
+                ctx.fillStyle = '#fff'; ctx.fillRect(player.x-10, player.y-10, 20, 20);
+                ctx.fillStyle = '#ff00ff'; boss.bullets.forEach(b => ctx.fillRect(b.x, b.y, 4, 4));
+            }
+        }
+
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
     </script>
 </body>
 </html>
