@@ -3,48 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Lunatic Love</title>
+    <link rel="icon" type="image/png" href="https://imgur.com/yWGCBpw.png">
     <style>
         body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; color: #fff; font-family: 'Courier New', monospace; }
-        canvas { border: 3px solid #4b0082; background: #050510; box-shadow: 0 0 30px #4b0082; position: relative; }
+        canvas { border: 3px solid #4b0082; background: #050510; box-shadow: 0 0 30px #4b0082; }
         
-        /* UI Layers */
-        .ui-overlay { position: absolute; width: 600px; height: 700px; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.7); z-index: 20; padding-top: 50px; }
-        .logo-img { width: 450px; margin-bottom: 5px; }
-        .dev-img { width: 180px; margin-bottom: 30px; opacity: 0.8; }
+        .ui-overlay { position: absolute; width: 600px; height: 700px; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.8); z-index: 20; padding-top: 40px; }
+        .logo-img { width: 420px; margin-bottom: 5px; }
+        .dev-img { width: 160px; margin-bottom: 20px; opacity: 0.9; }
         
-        .menu-btn { background: #4b0082; border: 2px solid #fff; color: white; padding: 12px 30px; margin: 8px; cursor: pointer; font-family: 'Courier New', monospace; font-size: 1.1em; width: 220px; transition: 0.2s; }
+        .menu-btn { background: #4b0082; border: 2px solid #fff; color: white; padding: 12px 30px; margin: 8px; cursor: pointer; font-family: 'Courier New', monospace; font-size: 1.1em; width: 220px; transition: 0.2s; border-radius: 5px; }
         .menu-btn:hover { background: #8a2be2; transform: scale(1.05); }
         .active-diff { background: #fff !important; color: #000 !important; font-weight: bold; }
         
-        #dialogue-box { position: absolute; bottom: 40px; width: 540px; height: 120px; background: rgba(0, 0, 0, 0.95); border: 2px solid #fff; padding: 15px; display: none; z-index: 30; }
+        #dialogue-box { position: absolute; bottom: 40px; width: 540px; height: 110px; background: rgba(0, 0, 0, 0.95); border: 2px solid #fff; padding: 15px; display: none; z-index: 30; pointer-events: none; }
         #char-name { font-weight: bold; margin-bottom: 5px; font-size: 1.2em; }
     </style>
 </head>
 <body>
 
     <div id="main-menu" class="ui-overlay">
-        <img src="https://imgur.com/yWGCBpw.png" class="logo-img" alt="Lunatic Love Logo">
-        <div style="font-size: 0.8em; margin-bottom: 5px;">created and developed by</div>
-        <img src="https://imgur.com/btg3Zph.png" class="dev-img" alt="Developer Logo">
+        <img src="https://imgur.com/yWGCBpw.png" class="logo-img">
+        <div style="font-size: 0.7em; margin-bottom: 5px; letter-spacing: 1px;">CREATED AND DEVELOPED BY</div>
+        <img src="https://imgur.com/btg3Zph.png" class="dev-img">
         <button class="menu-btn" onclick="startGame()">START GAME</button>
         <button class="menu-btn" onclick="showOptions()">OPTIONS</button>
     </div>
 
     <div id="options-menu" class="ui-overlay" style="display:none;">
-        <h2>DIFFICULTY SETTINGS</h2>
-        <button class="menu-btn" id="diff-0" onclick="setDifficulty(0)">VERY EASY</button>
-        <button class="menu-btn" id="diff-1" onclick="setDifficulty(1)">EASY</button>
-        <button class="menu-btn active-diff" id="diff-2" onclick="setDifficulty(2)">MEDIUM</button>
-        <button class="menu-btn" id="diff-3" onclick="setDifficulty(3)">HARD</button>
-        <button class="menu-btn" id="diff-4" onclick="setDifficulty(4)">VERY HARD</button>
-        <button class="menu-btn" id="diff-5" onclick="setDifficulty(5)">BRUTAL</button>
-        <button class="menu-btn" style="margin-top:20px;" onclick="hideOptions()">BACK</button>
+        <h2 style="color: #ff00ff;">DIFFICULTY</h2>
+        <button class="menu-btn difficulty-btn" id="diff-0" onclick="setDifficulty(0)">VERY EASY</button>
+        <button class="menu-btn difficulty-btn" id="diff-1" onclick="setDifficulty(1)">EASY</button>
+        <button class="menu-btn difficulty-btn active-diff" id="diff-2" onclick="setDifficulty(2)">MEDIUM</button>
+        <button class="menu-btn difficulty-btn" id="diff-3" onclick="setDifficulty(3)">HARD</button>
+        <button class="menu-btn difficulty-btn" id="diff-4" onclick="setDifficulty(4)">VERY HARD</button>
+        <button class="menu-btn difficulty-btn" id="diff-5" onclick="setDifficulty(5)">BRUTAL</button>
+        <button class="menu-btn" style="margin-top:20px; width:120px;" onclick="hideOptions()">BACK</button>
     </div>
 
     <div id="dialogue-box">
         <div id="char-name">NAME</div>
         <div id="char-text">TEXT</div>
-        <div style="position:absolute; bottom:5px; right:10px; font-size:0.7em; color: #888;">Press [Z] to continue</div>
+        <div style="position:absolute; bottom:5px; right:10px; font-size:0.7em; color: #aaa;">Press [Z] to continue</div>
     </div>
 
     <canvas id="gameCanvas" width="600" height="700"></canvas>
@@ -52,49 +52,27 @@
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx;
 
-        // Stars Background
-        let stars = [];
-        for(let i=0; i<100; i++) stars.push({ x: Math.random()*600, y: Math.random()*700, s: Math.random()*2 + 1 });
-
-        // SFX
-        function playSFX(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            if (type === 'shoot') {
-                osc.type = 'square'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-            } else if (type === 'pichuun') {
-                osc.type = 'sine'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.6);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.6);
-            }
-        }
-
+        let stars = Array.from({length: 80}, () => ({ x: Math.random()*600, y: Math.random()*700, s: Math.random()*2+1 }));
         let state = 'menu';
         let difficulty = 2;
         let bulletSpeedMod = 1.2;
         let diagIndex = 0;
         let frame = 0;
 
-        // Assets
         const sprites = {};
         const images = {
-            idle: 'kaguya_idle.png',
-            damage: 'kaguya_damage.png',
-            dead: 'kaguya_dead.png',
-            teleport: 'kaguya_teleport.png',
-            attack1: 'kaguya_attack1.png',
-            attack2: 'kaguya_attack2.png',
-            attack3: 'kaguya_attack3.png',
-            kaguya_portrait: 'https://imgur.com/fheByI4.png',
-            miyuki_portrait: 'https://imgur.com/OLqSOVo.png'
+            k_idle: 'kaguya_idle.png',
+            k_damage: 'kaguya_damage.png',
+            k_dead: 'kaguya_dead.png',
+            k_teleport: 'kaguya_teleport.png',
+            k_at1: 'kaguya_attack1.png',
+            k_at2: 'kaguya_attack2.png',
+            k_at3: 'kaguya_attack3.png',
+            k_port: 'https://imgur.com/fheByI4.png',
+            m_port: 'https://imgur.com/OLqSOVo.png',
+            m_back: 'https://imgur.com/s8t8Lml.png'
         };
 
         for (let key in images) {
@@ -111,17 +89,37 @@
         ];
 
         let player = { x: 300, y: 600, hp: 5, bullets: [], invinc: 0 };
-        let kaguya = { x: 300, y: 150, hp: 1000, sprite: 'idle', bullets: [], timer: 0, angle: 0 };
+        let kaguya = { x: 300, y: 150, hp: 1000, sprite: 'k_idle', bullets: [], timer: 0, angle: 0, spellActive: false };
         let keys = {};
 
-        function startGame() { document.getElementById('main-menu').style.display = 'none'; state = 'dialogue'; showDialogue(); }
+        function playSFX(freq, duration, type='square', volume=0.05) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + duration);
+                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function startGame() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            document.getElementById('main-menu').style.display = 'none';
+            state = 'dialogue'; showDialogue();
+        }
+
         function showOptions() { document.getElementById('main-menu').style.display = 'none'; document.getElementById('options-menu').style.display = 'flex'; }
         function hideOptions() { document.getElementById('options-menu').style.display = 'none'; document.getElementById('main-menu').style.display = 'flex'; }
-        function setDifficulty(level) {
-            difficulty = level;
-            bulletSpeedMod = [0.6, 0.9, 1.2, 1.8, 2.5, 4.0][level];
-            for(let i=0; i<6; i++) document.getElementById('diff-'+i).classList.remove('active-diff');
-            document.getElementById('diff-'+level).classList.add('active-diff');
+        
+        function setDifficulty(l) {
+            difficulty = l;
+            bulletSpeedMod = [0.6, 0.9, 1.2, 1.8, 2.5, 4.0][l];
+            document.querySelectorAll('.difficulty-btn').forEach((b, i) => b.classList.toggle('active-diff', i === l));
         }
 
         function showDialogue() {
@@ -129,16 +127,16 @@
             const d = dialogues[diagIndex];
             document.getElementById('char-name').innerText = d.name;
             document.getElementById('char-text').innerText = d.text;
-            document.getElementById('char-name').style.color = d.speaker === "kaguya" ? "#ff00ff" : "#00ffff";
+            document.getElementById('char-name').style.color = d.speaker === 'kaguya' ? "#ff00ff" : "#00ffff";
         }
 
         window.addEventListener('keydown', e => {
             keys[e.key] = true;
-            if (state === 'dialogue' && (e.key === 'z' || e.key === 'Z')) {
+            if (state === 'dialogue' && (e.key.toLowerCase() === 'z')) {
                 diagIndex++;
                 if (diagIndex >= dialogues.length) {
                     state = 'fight'; document.getElementById('dialogue-box').style.display = 'none';
-                } else { showDialogue(); }
+                } else showDialogue();
             }
         });
         window.addEventListener('keyup', e => keys[e.key] = false);
@@ -148,28 +146,38 @@
             if (state !== 'fight') return;
             frame++;
 
-            let speed = keys['Shift'] ? 2 : 4.5;
-            if (keys['ArrowLeft'] || keys['a']) player.x = Math.max(15, player.x - speed);
-            if (keys['ArrowRight'] || keys['d']) player.x = Math.min(585, player.x + speed);
-            if (keys['ArrowUp'] || keys['w']) player.y = Math.max(15, player.y - speed);
-            if (keys['ArrowDown'] || keys['s']) player.y = Math.min(685, player.y + speed);
+            if (kaguya.hp < 500 && !kaguya.spellActive) {
+                kaguya.spellActive = true;
+                playSFX(200, 1.0, 'sawtooth', 0.1); // Impact sound
+            }
 
-            if ((keys['z'] || keys['Z']) && frame % 5 === 0) { player.bullets.push({x: player.x, y: player.y - 10}); playSFX('shoot'); }
+            let spd = keys['Shift'] ? 2 : 4.5;
+            if (keys['ArrowLeft'] || keys['a']) player.x = Math.max(20, player.x - spd);
+            if (keys['ArrowRight'] || keys['d']) player.x = Math.min(580, player.x + spd);
+            if (keys['ArrowUp'] || keys['w']) player.y = Math.max(20, player.y - spd);
+            if (keys['ArrowDown'] || keys['s']) player.y = Math.min(680, player.y + spd);
+
+            if (keys['z'] && frame % 5 === 0) {
+                player.bullets.push({x: player.x, y: player.y - 15});
+                playSFX(800, 0.1, 'square', 0.03);
+            }
             player.bullets.forEach((b, i) => { b.y -= 12; if(b.y < -20) player.bullets.splice(i, 1); });
 
             if (kaguya.hp > 0) {
                 kaguya.timer++;
                 if (kaguya.timer % 150 === 0) {
-                    kaguya.x = 100 + Math.random() * 400; kaguya.y = 80 + Math.random() * 100;
-                    kaguya.sprite = 'teleport';
+                    kaguya.x = 100 + Math.random()*400; kaguya.y = 80 + Math.random()*100;
+                    kaguya.sprite = 'k_teleport';
                 } else {
-                    kaguya.angle += 0.04 * bulletSpeedMod;
-                    kaguya.sprite = frame % 60 < 20 ? 'attack1' : (frame % 60 < 40 ? 'attack2' : 'attack3');
-                    if (frame % Math.max(1, 5 - difficulty) === 0) {
-                        let count = 3 + Math.floor(difficulty/2);
-                        for(let i=0; i < count; i++) {
+                    kaguya.angle += (kaguya.spellActive ? 0.07 : 0.04) * bulletSpeedMod;
+                    kaguya.sprite = frame % 60 < 20 ? 'k_at1' : (frame % 60 < 40 ? 'k_at2' : 'k_at3');
+                    
+                    let freq = kaguya.spellActive ? Math.max(1, 3 - difficulty) : Math.max(1, 5 - difficulty);
+                    if (frame % freq === 0) {
+                        let count = kaguya.spellActive ? 6 + difficulty : 3 + Math.floor(difficulty/1.5);
+                        for(let i=0; i<count; i++){
                             let a = kaguya.angle + (Math.PI*2/count * i);
-                            kaguya.bullets.push({ x: kaguya.x, y: kaguya.y, vx: Math.cos(a) * (2.8 * bulletSpeedMod), vy: Math.sin(a) * (2.8 * bulletSpeedMod) });
+                            kaguya.bullets.push({x: kaguya.x, y: kaguya.y, vx: Math.cos(a)*2.5*bulletSpeedMod, vy: Math.sin(a)*2.5*bulletSpeedMod});
                         }
                     }
                 }
@@ -179,49 +187,62 @@
             kaguya.bullets.forEach((b, i) => {
                 b.x += b.vx; b.y += b.vy;
                 if(b.x < -20 || b.x > 620 || b.y > 720) kaguya.bullets.splice(i, 1);
-                let dist = Math.sqrt((b.x - player.x)**2 + (b.y - player.y)**2);
-                if (dist < 6 && player.invinc <= 0) {
-                    player.hp--; player.invinc = 60; playSFX('pichuun');
+                if (Math.hypot(b.x - player.x, b.y - player.y) < 6 && player.invinc <= 0) {
+                    player.hp--; player.invinc = 60; playSFX(1200, 0.5, 'sine', 0.2);
                     if (player.hp <= 0) state = 'gameover';
                 }
             });
-
             player.bullets.forEach((b, i) => {
-                if (Math.abs(b.x - kaguya.x) < 45 && Math.abs(b.y - kaguya.y) < 55) { kaguya.hp -= 2; player.bullets.splice(i, 1); }
+                if (Math.abs(b.x - kaguya.x) < 45 && Math.abs(b.y - kaguya.y) < 55) {
+                    kaguya.hp -= 2; player.bullets.splice(i, 1); playSFX(400, 0.05, 'sawtooth', 0.02);
+                }
             });
         }
 
         function draw() {
-            ctx.fillStyle = '#050510'; ctx.fillRect(0, 0, 600, 700);
+            ctx.fillStyle = kaguya.spellActive ? '#1a001a' : '#050510'; 
+            ctx.fillRect(0, 0, 600, 700);
             ctx.fillStyle = '#fff'; stars.forEach(s => ctx.fillRect(s.x, s.y, s.s/2, s.s/2));
 
             if (state === 'dialogue') {
                 const d = dialogues[diagIndex];
-                
-                // --- LÓGICA DE DESENHO DOS PORTRAITS ---
-                // Miyuki Portrait
                 ctx.globalAlpha = (d.speaker === 'miyuki') ? 1.0 : 0.3;
-                if (sprites.miyuki_portrait.complete) ctx.drawImage(sprites.miyuki_portrait, -50, 200, 400, 500);
-                
-                // Kaguya Portrait
+                if (sprites.m_port.complete) ctx.drawImage(sprites.m_port, -50, 200, 400, 500);
                 ctx.globalAlpha = (d.speaker === 'kaguya') ? 1.0 : 0.3;
-                if (sprites.kaguya_portrait.complete) ctx.drawImage(sprites.kaguya_portrait, 250, 200, 400, 500);
-                
+                if (sprites.k_port.complete) ctx.drawImage(sprites.k_port, 250, 200, 400, 500);
                 ctx.globalAlpha = 1.0;
             }
 
             if (state === 'fight' || state === 'victory') {
-                let s = sprites[kaguya.sprite];
-                if (s && s.complete) ctx.drawImage(s, kaguya.x - 60, kaguya.y - 60, 120, 120);
-                kaguya.bullets.forEach(b => { ctx.fillStyle = '#ff00ff'; ctx.beginPath(); ctx.arc(b.x, b.y, 5, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.stroke(); });
+                if (kaguya.spellActive && kaguya.hp > 0) {
+                    ctx.fillStyle = 'rgba(255, 0, 255, 0.1)';
+                    ctx.font = 'bold 20px Arial';
+                    ctx.textAlign = 'right';
+                    ctx.fillText("Spell Card: Impossible Request 'Moonlight Resolve'", 580, 50);
+                }
+
+                let ks = sprites[kaguya.sprite];
+                if (ks && ks.complete) ctx.drawImage(ks, kaguya.x - 60, kaguya.y - 60, 120, 120);
+                
                 if (player.invinc % 4 < 2) {
-                    ctx.fillStyle = '#00ffff'; ctx.beginPath(); ctx.arc(player.x, player.y, 8, 0, Math.PI*2); ctx.fill();
+                    if (sprites.m_back.complete) {
+                        ctx.drawImage(sprites.m_back, player.x - 30, player.y - 45, 60, 75);
+                    } else {
+                        ctx.fillStyle = '#00ffff'; ctx.beginPath(); ctx.arc(player.x, player.y, 10, 0, Math.PI*2); ctx.fill();
+                    }
                     ctx.fillStyle = 'red'; ctx.beginPath(); ctx.arc(player.x, player.y, 3, 0, Math.PI*2); ctx.fill();
                 }
+
+                kaguya.bullets.forEach(b => {
+                    ctx.fillStyle = kaguya.spellActive ? '#00ffff' : '#ff00ff'; 
+                    ctx.beginPath(); ctx.arc(b.x, b.y, 5, 0, Math.PI*2); ctx.fill();
+                    ctx.strokeStyle = '#fff'; ctx.stroke();
+                });
                 player.bullets.forEach(b => { ctx.fillStyle = '#fff'; ctx.fillRect(b.x-2, b.y, 4, 15); });
+
                 ctx.fillStyle = 'red'; ctx.fillRect(50, 20, 500 * (kaguya.hp / 1000), 10);
                 ctx.strokeStyle = '#fff'; ctx.strokeRect(50, 20, 500, 10);
-                ctx.fillStyle = '#fff'; ctx.font = 'bold 16px Arial'; ctx.fillText("LIVES: " + player.hp, 20, 685);
+                ctx.textAlign = 'left'; ctx.fillStyle = '#fff'; ctx.fillText("LIVES: " + player.hp, 20, 685);
             }
 
             if (state === 'gameover') { ctx.fillStyle = 'red'; ctx.font = '50px Arial'; ctx.textAlign = 'center'; ctx.fillText("PICHUUN!", 300, 350); }
