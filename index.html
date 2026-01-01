@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daigou</title>
+    <title>Daigou OS</title>
     <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Quicksand:wght@400;700&display=swap');
@@ -39,7 +39,7 @@
         }
         @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
-        /* --- DESKTOP & ICONS --- */
+        /* --- DESKTOP --- */
         #desktop {
             padding: 40px; display: flex; flex-direction: column; flex-wrap: wrap;
             align-content: flex-start; gap: 25px; height: 100%;
@@ -53,9 +53,9 @@
 
         .folder-icon { width: 55px; height: 55px; background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center; background-size: contain; filter: hue-rotate(300deg) saturate(0.8); }
         .music-icon { width: 55px; height: 55px; background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center; background-size: contain; filter: hue-rotate(300deg) saturate(0.8); }
-        .game-icon { width: 55px; height: 55px; background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/input-gaming.svg') no-repeat center; background-size: contain; filter: hue-rotate(300deg) saturate(0.8); }
+        .project-icon { width: 55px; height: 55px; background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/input-gaming.svg') no-repeat center; background-size: contain; filter: hue-rotate(300deg) saturate(0.8); }
 
-        /* --- WINDOWS SYSTEM --- */
+        /* --- WINDOWS --- */
         .window {
             position: absolute; top: 15%; left: 15%;
             background: var(--window-bg); border: 1px solid rgba(247, 209, 215, 0.2);
@@ -67,14 +67,9 @@
         .window-header { padding: 12px 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; cursor: move; border-bottom: 1px solid rgba(247, 209, 215, 0.1); }
         .close-btn { color: #ff5f56; cursor: pointer; font-weight: bold; }
         
-        /* GRID FIX */
         .window-body { 
-            padding: 25px; 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
-            gap: 20px; 
-            max-height: 500px; 
-            overflow-y: auto; 
+            padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
+            gap: 20px; max-height: 500px; overflow-y: auto; 
         }
 
         .file { display: flex; flex-direction: column; align-items: center; text-align: center; font-size: 9px; text-decoration: none; color: var(--text-main); transition: 0.2s; }
@@ -82,7 +77,7 @@
         .file img { width: 65px; height: 90px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; border: 1px solid rgba(247,209,215,0.1); }
         .file img.square { height: 65px; }
 
-        /* --- SIDEBAR CARD --- */
+        /* --- SIDEBAR --- */
         .side-card {
             position: fixed; right: 40px; top: 50%; transform: translateY(-50%);
             width: 280px; height: 550px;
@@ -91,40 +86,37 @@
         }
         .side-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.7); z-index: 1; }
         .side-content { position: relative; z-index: 2; padding: 30px; height: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .avatar-frame { width: 160px; height: 160px; border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid rgba(247, 209, 215, 0.5); background: transparent; }
+        .avatar-frame { width: 160px; height: 160px; border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid rgba(247, 209, 215, 0.5); }
         .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
         .logo-main { width: 120px; margin-bottom: 20px; }
         .bio { font-family: 'Quicksand', sans-serif; font-size: 13px; color: #fff; line-height: 1.5; margin-bottom: 20px; }
-        .clock-display { font-size: 18px; color: var(--accent); font-weight: bold; }
-        .date-display { font-size: 11px; color: rgba(255,255,255,0.7); letter-spacing: 2px; }
 
-        /* --- MUSIC GRID --- */
-        .playlist-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; transition: 0.2s; color: #fff; width: 100%; }
-        .playlist-item:hover { transform: scale(1.05); color: var(--accent); }
-        .playlist-thumb { width: 100px; height: 100px; border-radius: 8px; border: 1px solid rgba(247,209,215,0.3); margin-bottom: 8px; background: #111; object-fit: cover; }
-        .playlist-item span { font-size: 10px; display: block; margin-top: 4px; }
+        /* --- PLAYLISTS --- */
+        .playlist-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; color: #fff; }
+        .playlist-thumb { width: 100px; height: 100px; border-radius: 8px; border: 1px solid rgba(247,209,215,0.3); margin-bottom: 8px; object-fit: cover; background: #111; }
 
         /* --- CATS --- */
         .cat-emoji { position: absolute; font-size: 32px; animation: fall linear forwards; pointer-events: none; z-index: 5000; }
         @keyframes fall { from { transform: translateY(-50px); } to { transform: translateY(calc(100vh - 45px)); } }
 
-        #notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 10px 25px; border-radius: 5px; font-weight: bold; display: none; z-index: 11000; }
+        #notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 10px 25px; border-radius: 5px; display: none; z-index: 11000; }
     </style>
 </head>
 <body>
 
     <div id="boot-screen">
         <img src="https://imgur.com/btg3Zph.png" style="width: 100px; margin-bottom: 20px;">
-        <div style="letter-spacing: 5px; font-size: 10px;">SYSTEM STARTING...</div>
+        <div style="letter-spacing: 5px; font-size: 10px;">SYSTEM LOADING...</div>
     </div>
 
     <main id="desktop">
         <div class="desktop-item" onclick="openWin('win-animes')"><div class="folder-icon"></div><span>animes/</span></div>
         <div class="desktop-item" onclick="openWin('win-mangas')"><div class="folder-icon"></div><span>mangas/</span></div>
+        <div class="desktop-item" onclick="openWin('win-games')"><div class="folder-icon"></div><span>games/</span></div>
         <div class="desktop-item" onclick="openWin('win-waifus')"><div class="folder-icon"></div><span>waifus/</span></div>
 
         <div class="desktop-item" style="position:fixed; top:40px; right:350px;" onclick="openWin('win-music')"><div class="music-icon"></div><span>music/</span></div>
-        <div class="desktop-item" style="position:fixed; top:130px; right:350px;" onclick="openWin('win-games')"><div class="game-icon"></div><span>games/</span></div>
+        <div class="desktop-item" style="position:fixed; top:130px; right:350px;" onclick="openWin('win-projects')"><div class="project-icon"></div><span>projects/</span></div>
     </main>
 
     <aside class="side-card">
@@ -132,14 +124,14 @@
         <div class="side-content">
             <div class="avatar-frame"><img src="https://imgur.com/joCPvDu.gif"></div>
             <img src="https://imgur.com/btg3Zph.png" class="logo-main">
-            <p class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br>Buy Bitcoin ₿ - A shield of economic Freedom</p>
+            <p class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br>Buy Bitcoin ₿ - Freedom</p>
             <div style="display:flex; gap:15px; margin-bottom:20px;">
                 <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png" width="28"></a>
                 <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png" width="28"></a>
                 <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png" width="28"></a>
             </div>
-            <div class="clock-display" id="clock">00:00:00</div>
-            <div class="date-display" id="date">--年--月--日</div>
+            <div id="clock" style="font-weight:bold; color:var(--accent);">00:00:00</div>
+            <div id="date" style="font-size:11px; opacity:0.7;">--年--月--日</div>
         </div>
     </aside>
 
@@ -176,12 +168,18 @@
     </div>
 
     <div id="win-games" class="window">
-        <div class="window-header"><span>~/games</span><span class="close-btn" onclick="closeWin('win-games')">✖</span></div>
+        <div class="window-header"><span>~/favorite_games</span><span class="close-btn" onclick="closeWin('win-games')">✖</span></div>
+        <div class="window-body">
+            <a href="https://store.steampowered.com/app/570940/" target="_blank" class="file"><img src="https://imgur.com/lcMd96p.png" class="square">darksouls.game</a>
+            <a href="https://minecraft.net" target="_blank" class="file"><img src="https://imgur.com/ctWNET1.png" class="square">minecraft.game</a>
+        </div>
+    </div>
+
+    <div id="win-projects" class="window">
+        <div class="window-header"><span>~/projects</span><span class="close-btn" onclick="closeWin('win-projects')">✖</span></div>
         <div class="window-body">
             <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">Lunatic Love (Web)</a>
             <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">Lunatic Love</a>
-            <a href="https://store.steampowered.com/app/570940/" target="_blank" class="file"><img src="https://imgur.com/lcMd96p.png" class="square">darksouls.game</a>
-            <a href="https://minecraft.net" target="_blank" class="file"><img src="https://imgur.com/ctWNET1.png" class="square">minecraft.game</a>
         </div>
     </div>
 
@@ -212,19 +210,12 @@
 
     <script>
         let topZ = 1000;
-
         function openWin(id) { const win = document.getElementById(id); if (win) { win.classList.add('active'); win.style.zIndex = ++topZ; } }
         function closeWin(id) { const win = document.getElementById(id); if (win) { win.classList.remove('active'); if(id === 'win-player') document.getElementById('player-container').innerHTML = ''; } }
         function playList(id) { document.getElementById('player-container').innerHTML = `<iframe width="100%" height="250" src="https://www.youtube.com/embed/videoseries?list=${id}&autoplay=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>`; openWin('win-player'); }
-        
-        function showNotification(text) {
-            const n = document.getElementById("notification");
-            n.innerText = text; n.style.display = "block";
-            setTimeout(() => n.style.display = "none", 2500);
-        }
-
+        function showNotification(text) { const n = document.getElementById("notification"); n.innerText = text; n.style.display = "block"; setTimeout(() => n.style.display = "none", 2500); }
         function copyBTC() { navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => showNotification("BTC Address Copied!")); }
-
+        
         function updateTime() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toTimeString().split(' ')[0];
@@ -248,7 +239,6 @@
 
         window.onload = () => {
             updateTime(); setInterval(updateTime, 1000);
-            
             document.querySelectorAll('.window').forEach(win => {
                 const header = win.querySelector('.window-header');
                 let isDragging = false, offset = [0,0];
@@ -256,7 +246,6 @@
                 document.onmousemove = (e) => { if (isDragging) { win.style.left = (e.clientX + offset[0]) + 'px'; win.style.top = (e.clientY + offset[1]) + 'px'; } };
                 document.onmouseup = () => isDragging = false;
             });
-
             let buffer = "";
             const cmds = { "blank": "⠀", "cross": "☦", "guts": "𒉭" };
             window.onkeydown = (e) => {
