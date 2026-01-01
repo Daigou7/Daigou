@@ -44,8 +44,7 @@
             text-shadow: 1px 1px 3px #000;
         }
 
-        /* ÍCONES ESPECÍFICOS */
-        .folder-icon { width: 55px; height: 55px; background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/places/folder-blue.svg') no-repeat center; background-size: contain; filter: hue-rotate(300deg) saturate(0.8); }
+        /* ICONS */
         .music-icon { width: 55px; height: 55px; background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center; background-size: contain; filter: hue-rotate(300deg) saturate(0.8); }
         .ps4-icon { width: 55px; height: 55px; background: url('https://imgur.com/FeRrUbt.png') no-repeat center; background-size: contain; }
 
@@ -95,6 +94,28 @@
         <img src="https://imgur.com/btg3Zph.png" style="width: 100px; margin-bottom: 20px;">
         <div style="letter-spacing: 5px; font-size: 10px;">SYSTEM LOADING...</div>
     </div>
+
+    <main id="desktop">
+        <div class="desktop-item" onclick="openWin('win-music')"><div class="music-icon"></div><span>music/</span></div>
+        <div class="desktop-item" onclick="openWin('win-projects')"><div class="ps4-icon"></div><span>projects/</span></div>
+    </main>
+
+    <aside class="side-card">
+        <div class="side-overlay"></div>
+        <div class="side-content">
+            <div class="avatar-frame"><img src="https://imgur.com/joCPvDu.gif"></div>
+            <img src="https://imgur.com/btg3Zph.png" class="logo-main">
+            <p class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br>Buy Bitcoin ₿ - Freedom</p>
+            <div style="display:flex; gap:15px; margin-bottom:20px;">
+                <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png" width="28"></a>
+                <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png" width="28"></a>
+                <a href="javascript:void(0);" onclick="copyBTC()"><img src="https://imgur.com/dvR0GB6.png" width="28"></a>
+            </div>
+            <div id="clock" style="font-weight:bold; color:var(--accent);">00:00:00</div>
+            <div id="date" style="font-size:11px; opacity:0.7;">--年--月--日</div>
+        </div>
+    </aside>
+
     <div id="win-projects" class="window"><div class="window-header"><span>~/projects</span><span class="close-btn" onclick="closeWin('win-projects')">✖</span></div><div class="window-body">
         <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">github.src</a>
         <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">itchio.src</a>
