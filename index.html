@@ -24,7 +24,6 @@
             height: 100vh; width: 100vw; overflow: hidden;
         }
 
-        /* --- BOOT SCREEN --- */
         #boot-screen {
             position: fixed; inset: 0; background: #000; z-index: 30000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -32,7 +31,6 @@
         }
         @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
-        /* --- DESKTOP --- */
         #desktop {
             padding: 40px; display: flex; flex-direction: column; flex-wrap: wrap;
             align-content: flex-start; gap: 25px; height: 100%;
@@ -47,7 +45,6 @@
         .music-icon { width: 55px; height: 55px; background: url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center; background-size: contain; filter: hue-rotate(300deg) saturate(0.8); }
         .ps4-icon { width: 55px; height: 55px; background: url('https://imgur.com/FeRrUbt.png') no-repeat center; background-size: contain; }
 
-        /* --- WINDOWS --- */
         .window {
             position: absolute; top: 15%; left: 15%;
             background: var(--window-bg); border: 1px solid rgba(247, 209, 215, 0.2);
@@ -69,7 +66,6 @@
         .file img { width: 65px; height: 90px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; border: 1px solid rgba(247,209,215,0.1); }
         .file img.square { height: 65px; }
 
-        /* --- SIDEBAR CARD --- */
         .side-card {
             position: fixed; right: 40px; top: 50%; transform: translateY(-50%);
             width: 280px; height: 550px;
@@ -83,7 +79,6 @@
         .logo-main { width: 120px; margin-bottom: 20px; }
         .bio { font-family: 'Quicksand', sans-serif; font-size: 13px; color: #fff; line-height: 1.5; margin-bottom: 20px; }
 
-        /* COMMAND INPUT */
         #cmd-input {
             margin-top: 15px;
             background: rgba(255, 255, 255, 0.05);
@@ -104,7 +99,6 @@
             box-shadow: 0 0 10px rgba(247, 209, 215, 0.2);
         }
 
-        /* --- NOTIF --- */
         #notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 10px 25px; border-radius: 5px; display: none; z-index: 11000; font-weight: bold; text-align: center; max-width: 80%; }
     </style>
 </head>
@@ -159,7 +153,7 @@
             const n = document.getElementById("notification"); 
             n.innerText = text; 
             n.style.display = "block"; 
-            setTimeout(() => n.style.display = "none", 3500); 
+            setTimeout(() => n.style.display = "none", 4000); 
         }
         
         function copyText(text) {
@@ -206,7 +200,20 @@
             "hollow": { type: "notif", value: "Don't you dare go hollow." },
             "fire": { type: "notif", value: "Mayst thou thy peace discov'r." },
             "souls": { type: "notif", value: "You find the strength to focus, and they will become your strength." },
-            "ash": { type: "notif", value: "Ashen One, hearest thou my voice still?" }
+            "ash": { type: "notif", value: "Ashen One, hearest thou my voice still?" },
+            // BERSERK PACK
+            "struggler": { type: "notif", value: "Even if you force back what was lost, it still won't be as it was." },
+            "destiny": { type: "notif", value: "He who acts on his own is the one who finds his own way." },
+            "dream": { type: "notif", value: "A dream is a source of strength, but it can also be a source of suffering." },
+            "swordsman": { type: "notif", value: "My sword has gotten very dull. However, it's just right for hacking some monsters to pieces." },
+            "beast": { type: "notif", value: "If you're always afraid of the shadows, you'll never see the light." },
+            // CHRISTIAN PACK
+            "faith": { type: "notif", value: "Everything is possible for him who believes. (Mark 9:23)" },
+            "psalm23": { type: "notif", value: "The Lord is my shepherd, I shall not want." },
+            "light": { type: "notif", value: "The light shines in the darkness, and the darkness has not overcome it. (John 1:5)" },
+            "warrior": { type: "notif", value: "Put on the full armor of God, so that you can take your stand against the devil's schemes." },
+            "salvation": { type: "notif", value: "I am the way, the truth, and the life. (John 14:6)" },
+            "peace": { type: "notif", value: "My peace I give to you. Not as the world gives. (John 14:27)" }
         };
 
         function updateTime() {
