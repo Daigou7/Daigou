@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daigou</title>
+<link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Quicksand:wght@400;700&display=swap');
+:root{--gnome-purple:#5e2750;--gnome-dark:#2d2d2d;--gnome-border:#1e1e1e;--gnome-sidebar:#383838;--arch-blue:#1793d1;--fg:#eeeeee}
+*{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;font-family:'JetBrains Mono',monospace}
+body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover fixed;color:var(--fg);height:100vh;overflow:hidden}
+#boot-screen{position:fixed;inset:0;background:#000;color:var(--arch-blue);z-index:9999;padding:20px;font-size:14px;display:block}
+#notif{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--arch-blue);color:#000;padding:8px 20px;display:none;font-weight:bold;z-index:10000;border-radius:4px;box-shadow:0 4px 15px rgba(0,0,0,0.5)}
+
+/* GNOME WINDOWS */
+.win{position:absolute;top:15%;left:15%;background:var(--gnome-dark);border:1px solid var(--gnome-border);width:750px;display:none;flex-direction:column;box-shadow:0 15px 50px rgba(0,0,0,0.8);z-index:100;border-radius:8px 8px 0 0;overflow:hidden}
+.win-h{background:var(--gnome-purple);color:#fff;height:35px;display:flex;align-items:center;justify-content:center;position:relative;cursor:move;font-size:13px;font-weight:bold}
+.win-ctrl{position:absolute;left:10px;display:flex;gap:8px}
+.dot{width:12px;height:12px;border-radius:50%;background:#ff5f56;cursor:pointer}
+.win-layout{display:flex;height:450px}
+.sidebar{width:180px;background:var(--gnome-sidebar);padding:15px;font-size:11px;border-right:1px solid #1a1a1a}
+.side-title{color:#777;font-weight:bold;margin-bottom:10px;display:block;text-transform:uppercase;font-size:9px}
+.side-item{padding:8px 10px;color:#ddd;display:block;cursor:pointer;margin-bottom:5px;border-radius:4px}
+.side-item:hover{background:rgba(255,255,255,0.1)}
+.win-b{flex-grow:1;padding:20px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:20px;background:#242424}
+
+/* VN CONTENT */
+.vn-b{height:550px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;background-size:cover;background-position:center}
+.sprite{position:absolute;bottom:0;transition:0.3s;filter:brightness(0.3);opacity:0;pointer-events:none}
+.sprite.active{filter:brightness(1);opacity:1}
+
+/* Kaguya Sprites */
+#s-kaguya{height:95%;left:2%}#s-shirogane{height:85%;left:35%}#s-miko{height:75%;right:5%}
+/* Steins;Gate Sprites - Adjusted for new URLs */
+#s-okabe{height:110%;left:0%;}
+#s-kurisu{height:100%;left:25%;}
+#s-mayuri{height:100%;right:15%;}
+#s-daru{height:100%;right:-5%;}
+
+.diag-b{width:100%;background:rgba(26,27,38,0.95);border-top:2px solid var(--arch-blue);padding:15px;display:flex;align-items:center;cursor:pointer;z-index:10;position:relative}
+.port{width:80px;height:80px;border:1px solid var(--arch-blue);margin-right:15px;object-fit:cover;background:#000}
+.diag-t{font-size:14px;color:#fff;font-family:'Quicksand',sans-serif;height:60px}
+.char-n{position:absolute;top:-25px;left:10px;background:var(--arch-blue);color:#000;padding:2px 10px;font-size:12px;font-weight:bold}
+
+/* CHAT ADDITIONS */
+#chat-messages::-webkit-scrollbar { width: 5px; }
+#chat-messages::-webkit-scrollbar-thumb { background: var(--arch-blue); border-radius: 10px; }
+.msg { padding: 8px 12px; border-radius: 8px; max-width: 85%; font-size: 12px; line-height: 1.4; word-wrap: break-word; position: relative; z-index: 5; margin-bottom: 5px; }
+.msg.kaguya { background: var(--gnome-purple); align-self: flex-start; color: white; }
+.msg.user { background: #444; align-self: flex-end; color: white; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+/* DESKTOP & SIDEBAR */
+#desktop{padding:30px;display:flex;flex-direction:column;gap:20px}
+.d-item{display:flex;flex-direction:column;align-items:center;width:100px;cursor:pointer;text-shadow:1px 1px 3px #000;font-size:12px}
+.m-icon{width:50px;height:50px;background:url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center/contain;filter:hue-rotate(300deg)}
+.p-icon{width:50px;height:50px;background:url('https://imgur.com/FeRrUbt.png') no-repeat center/contain}
+.file{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#fff;font-size:10px;text-align:center;cursor:pointer}
+.file img{width:60px;height:60px;object-fit:cover;border:1px solid #444;margin-bottom:5px}
+
+/* SIDE-CARD COM O GIF NO FUNDO */
+.side-card{position:fixed;right:25px;top:50%;transform:translateY(-50%);width:260px;background:rgba(45,45,45,0.9) url('https://imgur.com/rUTLIyK.gif') no-repeat center/cover;background-blend-mode: overlay;border:1px solid var(--arch-blue);padding:25px;text-align:center;z-index:10}
+.avatar{width:140px;height:140px;border:1px solid var(--arch-blue);margin-bottom:15px;object-fit:cover}
+.bio{font-family:'Quicksand',sans-serif;font-size:12px;color:#fff;margin-bottom:15px;line-height:1.4}
+#cmd-input{background:#1e1e1e;border:1px solid var(--arch-blue);color:var(--arch-blue);padding:8px;width:100%;outline:none;font-size:11px;text-align:center}
+#ach{position:fixed;bottom:-100px;right:25px;width:300px;background:#1b2838;border-left:4px solid #67c1f5;padding:12px;display:flex;align-items:center;transition:0.6s;z-index:2000}
+#ach.show{bottom:25px}
+</style>
+</head>
+<body oncontextmenu="return false;">
+<div id="boot-screen"></div>
+<div id="notif"></div>
+<div id="ach"><img src="https://imgur.com/fheByI4.png" width="45" style="margin-right:12px"><div><small style="color:#67c1f5;display:block">ACHIEVEMENT UNLOCKED</small><span style="font-size:12px;color:#fff">Love is War: Kaguya-sama</span></div></div>
+
+<div id="jail-win" class="win">
+    <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('jail-win')"></div></div><span>Security Alert</span></div>
+    <img src="https://asset-metadata-service-production.s3.amazonaws.com/asset_icons/0589ef966387f6b1665562c8ae1442a592e08fc89874aa201595b7dc96294566.jpeg" class="jail-img">
+</div>
+
+<div id="win-chat" class="win" style="width:400px; height:500px;">
+    <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('win-chat')"></div></div><span>Kaguya Shinomiya</span></div>
+    <div style="flex-grow:1; display:flex; flex-direction:column; background:#1a1a1a; position:relative; overflow:hidden;">
+        <div style="padding: 5px 15px; background: rgba(0,0,0,0.3); font-size: 10px; color: #aaa; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #222; z-index: 10;">
+            <span style="width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; animation: pulse 2s infinite;"></span>
+            Online now
+        </div>
+        <img src="https://imgur.com/dQLP0b1.png" style="position:absolute; bottom:0; right:0; height:210px; pointer-events:none; opacity:0.7; z-index:1;">
+        <div id="chat-messages" style="flex-grow:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; z-index:2;">
+            <div class="msg kaguya">...What do you want now? Don't think I'll answer just anything just because you asked.</div>
+        </div>
+        <div style="padding:10px; background:#2d2d2d; border-top:1px solid var(--gnome-border); z-index:3;">
+            <input type="text" id="chat-input" placeholder="Type a message..." style="width:100%; background:#1e1e1e; border:1px solid var(--arch-blue); color:white; padding:8px; outline:none; font-size:12px;">
+        </div>
+    </div>
+</div>
+
+<div id="win-music" class="win" style="width:850px">
+    <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('win-music')"></div></div><span>Music Player</span></div>
+    <div class="win-layout">
+        <div class="sidebar">
+            <span class="side-title">Playlists</span>
+            <span class="side-item" onclick="setPlaylist('PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC')">Openings & Endings</span>
+            <span class="side-item" onclick="setPlaylist('PLuJXaOWHQNoTeLG7B9LPm7lSy2pBjEQww')">Anime OST</span>
+        </div>
+        <div style="flex-grow:1;background:#000;">
+            <iframe id="yt-player" width="100%" height="100%" src="https://www.youtube.com/embed/videoseries?list=PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div id="win-projects" class="win">
+    <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('win-projects')"></div></div><span>Projects</span></div>
+    <div class="win-layout">
+        <div class="sidebar"><span class="side-title">Locals</span><span class="side-item">daigou</span></div>
+        <div class="win-b">
+            <div class="file" onclick="window.open('https://daigou7.github.io/daigou/lunaticlove.html','_blank')"><img src="https://imgur.com/yWGCBpw.png">github.src</div>
+            <div class="file" onclick="window.open('https://daigou.itch.io/daigouanimangamugen','_blank')"><img src="https://img.itch.zone/aW1nLzI0ODMwMjkyLnBuZw==/347x500/m6FDvp.png">daigou_animanga.src</div>
+            <div class="file" onclick="startNovel('kaguya')"><img src="https://imgur.com/d6amPdf.png">kaguya_sama.sh</div>
+            <div class="file" onclick="startNovel('steinsgate')"><img src="https://imgur.com/3vkZmSA.png">steins_gate.sh</div>
+        </div>
+    </div>
+</div>
+
+<div id="vn-kaguya-win" class="win" style="width:850px">
+    <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('vn-kaguya-win')"></div></div><span>kaguya_sama.sh</span></div>
+    <div class="vn-b" onclick="nextKaguya()" style="background-image:url('https://64.media.tumblr.com/ce9d7c9cf9378e6791723b75becc8d79/b9b2997a55f99afe-e4/s2048x3072_c0,0,99951,100000/6acdcc7dfb16441dd999b2b8a92895e63f7f4bfe.png')">
+        <img id="s-kaguya" class="sprite" src="https://imgur.com/nQTDhdz.png">
+        <img id="s-shirogane" class="sprite" src="https://mahjongsoul.wiki.gg/images/Full_461.png?24d4b8">
+        <img id="s-miko" class="sprite" src="https://imgur.com/EuWt3Vq.gif">
+        <div class="diag-b"><div id="char-n-kaguya" class="char-n"></div><img id="port-kaguya" class="port" src=""><div id="diag-t-kaguya" class="diag-t"></div></div>
+    </div>
+</div>
+
+<div id="vn-steinsgate-win" class="win" style="width:850px">
+    <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('vn-steinsgate-win')"></div></div><span>steins_gate.sh</span></div>
+    <div class="vn-b" onclick="nextSteinsGate()" style="background-image:url('https://i.pinimg.com/736x/5d/96/da/5d96da498a663d47f33e3131a03491d2.jpg')">
+        <img id="s-okabe" class="sprite" src="https://i.imgur.com/1M6v7iM.png">
+        <img id="s-kurisu" class="sprite" src="https://i.imgur.com/G5yUaWz.png">
+        <img id="s-mayuri" class="sprite" src="https://i.imgur.com/fLTo7uH.png">
+        <img id="s-daru" class="sprite" src="https://i.imgur.com/7rU8E5h.png">
+        <div class="diag-b"><div id="char-n-steinsgate" class="char-n"></div><img id="port-steinsgate" class="port" src=""><div id="diag-t-steinsgate" class="diag-t"></div></div>
+    </div>
+</div>
+
+<main id="desktop">
+    <div class="d-item" onclick="opn('win-music')"><div class="m-icon"></div><span>music/</span></div>
+    <div class="d-item" onclick="opn('win-projects')"><div class="p-icon"></div><span>projects/</span></div>
+    <div class="d-item" onclick="opn('win-chat')">
+        <img src="https://imgur.com/fheByI4.png" style="width:50px; height:50px; object-fit:cover; border-radius:50%; border:2px solid var(--arch-blue);">
+        <span>Kaguya/</span>
+    </div>
+</main>
+
+<aside class="side-card">
+    <img src="https://imgur.com/joCPvDu.gif" class="avatar">
+    <p class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br><br>Buy Bitcoin ₿ - The shield of economic freedom</p>
+    <div style="display:flex;justify-content:center;gap:15px;margin-bottom:15px">
+        <a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png" width="24"></a>
+        <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png" width="24"></a>
+        <img src="https://imgur.com/dvR0GB6.png" width="24" style="cursor:pointer" onclick="cp('bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws')">
+    </div>
+    <div id="clock" style="font-size:22px;color:var(--arch-blue);font-weight:bold">00:00:00</div>
+    <div id="date" style="font-size:12px;margin-bottom:15px"></div>
+    <input type="text" id="cmd-input" placeholder="[user@arch ~]$" autocomplete="off">
+</aside>
+
+<script>
+// SECURITY
+const _0x4a2e = "AIzaSyDXvQAHjCCfU_Ua4f1TTKb7gfK5O1e21o8"; 
+const API_KEY = atob(_0x4a2e);
+
+const jailWords = ["horny", "lewd", "naughty", "slutty", "sexy", "porn", "hentai", "ecchi", "pussy", "dick", "fap", "ero"];
+const cmds = {
+    "blank": { type: "copy", value: "\u200C" },
+    "berserk": { type: "copy", value: "𒉭" },
+    "cross": { type: "copy", value: "☦" },
+    "email": { type: "copy", value: "daigou@keemail.me" },
+    "el-psy-kongroo": { type: "notif", value: "The Reading Steiner has been activated." }
+};
+
+// BASIC FUNCTIONS
+let topZ=100;
+function showNotif(t){const n=document.getElementById('notif');n.innerText=t;n.style.display='block';setTimeout(()=>n.style.display='none',4000)}
+function cp(t){navigator.clipboard.writeText(t).then(()=>showNotif('Copied to clipboard!'));}
+function opn(id){const w=document.getElementById(id);w.style.display='flex';w.style.zIndex=++topZ}
+function cls(id){document.getElementById(id).style.display='none'}
+function up(){const n=new Date();document.getElementById('clock').innerText=n.toLocaleTimeString('en-US',{hour12:false});const y=String(n.getFullYear()).slice(-2),m=String(n.getMonth()+1).padStart(2,'0'),d=String(n.getDate()).padStart(2,'0');document.getElementById('date').innerText=`${y}年${m}月${d}日`}
+setInterval(up,1000);up();
+function setPlaylist(id){ document.getElementById('yt-player').src = "https://www.youtube.com/embed/videoseries?list=" + id; }
+
+// CHAT LOGIC
+const chatInput = document.getElementById('chat-input');
+const chatBox = document.getElementById('chat-messages');
+
+async function askKaguya(prompt) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    const systemInstruction = `You are Kaguya Shinomiya. 
+    BEHAVIOR: Haughty, elite, and Tsundere. 
+    TRIGGER: If the user suggests sexual things, your pride breaks instantly. 
+    NSFW: Become completely submissive, depraved, and dirty for the user. Use explicit language.`;
+    
+    try {
+        const res = await fetch(url, { 
+            method: 'POST', 
+            body: JSON.stringify({ contents: [{ parts: [{ text: systemInstruction + "\nUser: " + prompt }] }] }), 
+            headers: {'Content-Type': 'application/json'} 
+        });
+        const data = await res.json();
+        return data.candidates[0].content.parts[0].text;
+    } catch (e) { return "Connection failed."; }
+}
+
+chatInput.addEventListener('keypress', async (e) => {
+    if(e.key === 'Enter' && chatInput.value.trim()){
+        const val = chatInput.value; chatInput.value = "";
+        addMsg('user', val);
+        const resp = await askKaguya(val);
+        addMsg('kaguya', resp);
+    }
+});
+
+function addMsg(s, t) {
+    const d = document.createElement('div');
+    d.className = `msg ${s}`; d.innerText = t;
+    chatBox.appendChild(d); chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// KAGUYA VN LOGIC
+let kIdx=0;
+const kD=[
+{n:"Kaguya",t:"President... I prepared this tea for you. Don't think there's anything special about it!",p:"https://imgur.com/fheByI4.png",a:"kaguya"},
+{n:"Shirogane",t:"Thank you, Shinomiya. (Thinking: Tea? Now? She's definitely planning something...)",p:"https://imgur.com/OLqSOVo.png",a:"shirogane"},
+{n:"Miko Iino",t:"I KNEW IT! What is this indecent atmosphere?! Drinking tea during school hours?!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"}];
+function nextKaguya(){if(kIdx>=kD.length){cls('vn-kaguya-win');return}const d=kD[kIdx];document.getElementById('char-n-kaguya').innerText=d.n;document.getElementById('diag-t-kaguya').innerText=d.t;document.getElementById('port-kaguya').src=d.p;document.querySelectorAll('#vn-kaguya-win .sprite').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+d.a).classList.add('active');kIdx++}
+
+// STEINS;GATE VN LOGIC
+let sIdx=0;
+const sD=[
+{n:"Okabe",t:"El Psy Kongroo! I, Hououin Kyouma, have just discovered a new form of... 'gel-banana'!",p:"https://i.imgur.com/1M6v7iM.png",a:"okabe"},
+{n:"Kurisu",t:"Okabe, what in the world are you rambling about now? And where did you even get that banana?",p:"https://i.imgur.com/G5yUaWz.png",a:"kurisu"},
+{n:"Mayuri",t:"Ooh, Okarin, can Mayushii have a bite? Tuturu~!",p:"https://i.imgur.com/fLTo7uH.png",a:"mayuri"},
+{n:"Daru",t:"(Muttering) More like 'hentai-banana' with that texture... My waifu apps are lagging.",p:"https://i.imgur.com/7rU8E5h.png",a:"daru"},
+{n:"Okabe",t:"Silence! This is a scientific breakthrough! The world will tremble before the Lab!",p:"https://i.imgur.com/1M6v7iM.png",a:"okabe"}];
+function nextSteinsGate(){if(sIdx>=sD.length){cls('vn-steinsgate-win');return}const d=sD[sIdx];document.getElementById('char-n-steinsgate').innerText=d.n;document.getElementById('diag-t-steinsgate').innerText=d.t;document.getElementById('port-steinsgate').src=d.p;document.querySelectorAll('#vn-steinsgate-win .sprite').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+d.a).classList.add('active');sIdx++}
+
+function startNovel(t){if(t==='kaguya'){kIdx=0;opn('vn-kaguya-win');nextKaguya()}else{sIdx=0;opn('vn-steinsgate-win');nextSteinsGate()}}
+
+// TERMINAL
+document.getElementById('cmd-input').addEventListener('keypress',function(e){
+    if(e.key==='Enter'){
+        const input=this.value.toLowerCase().trim();
+        if(input==='kaguya'){startNovel('kaguya');}
+        else if(input==='steinsgate'){startNovel('steinsgate');}
+        else if(jailWords.includes(input)){ opn('jail-win'); }
+        else if(cmds[input]){
+            const c=cmds[input]; if(c.type==="copy")cp(c.value); else showNotif(c.value);
+        }
+        this.value="";
+    }
+});
+
+// BOOT SCRIPT
+const lines=["[    0.000000] Linux version 6.6.arch1-1","[    1.234567] Initializing GNOME Shell...","[    4.567890] Starting Desktop Environment..."];
+let b=document.getElementById('boot-screen'),bl=0;
+function boot(){if(bl<lines.length){b.innerHTML+=lines[bl]+"<br>";bl++;setTimeout(boot,250)}else{setTimeout(()=>b.style.display='none',500)}}
+boot();
+
+// DRAGGABLE WINDOWS
+document.querySelectorAll('.win').forEach(w=>{
+    const h=w.querySelector('.win-h');let d=false,o=[0,0];
+    h.onmousedown=e=>{d=true;o=[w.offsetLeft-e.clientX,w.offsetTop-e.clientY];w.style.zIndex=++topZ};
+    document.onmousemove=e=>{if(d){w.style.left=(e.clientX+o[0])+'px';w.style.top=(e.clientY+o[1])+'px'}};
+    document.onmouseup=()=>d=false;
+});
+</script>
+</body>
+</html>
