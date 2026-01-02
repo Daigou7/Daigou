@@ -10,20 +10,25 @@
 *{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;font-family:'JetBrains Mono',monospace}
 body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover fixed;color:var(--fg);height:100vh;overflow:hidden}
 #boot-screen{position:fixed;inset:0;background:#000;color:var(--arch-blue);z-index:9999;padding:20px;font-size:14px;display:block}
-.win{position:absolute;top:10%;left:10%;background:var(--gnome-dark);border:1px solid var(--gnome-border);width:700px;display:none;flex-direction:column;box-shadow:0 15px 50px rgba(0,0,0,0.8);z-index:100;border-radius:8px 8px 0 0;overflow:hidden}
+#notif{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--arch-blue);color:#000;padding:8px 20px;display:none;font-weight:bold;z-index:10000;border-radius:4px;box-shadow:0 4px 15px rgba(0,0,0,0.5)}
+
+/* GNOME WINDOWS */
+.win{position:absolute;top:10%;left:10%;background:var(--gnome-dark);border:1px solid var(--gnome-border);width:750px;display:none;flex-direction:column;box-shadow:0 15px 50px rgba(0,0,0,0.8);z-index:100;border-radius:8px 8px 0 0;overflow:hidden}
 .win-h{background:var(--gnome-purple);color:#fff;height:35px;display:flex;align-items:center;justify-content:center;position:relative;cursor:move;font-size:13px;font-weight:bold}
 .win-ctrl{position:absolute;left:10px;display:flex;gap:8px}
 .dot{width:12px;height:12px;border-radius:50%;background:#ff5f56;cursor:pointer}
 .win-menu{background:#3f3f3f;padding:5px 15px;display:flex;gap:15px;font-size:11px;color:#ccc;border-bottom:1px solid #1a1a1a}
 .win-toolbar{background:var(--gnome-dark);padding:8px 15px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1a1a1a}
 .address-bar{background:#1e1e1e;border:1px solid #444;border-radius:4px;padding:3px 10px;flex-grow:1;font-size:11px;color:#888}
-.win-layout{display:flex;height:400px}
+.win-layout{display:flex;height:450px}
 .sidebar{width:160px;background:var(--gnome-sidebar);padding:15px;font-size:11px;border-right:1px solid #1a1a1a}
 .side-title{color:#777;font-weight:bold;margin-bottom:10px;display:block;text-transform:uppercase;font-size:9px}
-.side-item{padding:5px 0;color:#ddd;display:block;cursor:pointer}
+.side-item{padding:8px 0;color:#ddd;display:block;cursor:pointer;text-decoration:none}
 .side-item:hover{color:var(--arch-blue)}
-.win-b{flex-grow:1;padding:20px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:20px;background:#242424}
-.vn-b{height:500px;background:url('https://64.media.tumblr.com/ce9d7c9cf9378e6791723b75becc8d79/b9b2997a55f99afe-e4/s2048x3072_c0,0,99951,100000/6acdcc7dfb16441dd999b2b8a92895e63f7f4bfe.png') no-repeat center/cover;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+.win-b{flex-grow:1;padding:20px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:20px;background:#242424}
+
+/* VN */
+.vn-b{height:550px;background:url('https://64.media.tumblr.com/ce9d7c9cf9378e6791723b75becc8d79/b9b2997a55f99afe-e4/s2048x3072_c0,0,99951,100000/6acdcc7dfb16441dd999b2b8a92895e63f7f4bfe.png') no-repeat center/cover;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
 .sprite{position:absolute;bottom:0;transition:0.3s;filter:brightness(0.3);opacity:0;pointer-events:none}
 .sprite.active{filter:brightness(1);opacity:1}
 #s-kaguya{height:95%;left:2%}#s-shirogane{height:85%;left:35%}#s-miko{height:75%;right:5%}
@@ -31,19 +36,21 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 #port{width:80px;height:80px;border:1px solid var(--arch-blue);margin-right:15px;object-fit:cover}
 #diag-t{font-size:14px;color:#fff;font-family:'Quicksand',sans-serif}
 #char-n{position:absolute;top:-25px;left:10px;background:var(--arch-blue);color:#000;padding:2px 10px;font-size:12px;font-weight:bold}
+
+/* DESKTOP UI */
 #desktop{padding:30px;display:flex;flex-direction:column;gap:20px}
 .d-item{display:flex;flex-direction:column;align-items:center;width:100px;cursor:pointer;text-shadow:1px 1px 3px #000;font-size:12px}
 .m-icon{width:50px;height:50px;background:url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center/contain;filter:hue-rotate(300deg)}
 .p-icon{width:50px;height:50px;background:url('https://imgur.com/FeRrUbt.png') no-repeat center/contain}
 .file{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#fff;font-size:10px;text-align:center;cursor:pointer}
 .file img{width:60px;height:60px;object-fit:cover;border:1px solid #444;margin-bottom:5px}
-.side-card{position:fixed;right:25px;top:50%;transform:translateY(-50%);width:260px;background:rgba(45,45,45,0.9);border:1px solid var(--arch-blue);padding:25px;text-align:center;z-index:10}
+
+.side-card{position:fixed;right:25px;top:50%;transform:translateY(-50%);width:260px;background:rgba(45,45,45,0.92);border:1px solid var(--arch-blue);padding:25px;text-align:center;z-index:10}
 .avatar{width:140px;height:140px;border:1px solid var(--arch-blue);margin-bottom:15px;object-fit:cover}
 .bio{font-family:'Quicksand',sans-serif;font-size:12px;color:#fff;margin-bottom:15px;line-height:1.4}
 #cmd-input{background:#1e1e1e;border:1px solid var(--arch-blue);color:var(--arch-blue);padding:8px;width:100%;outline:none;font-size:11px;text-align:center}
 #ach{position:fixed;bottom:-100px;right:25px;width:300px;background:#1b2838;border-left:4px solid #67c1f5;padding:12px;display:flex;align-items:center;transition:0.6s;z-index:2000}
 #ach.show{bottom:25px}
-#notif{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--arch-blue);color:#000;padding:5px 15px;display:none;font-weight:bold;z-index:3000}
 </style>
 </head>
 <body oncontextmenu="return false;">
@@ -61,18 +68,21 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
     </div>
 </div>
 
-<div id="win-music" class="win" style="width:750px">
+<div id="win-music" class="win" style="width:800px">
     <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('win-music')"></div></div><span>Music Player</span></div>
-    <div class="win-menu"><span>File</span><span>Edit</span><span>Help</span></div>
-    <div class="win-toolbar"><div class="address-bar">/home/daigou/music</div></div>
+    <div class="win-menu"><span>File</span><span>Playback</span><span>Help</span></div>
+    <div class="win-toolbar"><div class="address-bar">/home/daigou/music/openings_and_endings</div></div>
     <div class="win-layout">
         <div class="sidebar">
+            <span class="side-title">Playlists</span>
+            <span class="side-item" onclick="showNotif('Loading: Openings & Endings...')">Openings & Endings</span>
+            <span class="side-item" onclick="showNotif('Loading: OSTs...')">Soundtracks</span>
+            <br>
             <span class="side-title">Places</span>
-            <span class="side-item" onclick="showNotif('Directory: daigou')">daigou</span>
-            <span class="side-item" onclick="showNotif('Directory: Desktop')">Desktop</span>
+            <span class="side-item">Desktop</span>
         </div>
-        <div style="flex-grow:1;background:#000;display:flex;align-items:center">
-            <iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PLmdfE8v9k8_DqMvF8_fMIdpIu9uA_u-0F" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <div style="flex-grow:1;background:#000;display:flex;justify-content:center;align-items:center">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/videoseries?list=PLmdfE8v9k8_DqMvF8_fMIdpIu9uA_u-0F" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
 </div>
@@ -82,7 +92,7 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
     <div class="win-menu"><span>File</span><span>Edit</span><span>Help</span></div>
     <div class="win-toolbar"><div class="address-bar">/home/daigou/projects</div></div>
     <div class="win-layout">
-        <div class="sidebar"><span class="side-title">Places</span><span class="side-item">daigou</span></div>
+        <div class="sidebar"><span class="side-title">Locals</span><span class="side-item" onclick="showNotif('Directory: Projects')">daigou</span></div>
         <div class="win-b">
             <div class="file" onclick="window.open('https://daigou7.github.io/Daigou/lunaticlove.html','_blank')"><img src="https://imgur.com/yWGCBpw.png">github.src</div>
             <div class="file" onclick="window.open('https://daigou7.itch.io/lunaticlove','_blank')"><img src="https://imgur.com/yWGCBpw.png">itchio.src</div>
@@ -136,6 +146,8 @@ document.getElementById('cmd-input').addEventListener('keypress',function(e){
     if(e.key==='Enter'){
         const c=this.value.toLowerCase().trim();
         if(c==='kaguya'){this.value="";idx=0;opn('vn-win');document.getElementById('ach').classList.add('show');setTimeout(()=>document.getElementById('ach').classList.remove('show'),5000);next()}
+        else if(c==='berserk'){this.value="";cp('Berserk');}
+        else if(c==='cross'){this.value="";cp('†');}
         else if(c==='gelbooru'){this.value="";window.open('https://gelbooru.com/index.php?page=post&s=list&tags=shinomiya_kaguya','_blank')}
         else if(c==='rule34'){this.value="";window.open('https://rule34.xxx/index.php?page=post&s=list&tags=shinomiya_kaguya','_blank')}
         else {this.value=""}
