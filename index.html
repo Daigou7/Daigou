@@ -17,33 +17,30 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 .win-h{background:var(--gnome-purple);color:#fff;height:35px;display:flex;align-items:center;justify-content:center;position:relative;cursor:move;font-size:13px;font-weight:bold}
 .win-ctrl{position:absolute;left:10px;display:flex;gap:8px}
 .dot{width:12px;height:12px;border-radius:50%;background:#ff5f56;cursor:pointer}
-.win-menu{background:#3f3f3f;padding:5px 15px;display:flex;gap:15px;font-size:11px;color:#ccc;border-bottom:1px solid #1a1a1a}
-.win-toolbar{background:var(--gnome-dark);padding:8px 15px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1a1a1a}
-.address-bar{background:#1e1e1e;border:1px solid #444;border-radius:4px;padding:3px 10px;flex-grow:1;font-size:11px;color:#888}
 .win-layout{display:flex;height:450px}
-.sidebar{width:160px;background:var(--gnome-sidebar);padding:15px;font-size:11px;border-right:1px solid #1a1a1a}
+.sidebar{width:180px;background:var(--gnome-sidebar);padding:15px;font-size:11px;border-right:1px solid #1a1a1a}
 .side-title{color:#777;font-weight:bold;margin-bottom:10px;display:block;text-transform:uppercase;font-size:9px}
-.side-item{padding:8px 0;color:#ddd;display:block;cursor:pointer}
+.side-item{padding:8px 10px;color:#ddd;display:block;cursor:pointer;margin-bottom:5px;border-radius:4px}
+.side-item:hover{background:rgba(255,255,255,0.1)}
 .win-b{flex-grow:1;padding:20px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:20px;background:#242424}
 
 /* JAIL WINDOW */
 #jail-win{width:400px;text-align:center;border:2px solid #ff5f56}
 .jail-img{width:100%;height:auto;display:block}
 
-/* VN & CONTENT */
+/* VN CONTENT */
 .vn-b{height:550px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;background-size:cover;background-position:center}
 .sprite{position:absolute;bottom:0;transition:0.3s;filter:brightness(0.3);opacity:0;pointer-events:none}
 .sprite.active{filter:brightness(1);opacity:1}
-/* Kaguya VN Sprites */
 #s-kaguya{height:95%;left:2%}#s-shirogane{height:85%;left:35%}#s-miko{height:75%;right:5%}
-/* Steins;Gate VN Sprites */
 #s-okabe{height:90%;left:5%;}#s-kurisu{height:95%;left:30%;}#s-mayuri{height:85%;right:20%;}#s-daru{height:80%;right:5%;}
 
-#diag-b{width:100%;background:rgba(26,27,38,0.95);border-top:2px solid var(--arch-blue);padding:15px;display:flex;align-items:center;cursor:pointer;z-index:10;position:relative}
-#port{width:80px;height:80px;border:1px solid var(--arch-blue);margin-right:15px;object-fit:cover}
-#diag-t{font-size:14px;color:#fff;font-family:'Quicksand',sans-serif}
-#char-n{position:absolute;top:-25px;left:10px;background:var(--arch-blue);color:#000;padding:2px 10px;font-size:12px;font-weight:bold}
+#diag-b-kaguya, #diag-b-steinsgate{width:100%;background:rgba(26,27,38,0.95);border-top:2px solid var(--arch-blue);padding:15px;display:flex;align-items:center;cursor:pointer;z-index:10;position:relative}
+.port{width:80px;height:80px;border:1px solid var(--arch-blue);margin-right:15px;object-fit:cover}
+.diag-t{font-size:14px;color:#fff;font-family:'Quicksand',sans-serif}
+.char-n{position:absolute;top:-25px;left:10px;background:var(--arch-blue);color:#000;padding:2px 10px;font-size:12px;font-weight:bold}
 
+/* DESKTOP & SIDEBAR */
 #desktop{padding:30px;display:flex;flex-direction:column;gap:20px}
 .d-item{display:flex;flex-direction:column;align-items:center;width:100px;cursor:pointer;text-shadow:1px 1px 3px #000;font-size:12px}
 .m-icon{width:50px;height:50px;background:url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center/contain;filter:hue-rotate(300deg)}
@@ -69,20 +66,22 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
     <img src="https://asset-metadata-service-production.s3.amazonaws.com/asset_icons/0589ef966387f6b1665562c8ae1442a592e08fc89874aa201595b7dc96294566.jpeg" class="jail-img">
 </div>
 
-<div id="win-music" class="win" style="width:800px">
+<div id="win-music" class="win" style="width:850px">
     <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('win-music')"></div></div><span>Music Player</span></div>
     <div class="win-layout">
-        <div class="sidebar"><span class="side-title">Playlists</span><span class="side-item">Openings & Endings</span></div>
+        <div class="sidebar">
+            <span class="side-title">Playlists</span>
+            <span class="side-item" onclick="setPlaylist('PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC')">Openings & Endings</span>
+            <span class="side-item" onclick="setPlaylist('PLuJXaOWHQNoTeLG7B9LPm7lSy2pBjEQww')">Anime OST</span>
+        </div>
         <div style="flex-grow:1;background:#000;display:flex;align-items:center">
-            <iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PLmdfE8v9k8_DqMvF8_fMIdpIu9uA_u-0F" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <iframe id="yt-player" width="100%" height="100%" src="https://www.youtube.com/embed/videoseries?list=PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
 </div>
 
 <div id="win-projects" class="win">
     <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('win-projects')"></div></div><span>Projects</span></div>
-    <div class="win-menu"><span>File</span><span>Edit</span><span>Help</span></div>
-    <div class="win-toolbar"><div class="address-bar">/home/daigou/projects</div></div>
     <div class="win-layout">
         <div class="sidebar"><span class="side-title">Locals</span><span class="side-item">daigou</span></div>
         <div class="win-b">
@@ -95,25 +94,24 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 
 <div id="vn-kaguya-win" class="win" style="width:850px">
     <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('vn-kaguya-win')"></div></div><span>kaguya_sama.sh</span></div>
-    <div id="vn-kaguya-b" class="vn-b" onclick="nextKaguya()" style="background-image:url('https://64.media.tumblr.com/ce9d7c9cf9378e6791723b75becc8d79/b9b2997a55f99afe-e4/s2048x3072_c0,0,99951,100000/6acdcc7dfb16441dd999b2b8a92895e63f7f4bfe.png')">
+    <div class="vn-b" onclick="nextKaguya()" style="background-image:url('https://64.media.tumblr.com/ce9d7c9cf9378e6791723b75becc8d79/b9b2997a55f99afe-e4/s2048x3072_c0,0,99951,100000/6acdcc7dfb16441dd999b2b8a92895e63f7f4bfe.png')">
         <img id="s-kaguya" class="sprite" src="https://imgur.com/nQTDhdz.png">
         <img id="s-shirogane" class="sprite" src="https://mahjongsoul.wiki.gg/images/Full_461.png?24d4b8">
         <img id="s-miko" class="sprite" src="https://imgur.com/EuWt3Vq.gif">
-        <div id="diag-b-kaguya"><div id="char-n-kaguya"></div><img id="port-kaguya" src=""><div id="diag-t-kaguya"></div></div>
+        <div id="diag-b-kaguya"><div id="char-n-kaguya" class="char-n"></div><img id="port-kaguya" class="port" src=""><div id="diag-t-kaguya" class="diag-t"></div></div>
     </div>
 </div>
 
 <div id="vn-steinsgate-win" class="win" style="width:850px">
     <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('vn-steinsgate-win')"></div></div><span>steins_gate.sh</span></div>
-    <div id="vn-steinsgate-b" class="vn-b" onclick="nextSteinsGate()" style="background-image:url('https://i.pinimg.com/736x/5d/96/da/5d96da498a663d47f33e3131a03491d2.jpg')">
-        <img id="s-okabe" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/2/22/Reawake.PNG/revision/latest?cb=20230523202715">
-        <img id="s-kurisu" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/0/01/Kurisu_Makise_Portrait.png/revision/latest?cb=20141222010103">
-        <img id="s-mayuri" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/e/e6/Mayuri_Shiina_Portrait.png/revision/latest?cb=20181024172638">
-        <img id="s-daru" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/8/84/Daru_Cosplay.png/revision/latest/scale-to-width-down/1000?cb=20230612211603">
-        <div id="diag-b-steinsgate"><div id="char-n-steinsgate"></div><img id="port-steinsgate" src=""><div id="diag-t-steinsgate"></div></div>
+    <div class="vn-b" onclick="nextSteinsGate()" style="background-image:url('https://i.pinimg.com/736x/5d/96/da/5d96da498a663d47f33e3131a03491d2.jpg')">
+        <img id="s-okabe" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/2/22/Reawake.PNG">
+        <img id="s-kurisu" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/0/01/Kurisu_Makise_Portrait.png">
+        <img id="s-mayuri" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/e/e6/Mayuri_Shiina_Portrait.png">
+        <img id="s-daru" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/8/84/Daru_Cosplay.png">
+        <div id="diag-b-steinsgate"><div id="char-n-steinsgate" class="char-n"></div><img id="port-steinsgate" class="port" src=""><div id="diag-t-steinsgate" class="diag-t"></div></div>
     </div>
 </div>
-
 
 <main id="desktop">
     <div class="d-item" onclick="opn('win-music')"><div class="m-icon"></div><span>music/</span></div>
@@ -138,132 +136,66 @@ const jailWords = ["horny", "lewd", "naughty", "slutty", "sexy", "porn", "hentai
 const cmds = {
     "blank": { type: "copy", value: "\u200C" },
     "berserk": { type: "copy", value: "𒉭" },
-    "guts": { type: "copy", value: "𒉭" },
     "cross": { type: "copy", value: "☦" },
-    "god": { type: "copy", value: "☦" },
-    "jesus": { type: "copy", value: "☦" },
-    "way": { type: "copy", value: "☦" },
-    "truth": { type: "copy", value: "☦" },
-    "life": { type: "copy", value: "☦" },
     "email": { type: "copy", value: "daigou@keemail.me" },
     "password": { type: "copy", value: "nigger lol" },
-    "id": { type: "copy", value: "https://steamcommunity.com/id/Daigou7/" },
-    "sacrifice": { type: "notif", value: "In this world, is the destiny of mankind controlled by some transcendental entity or law?" },
-    "cowboy": { type: "notif", value: "See you space cowboy..." },
     "el-psy-kongroo": { type: "notif", value: "The Reading Steiner has been activated." },
-    "matrix": { type: "notif", value: "There is no spoon." },
-    "sun": { type: "notif", value: "Praise the Sun!" },
-    "hollow": { type: "notif", value: "Don't you dare go hollow." },
-    "fire": { type: "notif", value: "Mayst thou thy peace discov'r." },
-    "souls": { type: "notif", value: "You find the strength to focus, and they will become your strength." },
-    "ash": { type: "notif", value: "Ashen One, hearest thou my voice still?" },
-    "struggler": { type: "notif", value: "Even if you force back what was lost, it still won't be as it was." },
-    "destiny": { type: "notif", value: "He who acts on his own is the one who finds his own way." },
-    "dream": { type: "notif", value: "A dream is a source of strength, but it can also be a source of suffering." },
-    "swordsman": { type: "notif", value: "My sword has gotten very dull. However, it's just right for hacking some monsters to pieces." },
-    "beast": { type: "notif", value: "If you're always afraid of the shadows, you'll never see the light." },
-    "faith": { type: "notif", value: "Everything is possible for him who believes. (Mark 9:23)" },
-    "psalm23": { type: "notif", value: "The Lord is my shepherd, I shall not want." },
-    "light": { type: "notif", value: "The light shines in the darkness, and the darkness has not overcome it. (John 1:5)" },
-    "warrior": { type: "notif", value: "Put on the full armor of God, so that you can take your stand against the devil's schemes." },
-    "salvation": { type: "notif", value: "I am the way, the truth, and the life. (John 14:6)" },
-    "peace": { type: "notif", value: "My peace I give to you. Not as the world gives. (John 14:27)" }
+    "cowboy": { type: "notif", value: "See you space cowboy..." },
+    "salvation": { type: "notif", value: "I am the way, the truth, and the life. (John 14:6)" }
 };
 
+// BOOT
 const lines=["[    0.000000] Linux version 6.6.arch1-1","[    1.234567] Initializing GNOME Shell...","[    4.567890] Starting Desktop Environment..."];
 let b=document.getElementById('boot-screen'),l=0;
 function boot(){if(l<lines.length){b.innerHTML+=lines[l]+"<br>";l++;setTimeout(boot,250)}else{setTimeout(()=>b.style.display='none',500)}}
 boot();
 
+// WINDOWS & CLOCK
 let topZ=100;
 function showNotif(t){const n=document.getElementById('notif');n.innerText=t;n.style.display='block';setTimeout(()=>n.style.display='none',4000)}
 function cp(t){navigator.clipboard.writeText(t).then(()=>showNotif('Copied to clipboard!'));}
 function opn(id){const w=document.getElementById(id);w.style.display='flex';w.style.zIndex=++topZ}
 function cls(id){document.getElementById(id).style.display='none'}
-
 function up(){const n=new Date();document.getElementById('clock').innerText=n.toLocaleTimeString('en-US',{hour12:false});const y=String(n.getFullYear()).slice(-2),m=String(n.getMonth()+1).padStart(2,'0'),d=String(n.getDate()).padStart(2,'0');document.getElementById('date').innerText=`${y}年${m}月${d}日`}
 setInterval(up,1000);up();
 
-// Kaguya VN
-let kaguyaIdx=0;
-const kaguyaDialogs=[
+// MUSIC LOGIC
+function setPlaylist(id){ document.getElementById('yt-player').src = "https://www.youtube.com/embed/videoseries?list=" + id; }
+
+// VN KAGUYA
+let kIdx=0;
+const kD=[
 {n:"Kaguya",t:"President... I prepared this tea for you. Don't think there's anything special about it!",p:"https://imgur.com/fheByI4.png",a:"kaguya"},
 {n:"Shirogane",t:"Thank you, Shinomiya. (Thinking: Tea? Now? She's definitely planning something...)",p:"https://imgur.com/OLqSOVo.png",a:"shirogane"},
-{n:"Miko Iino",t:"I KNEW IT! What is this indecent atmosphere?! Drinking tea during school hours?!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"},
-{n:"Kaguya",t:"I-Iino-san?! It's not what you're thinking!",p:"https://imgur.com/fheByI4.png",a:"kaguya"},
-{n:"Miko Iino",t:"I'm reporting this immediately! The Student Council is no place for sugary romances!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"}
-];
+{n:"Miko Iino",t:"I KNEW IT! What is this indecent atmosphere?! Drinking tea during school hours?!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"}];
+function nextKaguya(){if(kIdx>=kD.length){cls('vn-kaguya-win');return}const d=kD[kIdx];document.getElementById('char-n-kaguya').innerText=d.n;document.getElementById('diag-t-kaguya').innerText=d.t;document.getElementById('port-kaguya').src=d.p;document.querySelectorAll('#vn-kaguya-win .sprite').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+d.a).classList.add('active');kIdx++}
 
-function nextKaguya(){
-    if(kaguyaIdx>=kaguyaDialogs.length){cls('vn-kaguya-win');return}
-    const d=kaguyaDialogs[kaguyaIdx];
-    document.getElementById('char-n-kaguya').innerText=d.n;
-    document.getElementById('diag-t-kaguya').innerText=d.t;
-    document.getElementById('port-kaguya').src=d.p;
-    document.querySelectorAll('#vn-kaguya-win .sprite').forEach(s=>s.classList.remove('active'));
-    document.getElementById('s-'+d.a).classList.add('active');
-    kaguyaIdx++;
-}
+// VN STEINS;GATE
+let sIdx=0;
+const sD=[
+{n:"Okabe",t:"El Psy Kongroo! I, Hououin Kyouma, have just discovered a new form of... 'gel-banana'!",p:"https://static.wikia.nocookie.net/steins-gate/images/2/22/Reawake.PNG",a:"okabe"},
+{n:"Kurisu",t:"Okabe, what in the world are you rambling about now? And where did you even get that banana?",p:"https://static.wikia.nocookie.net/steins-gate/images/0/01/Kurisu_Makise_Portrait.png",a:"kurisu"},
+{n:"Mayuri",t:"Ooh, Okarin, can Mayushii have a bite? Tuturu~!",p:"https://static.wikia.nocookie.net/steins-gate/images/e/e6/Mayuri_Shiina_Portrait.png",a:"mayuri"},
+{n:"Daru",t:"(Muttering) More like 'hentai-banana' with that texture... My waifu apps are lagging.",p:"https://static.wikia.nocookie.net/steins-gate/images/8/84/Daru_Cosplay.png",a:"daru"}];
+function nextSteinsGate(){if(sIdx>=sD.length){cls('vn-steinsgate-win');return}const d=sD[sIdx];document.getElementById('char-n-steinsgate').innerText=d.n;document.getElementById('diag-t-steinsgate').innerText=d.t;document.getElementById('port-steinsgate').src=d.p;document.querySelectorAll('#vn-steinsgate-win .sprite').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+d.a).classList.add('active');sIdx++}
 
-// Steins;Gate VN
-let steinsgateIdx=0;
-const steinsgateDialogs=[
-    {n:"Okabe",t:"El Psy Kongroo! I, Hououin Kyouma, have just discovered a new form of... 'gel-banana'!",p:"https://static.wikia.nocookie.net/steins-gate/images/2/22/Reawake.PNG/revision/latest?cb=20230523202715",a:"okabe"},
-    {n:"Kurisu",t:"Okabe, what in the world are you rambling about now? And where did you even get that banana?",p:"https://static.wikia.nocookie.net/steins-gate/images/0/01/Kurisu_Makise_Portrait.png/revision/latest?cb=20141222010103",a:"kurisu"},
-    {n:"Mayuri",t:"Ooh, Okarin, can Mayushii have a bite? Tuturu~!",p:"https://static.wikia.nocookie.net/steins-gate/images/e/e6/Mayuri_Shiina_Portrait.png/revision/latest?cb=20181024172638",a:"mayuri"},
-    {n:"Daru",t:"(Muttering) More like 'hentai-banana' with that texture... My waifu apps are lagging.",p:"https://static.wikia.nocookie.net/steins-gate/images/8/84/Daru_Cosplay.png/revision/latest/scale-to-width-down/1000?cb=20230612211603",a:"daru"},
-    {n:"Okabe",t:"Silence, Mayushii! This is a scientific breakthrough! And Daru, your perverted comments are disrupting the fabric of space-time!",p:"https://static.wikia.nocookie.net/steins-gate/images/2/22/Reawake.PNG/revision/latest?cb=20230523202715",a:"okabe"},
-    {n:"Kurisu",t:"(Sigh) You're just trying to impress me with another one of your nonsensical inventions, aren't you, Hououin? It's just a banana that's been in the microwave for too long.",p:"https://static.wikia.nocookie.net/steins-gate/images/0/01/Kurisu_Makise_Portrait.png/revision/latest?cb=20141222010103",a:"kurisu"},
-    {n:"Mayuri",t:"Okarin, if it's a new invention, does that mean it grants wishes? Like a fluffy, delicious wish?",p:"https://static.wikia.nocookie.net/steins-gate/images/e/e6/Mayuri_Shiina_Portrait.png/revision/latest?cb=20181024172638",a:"mayuri"},
-    {n:"Daru",t:"If it grants wishes, I wish for a 2D waifu who becomes 3D... and is of legal age, of course. (Wink)",p:"https://static.wikia.nocookie.net/steins-gate/images/8/84/Daru_Cosplay.png/revision/latest/scale-to-width-down/1000?cb=20230612211603",a:"daru"},
-    {n:"Okabe",t:"You fools! You're all missing the point! This is about the *future*! The glorious future of the Future Gadget Laboratory!",p:"https://static.wikia.nocookie.net/steins-gate/images/2/22/Reawake.PNG/revision/latest?cb=20230523202715",a:"okabe"},
-    {n:"Kurisu",t:"Or the glorious future of a very messy kitchen. Just throw out the banana, Okabe.",p:"https://static.wikia.nocookie.net/steins-gate/images/0/01/Kurisu_Makise_Portrait.png/revision/latest?cb=20141222010103",a:"kurisu"},
-    {n:"Okabe",t:"Kuh! You mock me now, Assistant! But one day, the world will tremble before the might of my gel-banana! Mark my words!",p:"https://static.wikia.nocookie.net/steins-gate/images/2/22/Reawake.PNG/revision/latest?cb=20230523202715",a:"okabe"}
-];
+function startNovel(t){if(t==='kaguya'){kIdx=0;opn('vn-kaguya-win');document.getElementById('ach').classList.add('show');setTimeout(()=>document.getElementById('ach').classList.remove('show'),5000);nextKaguya()}else{sIdx=0;opn('vn-steinsgate-win');nextSteinsGate()}}
 
-function nextSteinsGate(){
-    if(steinsgateIdx>=steinsgateDialogs.length){cls('vn-steinsgate-win');return}
-    const d=steinsgateDialogs[steinsgateIdx];
-    document.getElementById('char-n-steinsgate').innerText=d.n;
-    document.getElementById('diag-t-steinsgate').innerText=d.t;
-    document.getElementById('port-steinsgate').src=d.p;
-    document.querySelectorAll('#vn-steinsgate-win .sprite').forEach(s=>s.classList.remove('active'));
-    document.getElementById('s-'+d.a).classList.add('active');
-    steinsgateIdx++;
-}
-
-
-function startNovel(novelType){
-    if(novelType === 'kaguya'){
-        kaguyaIdx=0;
-        opn('vn-kaguya-win');
-        document.getElementById('ach').classList.add('show');
-        setTimeout(()=>document.getElementById('ach').classList.remove('show'),5000);
-        nextKaguya();
-    } else if (novelType === 'steinsgate'){
-        steinsgateIdx=0;
-        opn('vn-steinsgate-win');
-        // No achievement for Steins;Gate for now, unless you want one!
-        nextSteinsGate();
-    }
-}
-
-
+// TERMINAL
 document.getElementById('cmd-input').addEventListener('keypress',function(e){
     if(e.key==='Enter'){
         const input=this.value.toLowerCase().trim();
-        if(input==='kaguya'){this.value=""; startNovel('kaguya');}
-        else if(input==='steinsgate'){this.value=""; startNovel('steinsgate');}
-        else if(jailWords.includes(input)){ opn('jail-win'); this.value=""; }
+        if(input==='kaguya'){startNovel('kaguya');}
+        else if(input==='steinsgate'){startNovel('steinsgate');}
+        else if(jailWords.includes(input)){ opn('jail-win'); }
         else if(cmds[input]){
-            const command = cmds[input];
-            if(command.type === "copy"){ cp(command.value); }
-            else if(command.type === "notif"){ showNotif(command.value); }
-            this.value="";
-        } else { this.value=""; }
+            const c=cmds[input]; if(c.type==="copy")cp(c.value); else showNotif(c.value);
+        }
+        this.value="";
     }
 });
 
+// DRAGGABLE
 document.querySelectorAll('.win').forEach(w=>{
     const h=w.querySelector('.win-h');let d=false,o=[0,0];
     h.onmousedown=e=>{d=true;o=[w.offsetLeft-e.clientX,w.offsetTop-e.clientY];w.style.zIndex=++topZ};
