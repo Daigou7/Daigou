@@ -156,11 +156,6 @@
 
     <div id="win-player" class="window"><div class="window-header"><span>Now Playing</span><span class="close-btn" onclick="closeWin('win-player')">✖</span></div><div id="player-container" style="padding:15px; background:#000;"></div></div>
 
-    <div id="win-gallery" class="window">
-        <div class="window-header"><span>~/hidden_gallery</span><span class="close-btn" onclick="closeWin('win-gallery')">✖</span></div>
-        <div class="window-body" id="gallery-body">
-            </div>
-    </div>
 
     <div id="img-viewer" onclick="this.style.display='none'">
         <img src="" id="full-img">
@@ -212,14 +207,6 @@
             document.getElementById('full-img').src = url;
             viewer.style.display = 'flex';
         }
-
-        // Função para carregar a galeria secreta
-        function openGallery() {
-            const urls = [
-                "https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2Fkaguya-shinomiya-kaguya-sama-love-is-war-v0-geie9dpmmqtc1.jpeg%3Fwidth%3D640%26crop%3Dsmart%26auto%3Dwebp%26s%3Dd3490a19388f018fb820eb172204f28859d89a46",
-                "https://cdn.donmai.us/original/98/9f/989f5fc2b4477f124989ba6f1f95184a.jpg",
-                "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9c940269-0bf1-46db-b6a7-3bdcfa73a688/dh1mz7l-ccb4a23e-a764-4a86-ab2a-b2a4690a1f38.png/v1/fill/w_809,h_988,q_70,strp/kaguya_shinomiya___feet_foot_commission_by_eycarts_dh1mz7l-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTQ3OSIsInBhdGgiOiIvZi85Yzk0MDI2OS0wYmYxLTQ2ZGItYjZhNy0zYmRjZmE3M2E2ODgvZGgxbXo3bC1jY2I0YTIzZS1hNzY0LTRhODYtYWIyYS1iMmE0NjkwYTFmMzgucG5nIiwid2lkdGgiOiI8PTEyMTAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.r7wRCoa6l2gNtF3H8KDAvwaCq_dQGcB0AMIoZM6oNYM"
-            ];
             const body = document.getElementById('gallery-body');
             body.innerHTML = ''; // Limpa para evitar duplicatas
             urls.forEach((url, index) => {
@@ -229,7 +216,6 @@
         }
 
         const shortcuts = {
-            "feet": { type: "function", value: openGallery },
             "blank": { type: "copy", value: "\u200C" },
             "berserk": { type: "copy", value: "𒉭" },
             "guts": { type: "copy", value: "𒉭" },
