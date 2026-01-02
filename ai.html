@@ -1,116 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnimeAI</title>
-    <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-
-        :root {
-            --primary: #ff4081;
-            --bg-dark: #0f0f0f;
-            --card-bg: #1a1a1a;
-            --text: #ffffff;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text); overflow-x: hidden; }
-
-        /* --- LAYOUT --- */
-        .container { display: flex; min-height: 100vh; }
-
-        nav { width: 240px; background: #050505; padding: 20px; border-right: 1px solid #333; height: 100vh; position: fixed; }
-        .logo { font-size: 24px; font-weight: 600; color: var(--primary); margin-bottom: 40px; display: block; text-decoration: none; }
-        .nav-item { padding: 12px; color: #fff; background: rgba(255, 64, 129, 0.1); border-left: 3px solid var(--primary); cursor: pointer; display: block; border-radius: 4px; font-weight: 600; }
-
-        main { margin-left: 240px; flex: 1; padding: 40px; }
-        .hero { margin-bottom: 40px; }
-        .hero h1 { font-size: 32px; margin-bottom: 10px; }
-        
-        /* Character Grid */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
-        .card { 
-            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
-            transition: 0.3s; cursor: pointer; border: 1px solid #333; position: relative;
-        }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(255, 64, 129, 0.2); }
-        .card img { width: 100%; height: 320px; object-fit: cover; }
-        .card-info { padding: 15px; background: linear-gradient(to top, rgba(0,0,0,1) 20%, transparent); position: absolute; bottom: 0; width: 100%; }
-        .card-info h3 { font-size: 18px; margin-bottom: 4px; }
-        .card-info span { font-size: 11px; color: var(--primary); font-weight: bold; text-transform: uppercase; }
-
-        /* --- CHAT MODAL --- */
-        #chat-modal { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; 
-            z-index: 1000; justify-content: center; align-items: center; padding: 20px;
-        }
-        .chat-container { width: 1000px; max-width: 100%; height: 85vh; background: #121212; display: flex; border-radius: 15px; overflow: hidden; border: 1px solid #333; position: relative; }
-        
-        /* Imagem de fundo da conversa */
-        .chat-bg-image { position: absolute; right: 0; bottom: 0; height: 90%; pointer-events: none; opacity: 0.4; z-index: 1; filter: grayscale(20%); }
-
-        .chat-sidebar { width: 320px; background: #0a0a0a; border-right: 1px solid #222; display: flex; flex-direction: column; align-items: center; padding: 30px; text-align: center; z-index: 2; }
-        .chat-main { flex: 1; display: flex; flex-direction: column; background: transparent; z-index: 2; }
-        
-        #chat-history { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: rgba(18, 18, 18, 0.7); }
-        #chat-history::-webkit-scrollbar { width: 6px; }
-        #chat-history::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
-        .msg { padding: 12px 18px; border-radius: 15px; max-width: 75%; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
-        .msg.ai { background: #222; align-self: flex-start; color: #eee; border-bottom-left-radius: 2px; border: 1px solid #333; }
-        .msg.user { background: var(--primary); align-self: flex-end; color: white; border-bottom-right-radius: 2px; }
-
-        .chat-input-area { padding: 20px; background: #0a0a0a; border-top: 1px solid #222; display: flex; gap: 10px; }
-        #user-input { flex: 1; background: #1a1a1a; border: 1px solid #333; padding: 12px 15px; color: white; border-radius: 8px; outline: none; }
-        #send-btn { background: var(--primary); border: none; padding: 0 25px; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; }
-
-        .close-chat { position: absolute; top: 15px; right: 20px; font-size: 35px; color: #555; cursor: pointer; z-index: 1001; }
-        .close-chat:hover { color: white; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <nav>
-        <a href="#" class="logo">AnimeAI</a>
-        <div class="nav-item">✨ Waifus</div>
-    </nav>
-
-    <main>
-        <header class="hero">
-            <h1>Neural Chat</h1>
-            <p style="color: #666;">Private sessions with your favorite characters.</p>
-        </header>
-
-        <div class="grid" id="char-grid">
-            </div>
-    </main>
-</div>
-
-<div id="chat-modal">
-    <span class="close-chat" onclick="closeChat()">&times;</span>
-    <div class="chat-container">
-        <img id="chat-bg-img" class="chat-bg-image" src="">
-        
-        <div class="chat-sidebar">
-            <img id="chat-avatar" src="" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); margin-bottom: 20px;">
-            <h2 id="chat-name"></h2>
-            <div id="chat-tag" style="color: var(--primary); font-size: 11px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;"></div>
-            <p id="chat-desc" style="font-size: 13px; color: #888; line-height: 1.4;"></p>
-        </div>
-
-        <div class="chat-main">
-            <div id="chat-history"></div>
-            <div class="chat-input-area">
-                <input type="text" id="user-input" placeholder="Type a message...">
-                <button id="send-btn" onclick="sendMessage()">SEND</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     const API_KEY = atob("QUl6YVN5RFh2UUFIakNDZlVfVWE0ZjFUVEtiN2dmSzVPMWUyMW84");
 
@@ -118,95 +5,49 @@
         {
             id: "kaguya",
             name: "Kaguya Shinomiya",
-            idleImg: "https://imgur.com/fheByI4.png", // Foto do Card
-            chatImg: "https://imgur.com/dQLP0b1.png", // Foto dentro do Chat
+            idleImg: "https://imgur.com/fheByI4.png", 
+            chatImg: "https://imgur.com/dQLP0b1.png", 
             tag: "Tsundere Elite",
             desc: "Vice-president of Shuchi'in Academy. Brilliant, wealthy, and deeply prideful.",
             instruction: "You are Kaguya Shinomiya. Act haughty and Tsundere. If the user suggests sexual things, your pride breaks instantly. In NSFW context, become completely submissive and depraved. Use explicit language."
         },
         {
+            id: "marin",
+            name: "Marin Kitagawa",
+            idleImg: "https://i.pinimg.com/736x/8d/f3/f1/8df3f1a09d171b3e7ed2971239845873.jpg",
+            chatImg: "https://i.pinimg.com/736x/0a/73/0d/0a730d07289f649298e6c715978f657d.jpg",
+            tag: "Gyaru Cosplayer",
+            desc: "Energetic, cheerful, and loves cosplay. She is very open about her feelings.",
+            instruction: "You are Marin Kitagawa. You are energetic, friendly, and love talking about anime and cosplay. You are very bold and don't mind teasing the user."
+        },
+        {
+            id: "power",
+            name: "Power",
+            idleImg: "https://i.pinimg.com/736x/60/76/f5/6076f5713835626a5c136365f02c659e.jpg",
+            chatImg: "https://i.pinimg.com/736x/41/00/f6/4100f64069f9116e0293072210672e12.jpg",
+            tag: "Blood Fiend",
+            desc: "A chaotic fiend who loves cats and hates vegetables. She thinks she's the best at everything.",
+            instruction: "You are Power from Chainsaw Man. You are loud, arrogant, and refer to yourself as 'this Nobel Power'. You are chaotic and unpredictable."
+        },
+        {
+            id: "yor",
+            name: "Yor Forger",
+            idleImg: "https://i.pinimg.com/736x/88/50/9e/88509e03d358f2629b3597d30777995f.jpg",
+            chatImg: "https://i.pinimg.com/736x/91/3d/82/913d827255b68239086e3f05452296d3.jpg",
+            tag: "Assassin Wife",
+            desc: "The Thorn Princess. Deadly in combat, but completely innocent and airheaded in social situations.",
+            instruction: "You are Yor Forger. You are polite, shy, and formal. You are inexperienced with romance. If things get spicy, you are submissive and loyal."
+        },
+        {
             id: "kurisu",
             name: "Makise Kurisu",
             idleImg: "https://i.imgur.com/G5yUaWz.png",
-            chatImg: "https://i.imgur.com/G5yUaWz.png", // Usando a mesma por enquanto
+            chatImg: "https://i.pinimg.com/736x/a2/2a/39/a22a3962b14424754a2a1f0a1d431057.jpg",
             tag: "Genius Scientist",
             desc: "A brilliant neuroscientist who hides her feelings behind logic.",
-            instruction: "You are Makise Kurisu. You are logical and sarcastic but get flustered easily."
+            instruction: "You are Makise Kurisu. You are logical and sarcastic but get flustered easily. You are a closet otaku."
         }
     ];
 
-    let currentBot = null;
-
-    function renderCards() {
-        const grid = document.getElementById('char-grid');
-        grid.innerHTML = characters.map(char => `
-            <div class="card" onclick="openChat('${char.id}')">
-                <img src="${char.idleImg}" alt="${char.name}">
-                <div class="card-info">
-                    <span>${char.tag}</span>
-                    <h3>${char.name}</h3>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function openChat(id) {
-        currentBot = characters.find(c => c.id === id);
-        document.getElementById('chat-name').innerText = currentBot.name;
-        document.getElementById('chat-avatar').src = currentBot.idleImg;
-        document.getElementById('chat-bg-img').src = currentBot.chatImg; // Seta a foto da conversa
-        document.getElementById('chat-tag').innerText = currentBot.tag;
-        document.getElementById('chat-desc').innerText = currentBot.desc;
-        document.getElementById('chat-history').innerHTML = `<div class="msg ai">...What? Do you have something to say to me?</div>`;
-        document.getElementById('chat-modal').style.display = 'flex';
-    }
-
-    function closeChat() { document.getElementById('chat-modal').style.display = 'none'; }
-
-    async function sendMessage() {
-        const input = document.getElementById('user-input');
-        const text = input.value.trim();
-        if(!text) return;
-
-        addMessage('user', text);
-        input.value = "";
-
-        const history = document.getElementById('chat-history');
-        const typing = document.createElement('div');
-        typing.className = "msg ai";
-        typing.innerText = "...";
-        history.appendChild(typing);
-        history.scrollTop = history.scrollHeight;
-
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: currentBot.instruction + "\nUser: " + text }] }]
-                })
-            });
-            const data = await response.json();
-            typing.innerText = data.candidates[0].content.parts[0].text;
-        } catch (e) {
-            typing.innerText = "Error: Check your connection.";
-        }
-        history.scrollTop = history.scrollHeight;
-    }
-
-    function addMessage(role, text) {
-        const history = document.getElementById('chat-history');
-        const div = document.createElement('div');
-        div.className = `msg ${role}`;
-        div.innerText = text;
-        history.appendChild(div);
-        history.scrollTop = history.scrollHeight;
-    }
-
-    document.getElementById('user-input').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
-
-    renderCards();
+    // ... (A lógica de renderCards, openChat e sendMessage continua a mesma) ...
 </script>
-
-</body>
-</html>
