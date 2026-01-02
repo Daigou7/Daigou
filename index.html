@@ -13,7 +13,7 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 #notif{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--arch-blue);color:#000;padding:8px 20px;display:none;font-weight:bold;z-index:10000;border-radius:4px;box-shadow:0 4px 15px rgba(0,0,0,0.5)}
 
 /* GNOME WINDOWS */
-.win{position:absolute;top:10%;left:10%;background:var(--gnome-dark);border:1px solid var(--gnome-border);width:750px;display:none;flex-direction:column;box-shadow:0 15px 50px rgba(0,0,0,0.8);z-index:100;border-radius:8px 8px 0 0;overflow:hidden}
+.win{position:absolute;top:15%;left:15%;background:var(--gnome-dark);border:1px solid var(--gnome-border);width:750px;display:none;flex-direction:column;box-shadow:0 15px 50px rgba(0,0,0,0.8);z-index:100;border-radius:8px 8px 0 0;overflow:hidden}
 .win-h{background:var(--gnome-purple);color:#fff;height:35px;display:flex;align-items:center;justify-content:center;position:relative;cursor:move;font-size:13px;font-weight:bold}
 .win-ctrl{position:absolute;left:10px;display:flex;gap:8px}
 .dot{width:12px;height:12px;border-radius:50%;background:#ff5f56;cursor:pointer}
@@ -23,11 +23,14 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 .win-layout{display:flex;height:450px}
 .sidebar{width:160px;background:var(--gnome-sidebar);padding:15px;font-size:11px;border-right:1px solid #1a1a1a}
 .side-title{color:#777;font-weight:bold;margin-bottom:10px;display:block;text-transform:uppercase;font-size:9px}
-.side-item{padding:8px 0;color:#ddd;display:block;cursor:pointer;text-decoration:none}
-.side-item:hover{color:var(--arch-blue)}
+.side-item{padding:8px 0;color:#ddd;display:block;cursor:pointer}
 .win-b{flex-grow:1;padding:20px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:20px;background:#242424}
 
-/* VN */
+/* JAIL WINDOW */
+#jail-win{width:400px;text-align:center;border:2px solid #ff5f56}
+.jail-img{width:100%;height:auto;display:block}
+
+/* VN & CONTENT */
 .vn-b{height:550px;background:url('https://64.media.tumblr.com/ce9d7c9cf9378e6791723b75becc8d79/b9b2997a55f99afe-e4/s2048x3072_c0,0,99951,100000/6acdcc7dfb16441dd999b2b8a92895e63f7f4bfe.png') no-repeat center/cover;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
 .sprite{position:absolute;bottom:0;transition:0.3s;filter:brightness(0.3);opacity:0;pointer-events:none}
 .sprite.active{filter:brightness(1);opacity:1}
@@ -37,7 +40,6 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 #diag-t{font-size:14px;color:#fff;font-family:'Quicksand',sans-serif}
 #char-n{position:absolute;top:-25px;left:10px;background:var(--arch-blue);color:#000;padding:2px 10px;font-size:12px;font-weight:bold}
 
-/* DESKTOP UI */
 #desktop{padding:30px;display:flex;flex-direction:column;gap:20px}
 .d-item{display:flex;flex-direction:column;align-items:center;width:100px;cursor:pointer;text-shadow:1px 1px 3px #000;font-size:12px}
 .m-icon{width:50px;height:50px;background:url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center/contain;filter:hue-rotate(300deg)}
@@ -58,31 +60,17 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 <div id="notif"></div>
 <div id="ach"><img src="https://imgur.com/fheByI4.png" width="45" style="margin-right:12px"><div><small style="color:#67c1f5;display:block">ACHIEVEMENT UNLOCKED</small><span style="font-size:12px;color:#fff">Love is War: Kaguya-sama</span></div></div>
 
-<div id="vn-win" class="win" style="width:850px">
-    <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('vn-win')"></div></div><span>kaguya_sama.sh</span></div>
-    <div class="vn-b" onclick="next()">
-        <img id="s-kaguya" class="sprite" src="https://imgur.com/nQTDhdz.png">
-        <img id="s-shirogane" class="sprite" src="https://mahjongsoul.wiki.gg/images/Full_461.png?24d4b8">
-        <img id="s-miko" class="sprite" src="https://imgur.com/EuWt3Vq.gif">
-        <div id="diag-b"><div id="char-n"></div><img id="port" src=""><div id="diag-t"></div></div>
-    </div>
+<div id="jail-win" class="win">
+    <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('jail-win')"></div></div><span>Security Alert</span></div>
+    <img src="https://asset-metadata-service-production.s3.amazonaws.com/asset_icons/0589ef966387f6b1665562c8ae1442a592e08fc89874aa201595b7dc96294566.jpeg" class="jail-img">
 </div>
 
 <div id="win-music" class="win" style="width:800px">
     <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('win-music')"></div></div><span>Music Player</span></div>
-    <div class="win-menu"><span>File</span><span>Playback</span><span>Help</span></div>
-    <div class="win-toolbar"><div class="address-bar">/home/daigou/music/openings_and_endings</div></div>
     <div class="win-layout">
-        <div class="sidebar">
-            <span class="side-title">Playlists</span>
-            <span class="side-item" onclick="showNotif('Loading: Openings & Endings...')">Openings & Endings</span>
-            <span class="side-item" onclick="showNotif('Loading: OSTs...')">Soundtracks</span>
-            <br>
-            <span class="side-title">Places</span>
-            <span class="side-item">Desktop</span>
-        </div>
-        <div style="flex-grow:1;background:#000;display:flex;justify-content:center;align-items:center">
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/videoseries?list=PLmdfE8v9k8_DqMvF8_fMIdpIu9uA_u-0F" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <div class="sidebar"><span class="side-title">Playlists</span><span class="side-item">Openings & Endings</span></div>
+        <div style="flex-grow:1;background:#000;display:flex;align-items:center">
+            <iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PLmdfE8v9k8_DqMvF8_fMIdpIu9uA_u-0F" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
 </div>
@@ -92,11 +80,21 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
     <div class="win-menu"><span>File</span><span>Edit</span><span>Help</span></div>
     <div class="win-toolbar"><div class="address-bar">/home/daigou/projects</div></div>
     <div class="win-layout">
-        <div class="sidebar"><span class="side-title">Locals</span><span class="side-item" onclick="showNotif('Directory: Projects')">daigou</span></div>
+        <div class="sidebar"><span class="side-title">Locals</span><span class="side-item">daigou</span></div>
         <div class="win-b">
             <div class="file" onclick="window.open('https://daigou7.github.io/Daigou/lunaticlove.html','_blank')"><img src="https://imgur.com/yWGCBpw.png">github.src</div>
-            <div class="file" onclick="window.open('https://daigou7.itch.io/lunaticlove','_blank')"><img src="https://imgur.com/yWGCBpw.png">itchio.src</div>
+            <div class="file" onclick="startNovel()"><img src="https://imgur.com/d6amPdf.png">kaguya_sama.sh</div>
         </div>
+    </div>
+</div>
+
+<div id="vn-win" class="win" style="width:850px">
+    <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('vn-win')"></div></div><span>kaguya_sama.sh</span></div>
+    <div class="vn-b" onclick="next()">
+        <img id="s-kaguya" class="sprite" src="https://imgur.com/nQTDhdz.png">
+        <img id="s-shirogane" class="sprite" src="https://mahjongsoul.wiki.gg/images/Full_461.png?24d4b8">
+        <img id="s-miko" class="sprite" src="https://imgur.com/EuWt3Vq.gif">
+        <div id="diag-b"><div id="char-n"></div><img id="port" src=""><div id="diag-t"></div></div>
     </div>
 </div>
 
@@ -119,13 +117,49 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 </aside>
 
 <script>
+const jailWords = ["horny", "lewd", "naughty", "slutty", "sexy", "porn", "hentai", "ecchi", "pussy", "dick", "fap", "ero"];
+const cmds = {
+    "blank": { type: "copy", value: "\u200C" },
+    "berserk": { type: "copy", value: "𒉭" },
+    "guts": { type: "copy", value: "𒉭" },
+    "cross": { type: "copy", value: "☦" },
+    "god": { type: "copy", value: "☦" },
+    "jesus": { type: "copy", value: "☦" },
+    "way": { type: "copy", value: "☦" },
+    "truth": { type: "copy", value: "☦" },
+    "life": { type: "copy", value: "☦" },
+    "email": { type: "copy", value: "daigou@keemail.me" },
+    "password": { type: "copy", value: "nigger lol" },
+    "id": { type: "copy", value: "https://steamcommunity.com/id/Daigou7/" },
+    "sacrifice": { type: "notif", value: "In this world, is the destiny of mankind controlled by some transcendental entity or law?" },
+    "cowboy": { type: "notif", value: "See you space cowboy..." },
+    "el-psy-kongroo": { type: "notif", value: "The Reading Steiner has been activated." },
+    "matrix": { type: "notif", value: "There is no spoon." },
+    "sun": { type: "notif", value: "Praise the Sun!" },
+    "hollow": { type: "notif", value: "Don't you dare go hollow." },
+    "fire": { type: "notif", value: "Mayst thou thy peace discov'r." },
+    "souls": { type: "notif", value: "You find the strength to focus, and they will become your strength." },
+    "ash": { type: "notif", value: "Ashen One, hearest thou my voice still?" },
+    "struggler": { type: "notif", value: "Even if you force back what was lost, it still won't be as it was." },
+    "destiny": { type: "notif", value: "He who acts on his own is the one who finds his own way." },
+    "dream": { type: "notif", value: "A dream is a source of strength, but it can also be a source of suffering." },
+    "swordsman": { type: "notif", value: "My sword has gotten very dull. However, it's just right for hacking some monsters to pieces." },
+    "beast": { type: "notif", value: "If you're always afraid of the shadows, you'll never see the light." },
+    "faith": { type: "notif", value: "Everything is possible for him who believes. (Mark 9:23)" },
+    "psalm23": { type: "notif", value: "The Lord is my shepherd, I shall not want." },
+    "light": { type: "notif", value: "The light shines in the darkness, and the darkness has not overcome it. (John 1:5)" },
+    "warrior": { type: "notif", value: "Put on the full armor of God, so that you can take your stand against the devil's schemes." },
+    "salvation": { type: "notif", value: "I am the way, the truth, and the life. (John 14:6)" },
+    "peace": { type: "notif", value: "My peace I give to you. Not as the world gives. (John 14:27)" }
+};
+
 const lines=["[    0.000000] Linux version 6.6.arch1-1","[    1.234567] Initializing GNOME Shell...","[    4.567890] Starting Desktop Environment..."];
 let b=document.getElementById('boot-screen'),l=0;
 function boot(){if(l<lines.length){b.innerHTML+=lines[l]+"<br>";l++;setTimeout(boot,250)}else{setTimeout(()=>b.style.display='none',500)}}
 boot();
 
 let topZ=100;
-function showNotif(t){const n=document.getElementById('notif');n.innerText=t;n.style.display='block';setTimeout(()=>n.style.display='none',2000)}
+function showNotif(t){const n=document.getElementById('notif');n.innerText=t;n.style.display='block';setTimeout(()=>n.style.display='none',4000)}
 function cp(t){navigator.clipboard.writeText(t).then(()=>showNotif('Copied to clipboard!'));}
 function opn(id){const w=document.getElementById(id);w.style.display='flex';w.style.zIndex=++topZ}
 function cls(id){document.getElementById(id).style.display='none'}
@@ -140,17 +174,27 @@ let idx=0;const dls=[
 {n:"Kaguya",t:"I-Iino-san?! It's not what you're thinking!",p:"https://imgur.com/fheByI4.png",a:"kaguya"},
 {n:"Miko Iino",t:"I'm reporting this immediately! The Student Council is no place for sugary romances!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"}];
 
+function startNovel(){
+    idx=0;
+    opn('vn-win');
+    document.getElementById('ach').classList.add('show');
+    setTimeout(()=>document.getElementById('ach').classList.remove('show'),5000);
+    next();
+}
+
 function next(){if(idx>=dls.length){cls('vn-win');return}const d=dls[idx];document.getElementById('char-n').innerText=d.n;document.getElementById('diag-t').innerText=d.t;document.getElementById('port').src=d.p;document.querySelectorAll('.sprite').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+d.a).classList.add('active');idx++}
 
 document.getElementById('cmd-input').addEventListener('keypress',function(e){
     if(e.key==='Enter'){
-        const c=this.value.toLowerCase().trim();
-        if(c==='kaguya'){this.value="";idx=0;opn('vn-win');document.getElementById('ach').classList.add('show');setTimeout(()=>document.getElementById('ach').classList.remove('show'),5000);next()}
-        else if(c==='berserk'){this.value="";cp('Berserk');}
-        else if(c==='cross'){this.value="";cp('†');}
-        else if(c==='gelbooru'){this.value="";window.open('https://gelbooru.com/index.php?page=post&s=list&tags=shinomiya_kaguya','_blank')}
-        else if(c==='rule34'){this.value="";window.open('https://rule34.xxx/index.php?page=post&s=list&tags=shinomiya_kaguya','_blank')}
-        else {this.value=""}
+        const input=this.value.toLowerCase().trim();
+        if(input==='kaguya'){this.value=""; startNovel();}
+        else if(jailWords.includes(input)){ opn('jail-win'); this.value=""; }
+        else if(cmds[input]){
+            const command = cmds[input];
+            if(command.type === "copy"){ cp(command.value); }
+            else if(command.type === "notif"){ showNotif(command.value); }
+            this.value="";
+        } else { this.value=""; }
     }
 });
 
