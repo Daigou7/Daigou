@@ -24,20 +24,22 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 .side-item:hover{background:rgba(255,255,255,0.1)}
 .win-b{flex-grow:1;padding:20px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:20px;background:#242424}
 
-/* JAIL WINDOW */
-#jail-win{width:400px;text-align:center;border:2px solid #ff5f56}
-.jail-img{width:100%;height:auto;display:block}
-
 /* VN CONTENT */
 .vn-b{height:550px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;background-size:cover;background-position:center}
 .sprite{position:absolute;bottom:0;transition:0.3s;filter:brightness(0.3);opacity:0;pointer-events:none}
 .sprite.active{filter:brightness(1);opacity:1}
-#s-kaguya{height:95%;left:2%}#s-shirogane{height:85%;left:35%}#s-miko{height:75%;right:5%}
-#s-okabe{height:90%;left:5%;}#s-kurisu{height:95%;left:30%;}#s-mayuri{height:85%;right:20%;}#s-daru{height:80%;right:5%;}
 
-#diag-b-kaguya, #diag-b-steinsgate{width:100%;background:rgba(26,27,38,0.95);border-top:2px solid var(--arch-blue);padding:15px;display:flex;align-items:center;cursor:pointer;z-index:10;position:relative}
-.port{width:80px;height:80px;border:1px solid var(--arch-blue);margin-right:15px;object-fit:cover}
-.diag-t{font-size:14px;color:#fff;font-family:'Quicksand',sans-serif}
+/* Kaguya Sprites */
+#s-kaguya{height:95%;left:2%}#s-shirogane{height:85%;left:35%}#s-miko{height:75%;right:5%}
+/* Steins;Gate Sprites - Adjusted for new URLs */
+#s-okabe{height:110%;left:0%;}
+#s-kurisu{height:100%;left:25%;}
+#s-mayuri{height:100%;right:15%;}
+#s-daru{height:100%;right:-5%;}
+
+.diag-b{width:100%;background:rgba(26,27,38,0.95);border-top:2px solid var(--arch-blue);padding:15px;display:flex;align-items:center;cursor:pointer;z-index:10;position:relative}
+.port{width:80px;height:80px;border:1px solid var(--arch-blue);margin-right:15px;object-fit:cover;background:#000}
+.diag-t{font-size:14px;color:#fff;font-family:'Quicksand',sans-serif;height:60px}
 .char-n{position:absolute;top:-25px;left:10px;background:var(--arch-blue);color:#000;padding:2px 10px;font-size:12px;font-weight:bold}
 
 /* DESKTOP & SIDEBAR */
@@ -74,7 +76,7 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
             <span class="side-item" onclick="setPlaylist('PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC')">Openings & Endings</span>
             <span class="side-item" onclick="setPlaylist('PLuJXaOWHQNoTeLG7B9LPm7lSy2pBjEQww')">Anime OST</span>
         </div>
-        <div style="flex-grow:1;background:#000;display:flex;align-items:center">
+        <div style="flex-grow:1;background:#000;">
             <iframe id="yt-player" width="100%" height="100%" src="https://www.youtube.com/embed/videoseries?list=PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
@@ -98,18 +100,18 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
         <img id="s-kaguya" class="sprite" src="https://imgur.com/nQTDhdz.png">
         <img id="s-shirogane" class="sprite" src="https://mahjongsoul.wiki.gg/images/Full_461.png?24d4b8">
         <img id="s-miko" class="sprite" src="https://imgur.com/EuWt3Vq.gif">
-        <div id="diag-b-kaguya"><div id="char-n-kaguya" class="char-n"></div><img id="port-kaguya" class="port" src=""><div id="diag-t-kaguya" class="diag-t"></div></div>
+        <div class="diag-b"><div id="char-n-kaguya" class="char-n"></div><img id="port-kaguya" class="port" src=""><div id="diag-t-kaguya" class="diag-t"></div></div>
     </div>
 </div>
 
 <div id="vn-steinsgate-win" class="win" style="width:850px">
     <div class="win-h"><div class="win-ctrl"><div class="dot" onclick="cls('vn-steinsgate-win')"></div></div><span>steins_gate.sh</span></div>
     <div class="vn-b" onclick="nextSteinsGate()" style="background-image:url('https://i.pinimg.com/736x/5d/96/da/5d96da498a663d47f33e3131a03491d2.jpg')">
-        <img id="s-okabe" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/2/22/Reawake.PNG">
-        <img id="s-kurisu" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/0/01/Kurisu_Makise_Portrait.png">
-        <img id="s-mayuri" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/e/e6/Mayuri_Shiina_Portrait.png">
-        <img id="s-daru" class="sprite" src="https://static.wikia.nocookie.net/steins-gate/images/8/84/Daru_Cosplay.png">
-        <div id="diag-b-steinsgate"><div id="char-n-steinsgate" class="char-n"></div><img id="port-steinsgate" class="port" src=""><div id="diag-t-steinsgate" class="diag-t"></div></div>
+        <img id="s-okabe" class="sprite" src="https://i.imgur.com/1M6v7iM.png">
+        <img id="s-kurisu" class="sprite" src="https://i.imgur.com/G5yUaWz.png">
+        <img id="s-mayuri" class="sprite" src="https://i.imgur.com/fLTo7uH.png">
+        <img id="s-daru" class="sprite" src="https://i.imgur.com/7rU8E5h.png">
+        <div class="diag-b"><div id="char-n-steinsgate" class="char-n"></div><img id="port-steinsgate" class="port" src=""><div id="diag-t-steinsgate" class="diag-t"></div></div>
     </div>
 </div>
 
@@ -138,19 +140,10 @@ const cmds = {
     "berserk": { type: "copy", value: "𒉭" },
     "cross": { type: "copy", value: "☦" },
     "email": { type: "copy", value: "daigou@keemail.me" },
-    "password": { type: "copy", value: "nigger lol" },
-    "el-psy-kongroo": { type: "notif", value: "The Reading Steiner has been activated." },
-    "cowboy": { type: "notif", value: "See you space cowboy..." },
-    "salvation": { type: "notif", value: "I am the way, the truth, and the life. (John 14:6)" }
+    "el-psy-kongroo": { type: "notif", value: "The Reading Steiner has been activated." }
 };
 
-// BOOT
-const lines=["[    0.000000] Linux version 6.6.arch1-1","[    1.234567] Initializing GNOME Shell...","[    4.567890] Starting Desktop Environment..."];
-let b=document.getElementById('boot-screen'),l=0;
-function boot(){if(l<lines.length){b.innerHTML+=lines[l]+"<br>";l++;setTimeout(boot,250)}else{setTimeout(()=>b.style.display='none',500)}}
-boot();
-
-// WINDOWS & CLOCK
+// BASIC FUNCTIONS
 let topZ=100;
 function showNotif(t){const n=document.getElementById('notif');n.innerText=t;n.style.display='block';setTimeout(()=>n.style.display='none',4000)}
 function cp(t){navigator.clipboard.writeText(t).then(()=>showNotif('Copied to clipboard!'));}
@@ -158,11 +151,9 @@ function opn(id){const w=document.getElementById(id);w.style.display='flex';w.st
 function cls(id){document.getElementById(id).style.display='none'}
 function up(){const n=new Date();document.getElementById('clock').innerText=n.toLocaleTimeString('en-US',{hour12:false});const y=String(n.getFullYear()).slice(-2),m=String(n.getMonth()+1).padStart(2,'0'),d=String(n.getDate()).padStart(2,'0');document.getElementById('date').innerText=`${y}年${m}月${d}日`}
 setInterval(up,1000);up();
-
-// MUSIC LOGIC
 function setPlaylist(id){ document.getElementById('yt-player').src = "https://www.youtube.com/embed/videoseries?list=" + id; }
 
-// VN KAGUYA
+// KAGUYA VN LOGIC
 let kIdx=0;
 const kD=[
 {n:"Kaguya",t:"President... I prepared this tea for you. Don't think there's anything special about it!",p:"https://imgur.com/fheByI4.png",a:"kaguya"},
@@ -170,16 +161,17 @@ const kD=[
 {n:"Miko Iino",t:"I KNEW IT! What is this indecent atmosphere?! Drinking tea during school hours?!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"}];
 function nextKaguya(){if(kIdx>=kD.length){cls('vn-kaguya-win');return}const d=kD[kIdx];document.getElementById('char-n-kaguya').innerText=d.n;document.getElementById('diag-t-kaguya').innerText=d.t;document.getElementById('port-kaguya').src=d.p;document.querySelectorAll('#vn-kaguya-win .sprite').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+d.a).classList.add('active');kIdx++}
 
-// VN STEINS;GATE
+// STEINS;GATE VN LOGIC
 let sIdx=0;
 const sD=[
-{n:"Okabe",t:"El Psy Kongroo! I, Hououin Kyouma, have just discovered a new form of... 'gel-banana'!",p:"https://static.wikia.nocookie.net/steins-gate/images/2/22/Reawake.PNG",a:"okabe"},
-{n:"Kurisu",t:"Okabe, what in the world are you rambling about now? And where did you even get that banana?",p:"https://static.wikia.nocookie.net/steins-gate/images/0/01/Kurisu_Makise_Portrait.png",a:"kurisu"},
-{n:"Mayuri",t:"Ooh, Okarin, can Mayushii have a bite? Tuturu~!",p:"https://static.wikia.nocookie.net/steins-gate/images/e/e6/Mayuri_Shiina_Portrait.png",a:"mayuri"},
-{n:"Daru",t:"(Muttering) More like 'hentai-banana' with that texture... My waifu apps are lagging.",p:"https://static.wikia.nocookie.net/steins-gate/images/8/84/Daru_Cosplay.png",a:"daru"}];
+{n:"Okabe",t:"El Psy Kongroo! I, Hououin Kyouma, have just discovered a new form of... 'gel-banana'!",p:"https://i.imgur.com/1M6v7iM.png",a:"okabe"},
+{n:"Kurisu",t:"Okabe, what in the world are you rambling about now? And where did you even get that banana?",p:"https://i.imgur.com/G5yUaWz.png",a:"kurisu"},
+{n:"Mayuri",t:"Ooh, Okarin, can Mayushii have a bite? Tuturu~!",p:"https://i.imgur.com/fLTo7uH.png",a:"mayuri"},
+{n:"Daru",t:"(Muttering) More like 'hentai-banana' with that texture... My waifu apps are lagging.",p:"https://i.imgur.com/7rU8E5h.png",a:"daru"},
+{n:"Okabe",t:"Silence! This is a scientific breakthrough! The world will tremble before the Lab!",p:"https://i.imgur.com/1M6v7iM.png",a:"okabe"}];
 function nextSteinsGate(){if(sIdx>=sD.length){cls('vn-steinsgate-win');return}const d=sD[sIdx];document.getElementById('char-n-steinsgate').innerText=d.n;document.getElementById('diag-t-steinsgate').innerText=d.t;document.getElementById('port-steinsgate').src=d.p;document.querySelectorAll('#vn-steinsgate-win .sprite').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+d.a).classList.add('active');sIdx++}
 
-function startNovel(t){if(t==='kaguya'){kIdx=0;opn('vn-kaguya-win');document.getElementById('ach').classList.add('show');setTimeout(()=>document.getElementById('ach').classList.remove('show'),5000);nextKaguya()}else{sIdx=0;opn('vn-steinsgate-win');nextSteinsGate()}}
+function startNovel(t){if(t==='kaguya'){kIdx=0;opn('vn-kaguya-win');nextKaguya()}else{sIdx=0;opn('vn-steinsgate-win');nextSteinsGate()}}
 
 // TERMINAL
 document.getElementById('cmd-input').addEventListener('keypress',function(e){
@@ -195,7 +187,13 @@ document.getElementById('cmd-input').addEventListener('keypress',function(e){
     }
 });
 
-// DRAGGABLE
+// BOOT SCRIPT
+const lines=["[    0.000000] Linux version 6.6.arch1-1","[    1.234567] Initializing GNOME Shell...","[    4.567890] Starting Desktop Environment..."];
+let b=document.getElementById('boot-screen'),bl=0;
+function boot(){if(bl<lines.length){b.innerHTML+=lines[bl]+"<br>";bl++;setTimeout(boot,250)}else{setTimeout(()=>b.style.display='none',500)}}
+boot();
+
+// DRAGGABLE WINDOWS
 document.querySelectorAll('.win').forEach(w=>{
     const h=w.querySelector('.win-h');let d=false,o=[0,0];
     h.onmousedown=e=>{d=true;o=[w.offsetLeft-e.clientX,w.offsetTop-e.clientY];w.style.zIndex=++topZ};
