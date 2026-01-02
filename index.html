@@ -1,17 +1,73 @@
-// --- LÓGICA DE DATA E HORA (VERSÃO KANJI CORRIGIDA) ---
-function updateClock() {
-    const now = new Date();
-    
-    // Hora (HH:MM:SS)
-    const timeString = now.toLocaleTimeString('en-US', { hour12: false });
-    document.getElementById('clock').innerText = timeString;
-
-    // Data com Kanjis (Ano年 Mês月 Dia日)
-    const year = String(now.getFullYear()).slice(-2); // Pega os últimos 2 dígitos (ex: 26)
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    
-    document.getElementById('date').innerText = `${year}年${month}月${day}日`;
-}
-setInterval(updateClock, 1000);
-updateClock();
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Daigou</title>
+<link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Quicksand:wght@700&display=swap');
+:root{--accent:#f7d1d7;--window-bg:rgba(10,10,12,0.95)}
+*{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none}
+#cmd-input{user-select:text;-webkit-user-select:text}
+body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;background-size:cover;color:var(--accent);font-family:'JetBrains Mono',monospace;height:100vh;width:100vw;overflow:hidden}
+#desktop{padding:40px;display:flex;flex-direction:column;gap:25px}
+.desktop-item{display:flex;flex-direction:column;align-items:center;width:110px;cursor:pointer;text-shadow:1px 1px 3px #000}
+.music-icon{width:55px;height:55px;background:url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center/contain;filter:hue-rotate(300deg)}
+.ps4-icon{width:55px;height:55px;background:url('https://imgur.com/FeRrUbt.png') no-repeat center/contain}
+.side-card{position:fixed;right:40px;top:50%;transform:translateY(-50%);width:280px;height:550px;background:url('https://imgur.com/rUTLIyK.gif') no-repeat center/cover;border-radius:12px;border:1px solid #333;overflow:hidden;z-index:10}
+.side-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.7);z-index:1}
+.side-content{position:relative;z-index:2;padding:30px;height:100%;display:flex;flex-direction:column;align-items:center;text-align:center}
+.avatar-frame{width:160px;height:160px;border-radius:12px;margin-bottom:15px;overflow:hidden;border:1px solid rgba(247,209,215,0.5)}
+.avatar-frame img{width:100%;height:100%;object-fit:cover}
+#cmd-input{margin-top:15px;background:rgba(255,255,255,0.1);border:1px solid var(--accent);color:#fff;padding:8px;width:90%;text-align:center;outline:none;border-radius:4px}
+#vn-container{position:fixed;inset:0;background:url('https://64.media.tumblr.com/ce9d7c9cf9378e6791723b75becc8d79/b9b2997a55f99afe-e4/s2048x3072_c0,0,99951,100000/6acdcc7dfb16441dd999b2b8a92895e63f7f4bfe.png') no-repeat center/cover;z-index:15000;display:none;flex-direction:column;justify-content:flex-end;align-items:center}
+.char-sprite{position:absolute;bottom:180px;height:75%;transition:0.5s;filter:brightness(0.4);opacity:0;pointer-events:none}
+.char-sprite.active{filter:brightness(1);opacity:1;transform:scale(1.05)}
+#dialogue-box{width:85%;height:160px;background:rgba(20,20,25,0.95);border:4px solid #fff;margin-bottom:40px;position:relative;display:flex;align-items:center;padding:25px;font-family:'Quicksand',sans-serif;color:white;cursor:pointer}
+#portrait{width:120px;height:120px;border:2px solid #fff;margin-right:25px;object-fit:cover}
+#dialogue-text{font-size:20px;line-height:1.4}
+#char-name{position:absolute;top:-40px;left:0;background:#fff;color:#000;padding:5px 25px;font-weight:bold}
+#achievement{position:fixed;top:-100px;right:20px;width:320px;height:80px;background:#1b2838;border-left:5px solid #67c1f5;display:flex;align-items:center;padding:15px;z-index:20000;transition:0.8s}
+#achievement.show{top:20px}
+#achievement img{width:50px;height:50px;margin-right:15px}
+.achiev-text{color:#fff;font-size:13px}
+.achiev-title{color:#67c1f5;font-weight:bold;display:block;font-size:11px}
+</style>
+</head>
+<body oncontextmenu="return false;">
+<div id="vn-container" onclick="nextDialogue()">
+<img id="sprite-kaguya" class="char-sprite" src="https://static.wikia.nocookie.net/kaguyasama-wa-kokurasetai/images/a/ab/KaguyaAnime.png/revision/latest?cb=20190209185412" style="left:5%">
+<img id="sprite-shirogane" class="char-sprite" src="https://mahjongsoul.wiki.gg/images/Full_461.png?24d4b8" style="left:30%">
+<img id="sprite-miko" class="char-sprite" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM0fPER53EmCp1Urf4mmTV6A66PRHC6EVQcQ&s" style="right:5%">
+<div id="dialogue-box"><div id="char-name"></div><img id="portrait" src=""><div id="dialogue-text"></div></div>
+</div>
+<div id="achievement"><img src="https://imgur.com/fheByI4.png"><div class="achiev-text"><span class="achiev-title">NEW ACHIEVEMENT UNLOCKED</span>O Amor é Guerra: Kaguya-sama</div></div>
+<main id="desktop">
+<div class="desktop-item"><div class="music-icon"></div><span>music/</span></div>
+<div class="desktop-item"><div class="ps4-icon"></div><span>projects/</span></div>
+</main>
+<aside class="side-card">
+<div class="side-overlay"></div>
+<div class="side-content">
+<div class="avatar-frame"><img src="https://imgur.com/joCPvDu.gif"></div>
+<div id="clock" style="font-weight:bold;font-size:24px">00:00:00</div>
+<div id="date" style="font-size:12px;margin-bottom:20px"></div>
+<input type="text" id="cmd-input" placeholder="enter command..." autocomplete="off">
+</div>
+</aside>
+<script>
+function up(){const n=new Date();document.getElementById('clock').innerText=n.toLocaleTimeString('en-US',{hour12:false});const y=String(n.getFullYear()).slice(-2),m=String(n.getMonth()+1).padStart(2,'0'),d=String(n.getDate()).padStart(2,'0');document.getElementById('date').innerText=`${y}年${m}月${d}日`}
+setInterval(up,1000);up();
+let idx=0;const dls=[
+{n:"Kaguya",t:"Presidente... eu preparei este chá para você. Não pense que há algo especial nisso!",p:"https://imgur.com/fheByI4.png",a:"kaguya"},
+{n:"Shirogane",t:"Obrigado, Shinomiya. (Pensando: Chá? Agora? Ela está planejando algo...)",p:"https://imgur.com/OLqSOVo.png",a:"shirogane"},
+{n:"Miko Iino",t:"EU SABIA! O que é essa atmosfera indecente?! Bebendo chá em horário escolar?!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"},
+{n:"Kaguya",t:"I-Iino-san?! Não é o que você está pensando!",p:"https://imgur.com/fheByI4.png",a:"kaguya"},
+{n:"Miko Iino",t:"Vou reportar isso imediatamente! O Conselho não é lugar para romances açucarados!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"}];
+function start(){document.getElementById('vn-container').style.display='flex';idx=0;const ach=document.getElementById('achievement');ach.classList.add('show');setTimeout(()=>ach.classList.remove('show'),6000);nextDialogue()}
+function nextDialogue(){if(idx>=dls.length){document.getElementById('vn-container').style.display='none';return}const d=dls[idx];document.getElementById('char-name').innerText=d.n;document.getElementById('dialogue-text').innerText=d.t;document.getElementById('portrait').src=d.p;document.querySelectorAll('.char-sprite').forEach(s=>s.classList.remove('active'));document.getElementById('sprite-'+d.a).classList.add('active');idx++}
+document.getElementById('cmd-input').addEventListener('input',function(){const c=this.value.toLowerCase().trim();if(c==='kaguya'){this.value="";start()}else if(c==='gelbooru'){this.value="";window.open('https://gelbooru.com/index.php?page=post&s=list&tags=shinomiya_kaguya','_blank')}else if(c==='rule34'){this.value="";window.open('https://rule34.xxx/index.php?page=post&s=list&tags=shinomiya_kaguya','_blank')}});
+document.getElementById('cmd-input').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.value=""});
+</script>
+</body>
+</html>
