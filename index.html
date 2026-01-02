@@ -14,7 +14,12 @@
             --text-main: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            user-select: none; -webkit-user-select: none;
+        }
+
+        #cmd-input { user-select: text; -webkit-user-select: text; }
 
         body {
             background: #000 url('https://imgur.com/MIu6PJK.png') no-repeat center center fixed;
@@ -61,7 +66,7 @@
             gap: 20px; max-height: 500px; overflow-y: auto; 
         }
 
-        .file { display: flex; flex-direction: column; align-items: center; text-align: center; font-size: 9px; text-decoration: none; color: var(--text-main); transition: 0.2s; }
+        .file { display: flex; flex-direction: column; align-items: center; text-align: center; font-size: 9px; text-decoration: none; color: var(--text-main); transition: 0.2s; cursor: pointer; }
         .file:hover { transform: scale(1.1); color: var(--accent); }
         .file img { width: 65px; height: 90px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; border: 1px solid rgba(247,209,215,0.1); }
         .file img.square { height: 65px; }
@@ -100,9 +105,16 @@
         }
 
         #notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 10px 25px; border-radius: 5px; display: none; z-index: 11000; font-weight: bold; text-align: center; max-width: 80%; }
+
+        /* Mini Galeria Preview */
+        #img-viewer {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 20000;
+            display: none; justify-content: center; align-items: center; cursor: zoom-out;
+        }
+        #img-viewer img { max-width: 90%; max-height: 90%; border: 2px solid var(--accent); border-radius: 8px; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <div id="boot-screen">
         <img src="https://imgur.com/btg3Zph.png" style="width: 100px; margin-bottom: 20px;">
@@ -127,39 +139,54 @@
             </div>
             <div id="clock" style="font-weight:bold; color:var(--accent);">00:00:00</div>
             <div id="date" style="font-size:11px; opacity:0.7;">--年--月--日</div>
-            <input type="password" id="cmd-input" placeholder="enter command..." autocomplete="off">
+            <input type="text" id="cmd-input" placeholder="enter command..." autocomplete="off">
         </div>
     </aside>
 
     <div id="win-projects" class="window"><div class="window-header"><span>~/projects</span><span class="close-btn" onclick="closeWin('win-projects')">✖</span></div><div class="window-body">
-        <a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">github.src</a>
-        <a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">itchio.src</a>
+        <a href="https://daigou7.github.io/daigou/lunaticlove.html" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png" class="square">github.src</a>
+        <a href="https://daigou.itch.io/" target="_blank" class="file"><img src="https://static.itch.io/images/itchio-textless-black.svg" class="square">itchio.src</a>
     </div></div>
 
     <div id="win-music" class="window"><div class="window-header"><span>~/music</span><span class="close-btn" onclick="closeWin('win-music')">✖</span></div><div class="window-body">
-        <div class="file" style="cursor:pointer" onclick="playList('PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC')"><img src="https://i.imgur.com/fheByI4.png" class="square">Anime_Hits.mp3</div>
-        <div class="file" style="cursor:pointer" onclick="playList('PLuJXaOWHQNoTeLG7B9LPm7lSy2pBjEQww')"><img src="https://i.imgur.com/fheByI4.png" class="square">OSTs.mp3</div>
-        <div class="file" style="cursor:pointer" onclick="playList('PLuJXaOWHQNoSPXr0hMsQeWzE5ycT8EmvQ')"><img src="https://i.imgur.com/fheByI4.png" class="square">Atmospheric.mp3</div>
+        <div class="file" onclick="playList('PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC')"><img src="https://i.imgur.com/fheByI4.png" class="square">Anime_Hits.mp3</div>
+        <div class="file" onclick="playList('PLuJXaOWHQNoTeLG7B9LPm7lSy2pBjEQww')"><img src="https://i.imgur.com/fheByI4.png" class="square">OSTs.mp3</div>
+        <div class="file" onclick="playList('PLuJXaOWHQNoSPXr0hMsQeWzE5ycT8EmvQ')"><img src="https://i.imgur.com/fheByI4.png" class="square">Atmospheric.mp3</div>
     </div></div>
 
     <div id="win-player" class="window"><div class="window-header"><span>Now Playing</span><span class="close-btn" onclick="closeWin('win-player')">✖</span></div><div id="player-container" style="padding:15px; background:#000;"></div></div>
 
+    <div id="win-gallery" class="window">
+        <div class="window-header"><span>~/hidden_gallery</span><span class="close-btn" onclick="closeWin('win-gallery')">✖</span></div>
+        <div class="window-body" id="gallery-body">
+            </div>
+    </div>
+
+    <div id="img-viewer" onclick="this.style.display='none'">
+        <img src="" id="full-img">
+    </div>
+
     <div id="notification"></div>
 
     <script>
+        // --- PROTEÇÃO ---
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) || (e.ctrlKey && e.key === "u")) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
         let topZ = 1000;
 
         function showNotification(text) { 
             const n = document.getElementById("notification"); 
-            n.innerText = text; 
-            n.style.display = "block"; 
+            n.innerText = text; n.style.display = "block"; 
             setTimeout(() => n.style.display = "none", 4000); 
         }
         
         function copyText(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showNotification("Copied!");
-            }).catch(err => { console.error('Clipboard Error:', err); });
+            navigator.clipboard.writeText(text).then(() => showNotification("Copied!"));
         }
 
         function copyBTC() { copyText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws"); }
@@ -171,7 +198,7 @@
         
         function closeWin(id) { 
             const win = document.getElementById(id); 
-            if (win) { win.classList.remove('active'); if(id === 'win-player') document.getElementById('player-container').innerHTML = ''; } 
+            if (win) win.classList.remove('active');
         }
 
         function playList(id) { 
@@ -179,7 +206,30 @@
             openWin('win-player'); 
         }
 
+        // Função para abrir imagem em tela cheia
+        function viewImage(url) {
+            const viewer = document.getElementById('img-viewer');
+            document.getElementById('full-img').src = url;
+            viewer.style.display = 'flex';
+        }
+
+        // Função para carregar a galeria secreta
+        function openGallery() {
+            const urls = [
+                "https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2Fkaguya-shinomiya-kaguya-sama-love-is-war-v0-geie9dpmmqtc1.jpeg%3Fwidth%3D640%26crop%3Dsmart%26auto%3Dwebp%26s%3Dd3490a19388f018fb820eb172204f28859d89a46",
+                "https://cdn.donmai.us/original/98/9f/989f5fc2b4477f124989ba6f1f95184a.jpg",
+                "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9c940269-0bf1-46db-b6a7-3bdcfa73a688/dh1mz7l-ccb4a23e-a764-4a86-ab2a-b2a4690a1f38.png/v1/fill/w_809,h_988,q_70,strp/kaguya_shinomiya___feet_foot_commission_by_eycarts_dh1mz7l-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTQ3OSIsInBhdGgiOiIvZi85Yzk0MDI2OS0wYmYxLTQ2ZGItYjZhNy0zYmRjZmE3M2E2ODgvZGgxbXo3bC1jY2I0YTIzZS1hNzY0LTRhODYtYWIyYS1iMmE0NjkwYTFmMzgucG5nIiwid2lkdGgiOiI8PTEyMTAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.r7wRCoa6l2gNtF3H8KDAvwaCq_dQGcB0AMIoZM6oNYM"
+            ];
+            const body = document.getElementById('gallery-body');
+            body.innerHTML = ''; // Limpa para evitar duplicatas
+            urls.forEach((url, index) => {
+                body.innerHTML += `<div class="file" onclick="viewImage('${url}')"><img src="${url}">pic_0${index+1}.jpg</div>`;
+            });
+            openWin('win-gallery');
+        }
+
         const shortcuts = {
+            "feet": { type: "function", value: openGallery },
             "blank": { type: "copy", value: "\u200C" },
             "berserk": { type: "copy", value: "𒉭" },
             "guts": { type: "copy", value: "𒉭" },
@@ -201,18 +251,17 @@
             "fire": { type: "notif", value: "Mayst thou thy peace discov'r." },
             "souls": { type: "notif", value: "You find the strength to focus, and they will become your strength." },
             "ash": { type: "notif", value: "Ashen One, hearest thou my voice still?" },
-            // BERSERK PACK
             "struggler": { type: "notif", value: "Even if you force back what was lost, it still won't be as it was." },
             "destiny": { type: "notif", value: "He who acts on his own is the one who finds his own way." },
             "dream": { type: "notif", value: "A dream is a source of strength, but it can also be a source of suffering." },
             "swordsman": { type: "notif", value: "My sword has gotten very dull. However, it's just right for hacking some monsters to pieces." },
             "beast": { type: "notif", value: "If you're always afraid of the shadows, you'll never see the light." },
-            // CHRISTIAN PACK
             "faith": { type: "notif", value: "Everything is possible for him who believes. (Mark 9:23)" },
             "psalm23": { type: "notif", value: "The Lord is my shepherd, I shall not want." },
             "light": { type: "notif", value: "The light shines in the darkness, and the darkness has not overcome it. (John 1:5)" },
             "warrior": { type: "notif", value: "Put on the full armor of God, so that you can take your stand against the devil's schemes." },
             "salvation": { type: "notif", value: "I am the way, the truth, and the life. (John 14:6)" },
+            "zi": { type: "notif", value: "kaguyafeet" },
             "peace": { type: "notif", value: "My peace I give to you. Not as the world gives. (John 14:27)" }
         };
 
@@ -224,20 +273,16 @@
         }
 
         window.onload = () => {
-            updateTime(); 
-            setInterval(updateTime, 1000);
-
+            updateTime(); setInterval(updateTime, 1000);
             const cmdInput = document.getElementById('cmd-input');
             if(cmdInput) {
                 cmdInput.addEventListener('input', (e) => {
                     const val = e.target.value.toLowerCase();
                     if (shortcuts[val]) {
                         const item = shortcuts[val];
-                        if (item.type === "copy") {
-                            copyText(item.value);
-                        } else {
-                            showNotification(item.value);
-                        }
+                        if (item.type === "copy") copyText(item.value);
+                        else if (item.type === "function") item.value();
+                        else showNotification(item.value);
                         e.target.value = ""; 
                     }
                 });
