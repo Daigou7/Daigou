@@ -5,45 +5,80 @@
 <title>Daigou</title>
 <link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
-:root{--arch-blue:#1793d1;--bg:#1a1b26;--fg:#a9b1d6;--win-bg:#24283b}
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Quicksand:wght@400;700&display=swap');
+:root{--arch-blue:#1793d1;--bg:#1a1b26;--fg:#a9b1d6;--win-bg:rgba(36,40,59,0.98)}
 *{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;font-family:'JetBrains Mono',monospace}
 body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover fixed;color:var(--fg);height:100vh;overflow:hidden}
-#desktop{padding:20px;display:flex;flex-direction:column;gap:15px}
-.win{position:absolute;top:10%;left:10%;background:var(--win-bg);border:1px solid var(--arch-blue);width:750px;display:none;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:100}
-.win-h{background:var(--arch-blue);color:#000;padding:5px 10px;display:flex;justify-content:space-between;cursor:move;font-weight:bold;font-size:12px}
-.close{cursor:pointer}
-.win-b{position:relative;height:450px;background:url('https://64.media.tumblr.com/ce9d7c9cf9378e6791723b75becc8d79/b9b2997a55f99afe-e4/s2048x3072_c0,0,99951,100000/6acdcc7dfb16441dd999b2b8a92895e63f7f4bfe.png') no-repeat center/cover;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
-.sprite{position:absolute;bottom:100px;height:70%;transition:0.3s;filter:brightness(0.3);opacity:0}
+#desktop{padding:30px;display:flex;flex-direction:column;gap:20px}
+.d-item{display:flex;flex-direction:column;align-items:center;width:100px;cursor:pointer;text-shadow:1px 1px 3px #000;font-size:12px}
+.m-icon{width:50px;height:50px;background:url('https://cdn.jsdelivr.net/gh/PapirusDevelopmentTeam/papirus-icon-theme@master/Papirus/64x64/apps/multimedia-audio-player.svg') no-repeat center/contain;filter:hue-rotate(300deg)}
+.p-icon{width:50px;height:50px;background:url('https://imgur.com/FeRrUbt.png') no-repeat center/contain}
+.win{position:absolute;top:10%;left:10%;background:var(--win-bg);border:1px solid var(--arch-blue);width:600px;display:none;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,0.8);z-index:100}
+.win-h{background:var(--arch-blue);color:#000;padding:5px 12px;display:flex;justify-content:space-between;cursor:move;font-weight:bold;font-size:12px}
+.win-b{padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:15px;max-height:400px;overflow-y:auto}
+.file{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#fff;font-size:10px;text-align:center}
+.file img{width:60px;height:60px;object-fit:cover;border:1px solid var(--arch-blue);margin-bottom:5px}
+.vn-b{height:500px;background:url('https://64.media.tumblr.com/ce9d7c9cf9378e6791723b75becc8d79/b9b2997a55f99afe-e4/s2048x3072_c0,0,99951,100000/6acdcc7dfb16441dd999b2b8a92895e63f7f4bfe.png') no-repeat center/cover;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+.sprite{position:absolute;bottom:0;transition:0.3s;filter:brightness(0.3);opacity:0;pointer-events:none}
 .sprite.active{filter:brightness(1);opacity:1}
-#diag-b{width:100%;background:rgba(26,27,38,0.95);border-top:2px solid var(--arch-blue);padding:15px;display:flex;align-items:center;cursor:pointer;z-index:10}
+#s-kaguya{height:95%;left:2%}
+#s-shirogane{height:85%;left:35%}
+#s-miko{height:75%;right:5%}
+#diag-b{width:100%;background:rgba(26,27,38,0.95);border-top:2px solid var(--arch-blue);padding:15px;display:flex;align-items:center;cursor:pointer;z-index:10;position:relative}
 #port{width:80px;height:80px;border:1px solid var(--arch-blue);margin-right:15px;object-fit:cover}
-#diag-t{font-size:14px;color:var(--fg)}
-#char-n{position:absolute;top:-25px;left:10px;background:var(--arch-blue);color:#000;padding:2px 10px;font-size:12px}
-.side-card{position:fixed;right:20px;top:20px;width:250px;background:var(--win-bg);border:1px solid var(--arch-blue);padding:20px;text-align:center}
-#cmd-input{margin-top:10px;background:#1a1b26;border:1px solid var(--arch-blue);color:var(--arch-blue);padding:5px;width:100%;outline:none;font-size:12px}
-#ach{position:fixed;bottom:-100px;right:20px;width:280px;background:#1b2838;border-left:4px solid #67c1f5;padding:10px;display:flex;align-items:center;transition:0.5s;z-index:1000}
-#ach.show{bottom:20px}
+#diag-t{font-size:14px;color:#fff;font-family:'Quicksand',sans-serif}
+#char-n{position:absolute;top:-25px;left:10px;background:var(--arch-blue);color:#000;padding:2px 10px;font-size:12px;font-weight:bold}
+.side-card{position:fixed;right:25px;top:50%;transform:translateY(-50%);width:260px;background:rgba(26,27,38,0.9);border:1px solid var(--arch-blue);padding:25px;text-align:center;z-index:10}
+.avatar{width:140px;height:140px;border:1px solid var(--arch-blue);margin-bottom:15px;object-fit:cover}
+.bio{font-family:'Quicksand',sans-serif;font-size:12px;color:#fff;margin-bottom:15px;line-height:1.4}
+#cmd-input{background:#1a1b26;border:1px solid var(--arch-blue);color:var(--arch-blue);padding:8px;width:100%;outline:none;font-size:11px;text-align:center}
+#ach{position:fixed;bottom:-100px;right:25px;width:300px;background:#1b2838;border-left:4px solid #67c1f5;padding:12px;display:flex;align-items:center;transition:0.6s;z-index:2000}
+#ach.show{bottom:25px}
+#notif{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--arch-blue);color:#000;padding:5px 15px;display:none;font-weight:bold;z-index:3000}
 </style>
 </head>
 <body oncontextmenu="return false;">
-<div id="vn-win" class="win">
-<div class="win-h"><span>Visual Novel - kaguya_sama.sh</span><span class="close" onclick="this.parentElement.parentElement.style.display='none'">[X]</span></div>
-<div class="win-b" onclick="next()">
-<img id="s-kaguya" class="sprite" src="https://static.wikia.nocookie.net/kaguyasama-wa-kokurasetai/images/a/ab/KaguyaAnime.png/revision/latest?cb=20190209185412" style="left:5%">
-<img id="s-shirogane" class="sprite" src="https://mahjongsoul.wiki.gg/images/Full_461.png?24d4b8" style="left:30%">
-<img id="s-miko" class="sprite" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM0fPER53EmCp1Urf4mmTV6A66PRHC6EVQcQ&s" style="right:5%">
+<div id="notif"></div>
+<div id="ach"><img src="https://imgur.com/fheByI4.png" width="45" style="margin-right:12px"><div><small style="color:#67c1f5;display:block">ACHIEVEMENT UNLOCKED</small><span style="font-size:12px;color:#fff">Love is War: Kaguya-sama</span></div></div>
+<div id="vn-win" class="win" style="width:850px">
+<div class="win-h"><span>kaguya_sama.sh</span><span class="close" onclick="cls('vn-win')">[X]</span></div>
+<div class="vn-b" onclick="next()">
+<img id="s-kaguya" class="sprite" src="https://imgur.com/nQTDhdz.png">
+<img id="s-shirogane" class="sprite" src="https://mahjongsoul.wiki.gg/images/Full_461.png?24d4b8">
+<img id="s-miko" class="sprite" src="https://imgur.com/EuWt3Vq.gif">
 <div id="diag-b"><div id="char-n"></div><img id="port" src=""><div id="diag-t"></div></div>
 </div>
 </div>
-<div id="ach"><img src="https://imgur.com/fheByI4.png" width="40" style="margin-right:10px"><div><small style="color:#67c1f5;display:block">ACHIEVEMENT UNLOCKED</small><span style="font-size:12px;color:#fff">Love is War: Kaguya-sama</span></div></div>
+<div id="win-music" class="win"><div class="win-h"><span>~/music</span><span class="close" onclick="cls('win-music')">[X]</span></div><div class="win-b">
+<div class="file" onclick="showNotif('Playing...')"><img src="https://i.imgur.com/fheByI4.png">Anime_Hits.mp3</div>
+<div class="file" onclick="showNotif('Playing...')"><img src="https://i.imgur.com/fheByI4.png">OSTs.mp3</div>
+</div></div>
+<div id="win-projects" class="win"><div class="win-h"><span>~/projects</span><span class="close" onclick="cls('win-projects')">[X]</span></div><div class="win-b">
+<a href="https://daigou7.github.io/Daigou/lunaticlove.html" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png">github.src</a>
+<a href="https://daigou7.itch.io/lunaticlove" target="_blank" class="file"><img src="https://imgur.com/yWGCBpw.png">itchio.src</a>
+</div></div>
+<main id="desktop">
+<div class="d-item" onclick="opn('win-music')"><div class="m-icon"></div><span>music/</span></div>
+<div class="d-item" onclick="opn('win-projects')"><div class="p-icon"></div><span>projects/</span></div>
+</main>
 <aside class="side-card">
-<img src="https://imgur.com/joCPvDu.gif" width="100" style="border:1px solid var(--arch-blue);margin-bottom:10px">
-<div id="clock" style="font-size:20px;color:var(--arch-blue)">00:00:00</div>
-<div id="date" style="font-size:12px;margin-bottom:10px"></div>
-<input type="text" id="cmd-input" placeholder="[user@arch ~]$ " autocomplete="off">
+<img src="https://imgur.com/joCPvDu.gif" class="avatar">
+<p class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br><br>Buy Bitcoin ₿ - The shield of economic freedom</p>
+<div style="display:flex;justify-content:center;gap:15px;margin-bottom:15px">
+<a href="https://steamcommunity.com/id/Daigou7/" target="_blank"><img src="https://imgur.com/N92w6JN.png" width="24"></a>
+<a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png" width="24"></a>
+<img src="https://imgur.com/dvR0GB6.png" width="24" style="cursor:pointer" onclick="cp('bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws')">
+</div>
+<div id="clock" style="font-size:22px;color:var(--arch-blue);font-weight:bold">00:00:00</div>
+<div id="date" style="font-size:12px;margin-bottom:15px"></div>
+<input type="text" id="cmd-input" placeholder="[user@arch ~]$" autocomplete="off">
 </aside>
 <script>
+let topZ=100;
+function showNotif(t){const n=document.getElementById('notif');n.innerText=t;n.style.display='block';setTimeout(()=>n.style.display='none',2000)}
+function cp(t){navigator.clipboard.writeText(t).then(()=>showNotif('Copied!'))}
+function opn(id){const w=document.getElementById(id);w.style.display='flex';w.style.zIndex=++topZ}
+function cls(id){document.getElementById(id).style.display='none'}
 function up(){const n=new Date();document.getElementById('clock').innerText=n.toLocaleTimeString('en-US',{hour12:false});const y=String(n.getFullYear()).slice(-2),m=String(n.getMonth()+1).padStart(2,'0'),d=String(n.getDate()).padStart(2,'0');document.getElementById('date').innerText=`${y}年${m}月${d}日`}
 setInterval(up,1000);up();
 let idx=0;const dls=[
@@ -52,12 +87,9 @@ let idx=0;const dls=[
 {n:"Miko Iino",t:"I KNEW IT! What is this indecent atmosphere?! Drinking tea during school hours?!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"},
 {n:"Kaguya",t:"I-Iino-san?! It's not what you're thinking!",p:"https://imgur.com/fheByI4.png",a:"kaguya"},
 {n:"Miko Iino",t:"I'm reporting this immediately! The Student Council is no place for sugary romances!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"}];
-function next(){if(idx>=dls.length){document.getElementById('vn-win').style.display='none';return}const d=dls[idx];document.getElementById('char-n').innerText=d.n;document.getElementById('diag-t').innerText=d.t;document.getElementById('port').src=d.p;document.querySelectorAll('.sprite').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+d.a).classList.add('active');idx++}
-document.getElementById('cmd-input').addEventListener('input',function(){const c=this.value.toLowerCase().trim();if(c==='kaguya'){this.value="";idx=0;document.getElementById('vn-win').style.display='flex';const a=document.getElementById('ach');a.classList.add('show');setTimeout(()=>a.classList.remove('show'),5000);next()}else if(c==='gelbooru'){this.value="";window.open('https://gelbooru.com/index.php?page=post&s=list&tags=shinomiya_kaguya','_blank')}else if(c==='rule34'){this.value="";window.open('https://rule34.xxx/index.php?page=post&s=list&tags=shinomiya_kaguya','_blank')}});
-const win=document.getElementById('vn-win');const head=win.querySelector('.win-h');let drg=false,off=[0,0];
-head.onmousedown=e=>{drg=true;off=[win.offsetLeft-e.clientX,win.offsetTop-e.clientY]};
-document.onmousemove=e=>{if(drg){win.style.left=(e.clientX+off[0])+'px';win.style.top=(e.clientY+off[1])+'px'}};
-document.onmouseup=()=>drg=false;
+function next(){if(idx>=dls.length){cls('vn-win');return}const d=dls[idx];document.getElementById('char-n').innerText=d.n;document.getElementById('diag-t').innerText=d.t;document.getElementById('port').src=d.p;document.querySelectorAll('.sprite').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+d.a).classList.add('active');idx++}
+document.getElementById('cmd-input').addEventListener('input',function(){const c=this.value.toLowerCase().trim();if(c==='kaguya'){this.value="";idx=0;opn('vn-win');document.getElementById('ach').classList.add('show');setTimeout(()=>document.getElementById('ach').classList.remove('show'),5000);next()}else if(c==='gelbooru'){this.value="";window.open('https://gelbooru.com/index.php?page=post&s=list&tags=shinomiya_kaguya','_blank')}else if(c==='rule34'){this.value="";window.open('https://rule34.xxx/index.php?page=post&s=list&tags=shinomiya_kaguya','_blank')}});
+document.querySelectorAll('.win').forEach(w=>{const h=w.querySelector('.win-h');let d=false,o=[0,0];h.onmousedown=e=>{d=true;o=[w.offsetLeft-e.clientX,w.offsetTop-e.clientY];w.style.zIndex=++topZ};document.onmousemove=e=>{if(d){w.style.left=(e.clientX+o[0])+'px';w.style.top=(e.clientY+o[1])+'px'}};document.onmouseup=()=>d=false});
 </script>
 </body>
 </html>
