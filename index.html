@@ -3,13 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <title>Daigou</title>
-<link rel="icon" type="image/png" href="https://imgur.com/fheByI4.png">
+<link rel="icon" type="image/png" href="https://imgur.com/LFnzu3x.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Quicksand:wght@400;700&display=swap');
 :root{--gnome-purple:#5e2750;--gnome-dark:#2d2d2d;--gnome-border:#1e1e1e;--gnome-sidebar:#383838;--arch-blue:#1793d1;--fg:#eeeeee}
 *{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;font-family:'JetBrains Mono',monospace}
-body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover fixed;color:var(--fg);height:100vh;overflow:hidden}
+body{background:#000 url('https://imgur.com/blArmwF.png') no-repeat center/cover fixed;color:var(--fg);height:100vh;overflow:hidden}
 #boot-screen{position:fixed;inset:0;background:#000;color:var(--arch-blue);z-index:9999;padding:20px;font-size:14px;display:block}
+
+/* LOGIN SCREEN */
+#login-screen{position:fixed;inset:0;background:url('https://imgur.com/yMfUHcK.png') no-repeat center/cover;z-index:9998;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#login-screen::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.4);z-index:-1}
+.login-box{display:flex;flex-direction:column;align-items:center;gap:15px}
+.user-pfp{width:120px;height:120px;border-radius:50%;border:2px solid var(--arch-blue);background:url('https://imgur.com/uIFWLXD.png') no-repeat center/cover}
+.user-name{font-size:24px;font-weight:bold;text-shadow:0 2px 10px rgba(0,0,0,0.8)}
+.pass-box{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:10px 20px;border-radius:20px;border:1px solid rgba(255,255,255,0.2);width:200px;height:40px;display:flex;align-items:center;justify-content:center;font-size:20px}
+
 #notif{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--arch-blue);color:#000;padding:8px 20px;display:none;font-weight:bold;z-index:10000;border-radius:4px;box-shadow:0 4px 15px rgba(0,0,0,0.5)}
 
 /* GNOME WINDOWS */
@@ -29,9 +38,7 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 .sprite{position:absolute;bottom:0;transition:0.3s;filter:brightness(0.3);opacity:0;pointer-events:none}
 .sprite.active{filter:brightness(1);opacity:1}
 
-/* Kaguya Sprites */
 #s-kaguya{height:95%;left:2%}#s-shirogane{height:85%;left:35%}#s-miko{height:75%;right:5%}
-/* Steins;Gate Sprites - Adjusted for new URLs */
 #s-okabe{height:110%;left:0%;}
 #s-kurisu{height:100%;left:25%;}
 #s-mayuri{height:100%;right:15%;}
@@ -50,7 +57,7 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 .file{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#fff;font-size:10px;text-align:center;cursor:pointer}
 .file img{width:60px;height:60px;object-fit:cover;border:1px solid #444;margin-bottom:5px}
 
-/* SIDE-CARD COM O GIF NO FUNDO */
+/* SIDE-CARD */
 .side-card{position:fixed;right:25px;top:50%;transform:translateY(-50%);width:260px;background:rgba(45,45,45,0.9) url('https://imgur.com/rUTLIyK.gif') no-repeat center/cover;background-blend-mode: overlay;border:1px solid var(--arch-blue);padding:25px;text-align:center;z-index:10}
 .avatar{width:140px;height:140px;border:1px solid var(--arch-blue);margin-bottom:15px;object-fit:cover}
 .bio{font-family:'Quicksand',sans-serif;font-size:12px;color:#fff;margin-bottom:15px;line-height:1.4}
@@ -61,6 +68,15 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
 </head>
 <body oncontextmenu="return false;">
 <div id="boot-screen"></div>
+
+<div id="login-screen">
+    <div class="login-box">
+        <div class="user-pfp"></div>
+        <div class="user-name">Daigou</div>
+        <div class="pass-box" id="pass-field"></div>
+    </div>
+</div>
+
 <div id="notif"></div>
 <div id="ach"><img src="https://imgur.com/fheByI4.png" width="45" style="margin-right:12px"><div><small style="color:#67c1f5;display:block">ACHIEVEMENT UNLOCKED</small><span style="font-size:12px;color:#fff">Love is War: Kaguya-sama</span></div></div>
 
@@ -130,8 +146,6 @@ body{background:#000 url('https://imgur.com/MIu6PJK.png') no-repeat center/cover
         <a href="https://myanimelist.net/profile/Daigou" target="_blank"><img src="https://i.imgur.com/jWbk2Ey.png" width="24"></a>
         <img src="https://imgur.com/dvR0GB6.png" width="24" style="cursor:pointer" onclick="cp('bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws')">
     </div>
-    <div id="clock" style="font-size:22px;color:var(--arch-blue);font-weight:bold">00:00:00</div>
-    <div id="date" style="font-size:12px;margin-bottom:15px"></div>
     <input type="text" id="cmd-input" placeholder="[user@arch ~]$" autocomplete="off">
 </aside>
 
@@ -145,17 +159,13 @@ const cmds = {
     "el-psy-kongroo": { type: "notif", value: "The Reading Steiner has been activated." }
 };
 
-// BASIC FUNCTIONS
 let topZ=100;
 function showNotif(t){const n=document.getElementById('notif');n.innerText=t;n.style.display='block';setTimeout(()=>n.style.display='none',4000)}
 function cp(t){navigator.clipboard.writeText(t).then(()=>showNotif('Copied to clipboard!'));}
 function opn(id){const w=document.getElementById(id);w.style.display='flex';w.style.zIndex=++topZ}
 function cls(id){document.getElementById(id).style.display='none'}
-function up(){const n=new Date();document.getElementById('clock').innerText=n.toLocaleTimeString('en-US',{hour12:false});const y=String(n.getFullYear()).slice(-2),m=String(n.getMonth()+1).padStart(2,'0'),d=String(n.getDate()).padStart(2,'0');document.getElementById('date').innerText=`${y}年${m}月${d}日`}
-setInterval(up,1000);up();
 function setPlaylist(id){ document.getElementById('yt-player').src = "https://www.youtube.com/embed/videoseries?list=" + id; }
 
-// KAGUYA VN LOGIC
 let kIdx=0;
 const kD=[
 {n:"Kaguya",t:"President... I prepared this tea for you. Don't think there's anything special about it!",p:"https://imgur.com/fheByI4.png",a:"kaguya"},
@@ -163,7 +173,6 @@ const kD=[
 {n:"Miko Iino",t:"I KNEW IT! What is this indecent atmosphere?! Drinking tea during school hours?!",p:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtlSYWRhVh_jElcpxfmTYoyq16KNtC4HYoA&s",a:"miko"}];
 function nextKaguya(){if(kIdx>=kD.length){cls('vn-kaguya-win');return}const d=kD[kIdx];document.getElementById('char-n-kaguya').innerText=d.n;document.getElementById('diag-t-kaguya').innerText=d.t;document.getElementById('port-kaguya').src=d.p;document.querySelectorAll('#vn-kaguya-win .sprite').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+d.a).classList.add('active');kIdx++}
 
-// STEINS;GATE VN LOGIC
 let sIdx=0;
 const sD=[
 {n:"Okabe",t:"El Psy Kongroo! I, Hououin Kyouma, have just discovered a new form of... 'gel-banana'!",p:"https://i.imgur.com/1M6v7iM.png",a:"okabe"},
@@ -175,7 +184,6 @@ function nextSteinsGate(){if(sIdx>=sD.length){cls('vn-steinsgate-win');return}co
 
 function startNovel(t){if(t==='kaguya'){kIdx=0;opn('vn-kaguya-win');nextKaguya()}else{sIdx=0;opn('vn-steinsgate-win');nextSteinsGate()}}
 
-// TERMINAL
 document.getElementById('cmd-input').addEventListener('keypress',function(e){
     if(e.key==='Enter'){
         const input=this.value.toLowerCase().trim();
@@ -189,13 +197,31 @@ document.getElementById('cmd-input').addEventListener('keypress',function(e){
     }
 });
 
-// BOOT SCRIPT
 const lines=["[    0.000000] Linux version 6.6.arch1-1","[    1.234567] Initializing GNOME Shell...","[    4.567890] Starting Desktop Environment..."];
 let b=document.getElementById('boot-screen'),bl=0;
-function boot(){if(bl<lines.length){b.innerHTML+=lines[bl]+"<br>";bl++;setTimeout(boot,250)}else{setTimeout(()=>b.style.display='none',500)}}
+function boot(){if(bl<lines.length){b.innerHTML+=lines[bl]+"<br>";bl++;setTimeout(boot,250)}else{setTimeout(loginSequence,500)}}
+
+function loginSequence(){
+    b.style.display='none';
+    const ls = document.getElementById('login-screen');
+    ls.style.display='flex';
+    const pf = document.getElementById('pass-field');
+    const pass = "********";
+    let i = 0;
+    setTimeout(()=>{
+        const type = setInterval(()=>{
+            if(i < pass.length){
+                pf.innerText += "•";
+                i++;
+            } else {
+                clearInterval(type);
+                setTimeout(()=>ls.style.display='none', 600);
+            }
+        }, 150);
+    }, 1000);
+}
 boot();
 
-// DRAGGABLE WINDOWS
 document.querySelectorAll('.win').forEach(w=>{
     const h=w.querySelector('.win-h');let d=false,o=[0,0];
     h.onmousedown=e=>{d=true;o=[w.offsetLeft-e.clientX,w.offsetTop-e.clientY];w.style.zIndex=++topZ};
