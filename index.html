@@ -9,6 +9,10 @@
 :root{--gnome-purple:#5e2750;--gnome-dark:#2d2d2d;--gnome-border:#1e1e1e;--gnome-sidebar:#383838;--arch-blue:#1793d1;--fg:#eeeeee}
 *{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;font-family:'JetBrains Mono',monospace}
 body{background:#000 url('https://imgur.com/blArmwF.png') no-repeat center/cover fixed;color:var(--fg);height:100vh;overflow:hidden}
+
+/* MAIN CONTENT HIDDEN BY DEFAULT */
+#desktop, .side-card { display: none; }
+
 #boot-screen{position:fixed;inset:0;background:#000;color:var(--arch-blue);z-index:9999;padding:20px;font-size:14px;display:block}
 
 /* LOGIN SCREEN */
@@ -206,7 +210,7 @@ function loginSequence(){
     const ls = document.getElementById('login-screen');
     ls.style.display='flex';
     const pf = document.getElementById('pass-field');
-    const pass = "********";
+    const pass = "**********";
     let i = 0;
     setTimeout(()=>{
         const type = setInterval(()=>{
@@ -215,7 +219,11 @@ function loginSequence(){
                 i++;
             } else {
                 clearInterval(type);
-                setTimeout(()=>ls.style.display='none', 600);
+                setTimeout(()=>{
+                    ls.style.display='none';
+                    document.getElementById('desktop').style.display='flex';
+                    document.querySelector('.side-card').style.display='block';
+                }, 600);
             }
         }, 150);
     }, 1000);
