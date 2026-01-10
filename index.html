@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daigou</title>
     <link rel="icon" type="image/png" href="https://imgur.com/LFnzu3x.png">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500&family=Fira+Code:wght@300;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Fira+Code:wght@300;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --pink-light: #ffb7c5;
@@ -22,33 +21,34 @@
         }
 
         #boot-screen {
-            background-color: #000;
+            position: fixed;
+            inset: 0;
+            background: #000;
             color: var(--pink-light);
-            height: 100vh;
-            padding: 20px;
-            font-size: 13px;
-            position: absolute;
-            width: 100%;
             z-index: 9999;
+            padding: 20px;
+            font-size: 14px;
         }
 
         #lock-screen {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100vh;
+            position: fixed;
+            inset: 0;
             background: url('https://imgur.com/O16ESR6.png') no-repeat center center/cover;
+            z-index: 9000;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 9000;
         }
 
-        .lock-content {
-            text-align: center;
-            padding: 40px;
+        #desktop {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background: url('https://imgur.com/xsf1npP.png') no-repeat center center/cover;
         }
 
+        .lock-content { text-align: center; }
         .profile-img {
             width: 120px;
             height: 120px;
@@ -58,28 +58,14 @@
             background: url('https://imgur.com/ITAsHqz.png') no-repeat center/cover;
             display: inline-block;
         }
-
         .lock-name {
             font-size: 28px;
             color: var(--pink-light);
             margin-bottom: 20px;
             font-family: 'Quicksand', sans-serif;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
         }
-
-        #pass-display {
-            color: var(--pink-light);
-            font-size: 20px;
-            letter-spacing: 5px;
-            height: 30px;
-        }
-
-        #desktop {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            background: url('https://imgur.com/xsf1npP') no-repeat center center/cover;
-        }
+        #pass-display { color: var(--pink-light); font-size: 20px; letter-spacing: 5px; height: 30px; }
 
         .sidebar-container {
             position: fixed;
@@ -102,29 +88,9 @@
             border-radius: 8px 8px 0 0;
         }
 
-        .avatar { 
-            width: 100px; 
-            height: 100px; 
-            border: 1px solid var(--pink-light); 
-            margin-bottom: 12px; 
-            object-fit: cover; 
-        }
-
-        .bio { 
-            font-family: 'Quicksand', sans-serif; 
-            font-size: 11px; 
-            color: #fff; 
-            margin-bottom: 12px; 
-            line-height: 1.4; 
-            text-shadow: 1px 1px 2px #000;
-        }
-
-        .btc-logo { 
-            width: 20px; 
-            height: 20px; 
-            object-fit: contain; 
-            cursor: pointer; 
-        }
+        .avatar { width: 100px; height: 100px; border: 1px solid var(--pink-light); margin-bottom: 12px; object-fit: cover; }
+        .bio { font-family: 'Quicksand', sans-serif; font-size: 11px; color: #fff; margin-bottom: 12px; line-height: 1.4; text-shadow: 1px 1px 2px #000; }
+        .btc-logo { width: 20px; height: 20px; object-fit: contain; cursor: pointer; }
 
         .pink-terminal {
             width: 320px;
@@ -133,75 +99,54 @@
             border: 1px solid var(--pink-light);
             border-radius: 0 0 8px 8px;
             overflow: hidden;
-            animation: bg-reverse 15s ease-in-out infinite alternate;
         }
 
         .term-h { background: rgba(51,51,51,0.9); padding: 6px 10px; display: flex; align-items: center; gap: 5px; }
         .term-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink-light); opacity: 0.6; }
+        .term-body { padding: 12px; display: flex; gap: 12px; color: var(--pink-light); font-size: 10px; line-height: 1.2; }
+        .term-logo img { width: 85px; height: 85px; border: 1px solid var(--pink-light); object-fit: cover; }
 
-        .term-body { 
-            padding: 12px; 
-            display: flex; 
-            gap: 12px; 
-            color: var(--pink-light); 
-            font-size: 10px; 
-            line-height: 1.2; 
-        }
+        #cmd-input { background: rgba(30,30,30,0.8); border: 1px solid var(--pink-light); color: var(--pink-light); padding: 8px; width: 100%; outline: none; font-size: 11px; text-align: center; margin-top: 10px; }
 
-        .term-logo img { 
-            width: 85px; 
-            height: 85px; 
-            border: 1px solid var(--pink-light); 
-            object-fit: cover; 
+        .win {
+            position: absolute;
+            background: rgba(15, 15, 15, 0.95);
+            border: 1px solid var(--pink-light);
+            border-radius: 12px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            z-index: 2000;
+            backdrop-filter: blur(10px);
         }
+        .win-h { background: rgba(40, 40, 40, 0.9); padding: 10px; display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid rgba(255,183,197,0.2); }
+        .win-dots { position: absolute; left: 12px; display: flex; gap: 6px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; cursor: pointer; }
+        .d-red { background: #ff5f56; } .d-ylw { background: #ffbd2e; } .d-grn { background: #27c93f; }
+        .win-title { font-size: 11px; color: var(--pink-light); font-weight: bold; }
 
-        #cmd-input { 
-            background: rgba(30,30,30,0.8); 
-            border: 1px solid var(--pink-light); 
-            color: var(--pink-light); 
-            padding: 8px; 
-            width: 100%; 
-            outline: none; 
-            font-size: 11px; 
-            text-align: center; 
-            margin-top: 10px; 
-        }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; padding: 20px; gap: 15px; }
+        .game-item { text-align: center; text-decoration: none; color: #fff; font-size: 10px; }
+        .game-item img { width: 85px; height: 85px; border: 1px solid var(--pink-light); border-radius: 4px; margin-bottom: 8px; }
 
         .taskbar {
             position: fixed;
-            bottom: 15px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid var(--pink-light);
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 10px 25px;
+            border-radius: 15px;
             display: flex;
-            gap: 20px;
+            gap: 25px;
+            z-index: 3000;
         }
-
-        .task-icon { width: 30px; height: 30px; cursor: pointer; }
-
-        .win {
-            position: absolute;
-            top: 100px;
-            left: 100px;
-            background: rgba(0,0,0,0.9);
-            border: 1px solid var(--pink-light);
-            display: none;
-            flex-direction: column;
-            z-index: 2000;
-        }
-
-        .win-h { background: #222; padding: 5px 10px; display: flex; justify-content: space-between; font-size: 11px; color: var(--pink-light); }
-        .win-c { cursor: pointer; }
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; padding: 20px; gap: 20px; }
-        .game-item { text-align: center; color: #fff; text-decoration: none; font-size: 10px; }
-        .game-item img { width: 70px; height: 70px; border: 1px solid var(--pink-light); display: block; margin: 0 auto 5px; }
+        .task-icon { width: 32px; height: 32px; cursor: pointer; }
     </style>
 </head>
 <body>
-
     <div id="boot-screen"></div>
 
     <div id="lock-screen">
@@ -215,34 +160,25 @@
     <div id="desktop">
         <div class="sidebar-container">
             <div class="side-card">
-                <img src="https://imgur.com/ITAsHqz.png" class="avatar">
-                <div class="bio">DAIGOU @ ARCH LINUX<br>High-End AMD Ryzen Developer</div>
+                <img src="https://imgur.com/joCPvDu.gif" class="avatar">
+                <div class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br><br>Buy Bitcoin ₿ - The shield of economic freedom</div>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="btc-logo">
             </div>
-
             <div class="pink-terminal">
-                <div class="term-h">
-                    <div class="term-dot"></div>
-                    <div class="term-dot"></div>
-                    <div class="term-dot"></div>
-                </div>
+                <div class="term-h"><div class="dot d-red"></div><div class="dot d-ylw"></div><div class="dot d-grn"></div></div>
                 <div class="term-body">
-                    <div class="term-logo">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Arch_Linux_logo.svg">
-                    </div>
+                    <div class="term-logo"><img src="https://i.imgur.com/7h65ggO.gif"></div>
                     <div>
-                        <p style="font-weight: bold;">daigou@ryzen-9-high-end</p>
-                        <p>------------------</p>
+                        <p style="font-weight:bold">daigou@archlinux</p>
+                        <p>--------------</p>
                         <p>OS: Arch Linux x86_64</p>
-                        <p>Host: Ryzen High-End</p>
-                        <p>Kernel: 6.x.x-daigou-pink</p>
-                        <p>Uptime: 1 min</p>
-                        <p>CPU: AMD Ryzen 9 9950X (32) @ 5.7GHz</p>
+                        <p>CPU: AMD Ryzen 9 9950X</p>
+                        <p>GPU: RTX 5090</p>
                         <p>Memory: 128GB DDR5</p>
                     </div>
                 </div>
             </div>
-            <input type="text" id="cmd-input" placeholder="~/daigou >">
+            <input type="text" id="cmd-input" placeholder="[user@arch ~]$">
         </div>
 
         <div class="taskbar">
@@ -250,13 +186,19 @@
             <img src="https://imgur.com/FeRrUbt.png" class="task-icon" onclick="toggleW('gm')">
         </div>
 
-        <div id="w-yt" class="win" style="width: 480px; height: 320px;">
-            <div class="win-h"><span>YouTube Player</span><span class="win-c" onclick="toggleW('yt')">X</span></div>
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/videoseries?list=PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+        <div id="w-yt" class="win" style="width: 550px; height: 380px; top: 10%; left: 10%;">
+            <div class="win-h">
+                <div class="win-dots"><div class="dot d-red" onclick="toggleW('yt')"></div><div class="dot d-ylw"></div><div class="dot d-grn"></div></div>
+                <div class="win-title">YouTube Player</div>
+            </div>
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/videoseries?list=PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC" frameborder="0"></iframe>
         </div>
 
-        <div id="w-gm" class="win" style="width: 350px;">
-            <div class="win-h"><span>Game Library</span><span class="win-c" onclick="toggleW('gm')">X</span></div>
+        <div id="w-gm" class="win" style="width: 400px; top: 15%; left: 30%;">
+            <div class="win-h">
+                <div class="win-dots"><div class="dot d-red" onclick="toggleW('gm')"></div><div class="dot d-ylw"></div><div class="dot d-grn"></div></div>
+                <div class="win-title">Game Library</div>
+            </div>
             <div class="game-grid">
                 <a href="https://daigou7.github.io/daigou/lunaticlove.html" target="_blank" class="game-item">
                     <img src="https://imgur.com/yWGCBpw.png">
@@ -264,65 +206,33 @@
                 </a>
                 <a href="https://daigou.itch.io/daigouanimangamugen" target="_blank" class="game-item">
                     <img src="https://img.itch.zone/aW1nLzI0ODMwMjkyLnBuZw==/347x500/m6FDvp.png">
-                    <span>Daigou Animanga Mugen</span>
+                    <span>Mugen</span>
                 </a>
             </div>
         </div>
     </div>
 
     <script>
-        const logs = [
-            "[  0.000000] Linux version 6.x-arch (daigou@AMD-RYZEN-9-HIGH-END)",
-            "[  0.012441] CPU0: AMD Ryzen 9 9950X 16-Core Processor",
-            "[  0.455210] Memory: 134217728K/134217728K available",
-            "[  1.021102] nvme0: Gen5 SSD Detected (4TB)",
-            "[  1.552110] pink-kernel: initialising daigou's modules...",
-            "[  2.100445] Welcome to Arch Linux, Daigou.",
-            "[  2.844012] Starting Kaguya-sama Display Manager...",
-            "[  OK  ] Started Graphical Interface."
-        ];
-
+        const logs = ["[ 0.00] Linux version 6.x", "[ 1.23] Initializing Arch...", "[ 2.10] Welcome, Daigou.", "[ OK ] Interface Ready."];
         let i = 0;
         function boot() {
+            let b = document.getElementById('boot-screen');
             if (i < logs.length) {
-                let p = document.createElement('p');
-                p.textContent = logs[i];
-                document.getElementById('boot-screen').appendChild(p);
-                i++;
-                setTimeout(boot, 150);
+                let p = document.createElement('p'); p.textContent = logs[i]; b.appendChild(p);
+                i++; setTimeout(boot, 150);
             } else {
-                setTimeout(() => {
-                    document.getElementById('boot-screen').style.display = 'none';
-                    document.getElementById('lock-screen').style.display = 'flex';
-                    autoLogin();
-                }, 800);
+                setTimeout(() => { b.style.display = 'none'; document.getElementById('lock-screen').style.display = 'flex'; autoLogin(); }, 800);
             }
         }
-
         function autoLogin() {
-            const pass = "********";
-            const display = document.getElementById('pass-display');
-            let j = 0;
+            const pass = "********"; const display = document.getElementById('pass-display'); let j = 0;
             function type() {
-                if (j < pass.length) {
-                    display.textContent += "•";
-                    j++;
-                    setTimeout(type, 200);
-                } else {
-                    setTimeout(() => {
-                        document.getElementById('lock-screen').style.display = 'none';
-                        document.getElementById('desktop').style.display = 'block';
-                    }, 500);
-                }
+                if (j < pass.length) { display.textContent += "•"; j++; setTimeout(type, 200); }
+                else { setTimeout(() => { document.getElementById('lock-screen').style.display = 'none'; document.getElementById('desktop').style.display = 'block'; }, 500); }
             }
             setTimeout(type, 1000);
         }
-
-        function toggleW(id) {
-            let w = document.getElementById('w-' + id);
-            w.style.display = (w.style.display === 'flex') ? 'none' : 'flex';
-        }
-
+        function toggleW(id) { let w = document.getElementById('w-' + id); w.style.display = (w.style.display === 'flex') ? 'none' : 'flex'; }
         window.onload = boot;
     </script>
 </body>
