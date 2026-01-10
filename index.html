@@ -33,7 +33,7 @@
         #lock-screen {
             position: fixed;
             inset: 0;
-            background: url('https://imgur.com/O16ESR6.png') no-repeat center center/cover;
+            background: url('https://imgur.com/O16ESR6.gif') no-repeat center center/cover;
             z-index: 9000;
             display: none;
             flex-direction: column;
@@ -89,8 +89,7 @@
         }
 
         .avatar { width: 100px; height: 100px; border: 1px solid var(--pink-light); margin-bottom: 12px; object-fit: cover; }
-        .bio { font-family: 'Quicksand', sans-serif; font-size: 11px; color: #fff; margin-bottom: 12px; line-height: 1.4; text-shadow: 1px 1px 2px #000; }
-        .btc-logo { width: 20px; height: 20px; object-fit: contain; cursor: pointer; }
+        .bio { font-family: 'Quicksand', sans-serif; font-size: 11px; color: #fff; line-height: 1.4; text-shadow: 1px 1px 2px #000; }
 
         .pink-terminal {
             width: 320px;
@@ -140,10 +139,12 @@
             padding: 10px 25px;
             border-radius: 15px;
             display: flex;
-            gap: 25px;
+            gap: 20px;
             z-index: 3000;
+            align-items: center;
         }
-        .task-icon { width: 32px; height: 32px; cursor: pointer; }
+        .task-icon { width: 32px; height: 32px; cursor: pointer; transition: 0.2s; }
+        .task-icon:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -162,12 +163,11 @@
             <div class="side-card">
                 <img src="https://imgur.com/joCPvDu.gif" class="avatar">
                 <div class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br><br>Buy Bitcoin ₿ - The shield of economic freedom</div>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="btc-logo">
             </div>
             <div class="pink-terminal">
                 <div class="term-h"><div class="dot d-red"></div><div class="dot d-ylw"></div><div class="dot d-grn"></div></div>
                 <div class="term-body">
-                    <div class="term-logo"><img src="https://i.imgur.com/7h65ggO.gif"></div>
+                    <div class="term-logo"><img src="https://imgur.com/MHymFHr.gif"></div>
                     <div>
                         <p style="font-weight:bold">daigou@archlinux</p>
                         <p>--------------</p>
@@ -182,8 +182,11 @@
         </div>
 
         <div class="taskbar">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" class="task-icon" onclick="toggleW('yt')">
-            <img src="https://imgur.com/FeRrUbt.png" class="task-icon" onclick="toggleW('gm')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" class="task-icon" onclick="toggleW('yt')" title="YouTube">
+            <img src="https://imgur.com/FeRrUbt.png" class="task-icon" onclick="toggleW('gm')" title="Game Library">
+            <img src="https://imgur.com/N92w6JN.png" class="task-icon" onclick="window.open('https://steamcommunity.com/id/Daigou7/', '_blank')" title="Steam">
+            <img src="https://imgur.com/jWbk2Ey.png" class="task-icon" onclick="window.open('https://myanimelist.net/profile/Daigou', '_blank')" title="MyAnimeList">
+            <img src="https://imgur.com/dvR0GB6.png" class="task-icon" onclick="copyBtc()" title="Copy Bitcoin Address">
         </div>
 
         <div id="w-yt" class="win" style="width: 550px; height: 380px; top: 10%; left: 10%;">
@@ -233,6 +236,11 @@
             setTimeout(type, 1000);
         }
         function toggleW(id) { let w = document.getElementById('w-' + id); w.style.display = (w.style.display === 'flex') ? 'none' : 'flex'; }
+        function copyBtc() {
+            navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => {
+                alert("Bitcoin address copied!");
+            });
+        }
         window.onload = boot;
     </script>
 </body>
