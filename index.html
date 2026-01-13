@@ -252,16 +252,9 @@
                 let p = document.createElement('p'); p.textContent = logs[i]; b.appendChild(p);
                 i++; setTimeout(boot, 150);
             } else {
-                setTimeout(() => { b.style.display = 'none'; document.getElementById('lock-screen').style.display = 'flex'; autoLogin(); }, 800);
+                setTimeout(() => { b.style.display = 'none'; document.getElementById('lock-screen').style.display = 'block'; autoLogin(); }, 1200);
             }
         }
-        function autoLogin() {
-            const pass = "********"; const display = document.getElementById('pass-display'); let j = 0;
-            function type() {
-                if (j < pass.length) { display.textContent += "•"; j++; setTimeout(type, 200); }
-                else { setTimeout(() => { document.getElementById('lock-screen').style.display = 'none'; document.getElementById('desktop').style.display = 'block'; }, 500); }
-            }
-            setTimeout(type, 1000);
         }
         function toggleW(id) { let w = document.getElementById('w-' + id); w.style.display = (w.style.display === 'flex') ? 'none' : 'flex'; }
         function copyBtc() {
