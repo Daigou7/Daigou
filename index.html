@@ -31,6 +31,16 @@
             padding: 20px;
             font-size: 14px;
         }
+
+        #lock-screen {
+            position: fixed;
+            inset: 0;
+            background: #000 url('https://i.imgur.com/O16ESR6.gif') no-repeat center center/cover;
+            z-index: 9000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         #desktop {
@@ -116,7 +126,7 @@
         .win-h { background: rgba(30, 30, 30, 0.9); padding: 12px; display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid rgba(255,183,197,0.1); cursor: move; }
         .win-dots { position: absolute; left: 15px; display: flex; gap: 8px; }
         .dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-        .d-pink { background: var(--pink-light); } /* Trocado de vermelho para rosa */
+        .d-pink { background: var(--pink-light); } 
         .d-ylw { background: #f3f99d; opacity: 0.5; } 
         .d-grn { background: #b2f7ef; opacity: 0.5; }
         .win-title { font-size: 12px; color: var(--pink-light); font-weight: bold; font-family: 'Quicksand'; letter-spacing: 1px; }
@@ -179,31 +189,23 @@
 <body>
     <div id="boot-screen"></div>
 
-    <div id="lock-screen">
-        <div class="lock-content">
-            <div class="profile-img"></div>
-            <div class="lock-name">Daigou</div>
-            <div id="pass-display"></div>
-        </div>
-    </div>
-
     <div id="desktop">
         <div class="sidebar-container">
             <div class="side-card">
                 <img src="https://imgur.com/joCPvDu.gif" class="avatar">
-                <div class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦<br><br>Buy Bitcoin ₿ - The shield of economic freedom</div>
+                <div class="bio">My body, my soul, and my spirit belong to Jesus Christ of Nazareth ☦</div>
             </div>
             <div class="pink-terminal">
                 <div class="term-h"><div class="dot d-pink"></div><div class="dot d-ylw"></div><div class="dot d-grn"></div></div>
                 <div class="term-body">
                     <div class="term-logo"><img src="https://imgur.com/MHymFHr.gif"></div>
                     <div>
-                        <p style="font-weight:bold">daigou</p>
+                        <p style="font-weight:bold">daigou@archlinux</p>
                         <p>--------------</p>
-                        <p>Waifu: Kaguya Shinomiya</p>
-                        <p>Favorite Anime: Steins;Gate</p>
-                        <p>Favorite Manga: Berserk</p>
-                        <p>Favorite Game: Dark Souls: Remastered</p>
+                        <p>OS: Arch Linux x86_64</p>
+                        <p>CPU: AMD Ryzen 9 9950X</p>
+                        <p>GPU: RTX 5090</p>
+                        <p>Memory: 128GB DDR5</p>
                     </div>
                 </div>
             </div>
@@ -244,7 +246,7 @@
     </div>
 
     <script>
-        const logs = ["[ 0.00] Initiating system", "[ 1.10] Loading assets...", "[ 1.80] System Ready.", "[ 2.40] O Kawaii Koto"];
+        const logs = ["[ 0.00] Arch Linux 6.x-pink-daigou", "[ 1.10] AMD Ryzen 9 9950X - 16 Cores", "[ 1.80] Loading Assets...", "[ 2.40] System Ready."];
         let i = 0;
         function boot() {
             let b = document.getElementById('boot-screen');
@@ -252,16 +254,13 @@
                 let p = document.createElement('p'); p.textContent = logs[i]; b.appendChild(p);
                 i++; setTimeout(boot, 150);
             } else {
-                setTimeout(() => { b.style.display = 'none'; document.getElementById('lock-screen').style.display = 'block'; autoLogin(); }, 1200);
+                setTimeout(() => { 
+                    b.style.display = 'none'; 
+                    document.getElementById('desktop').style.display = 'block'; 
+                }, 800);
             }
         }
-        }
         function toggleW(id) { let w = document.getElementById('w-' + id); w.style.display = (w.style.display === 'flex') ? 'none' : 'flex'; }
-        function copyBtc() {
-            navigator.clipboard.writeText("bc1qxy0uvk6n9fu7nv9a93ljax8q77vl649pmsh8ws").then(() => {
-                alert("BTC Address Copied to Clipboard!");
-            });
-        }
 
         // DRAGGING SYSTEM
         document.querySelectorAll('.win').forEach(w => {
