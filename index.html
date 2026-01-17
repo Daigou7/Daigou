@@ -232,7 +232,7 @@
         </div>
 
         <div class="taskbar">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" class="task-icon" onclick="toggleW('yt')" title="YouTube">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" class="task-icon" onclick="openYTHome()" title="YouTube">
             <img src="https://imgur.com/FeRrUbt.png" class="task-icon" onclick="toggleW('gm')" title="Game Library">
             <img src="https://imgur.com/N92w6JN.png" class="task-icon" onclick="window.open('https://steamcommunity.com/id/Daigou7/', '_blank')" title="Steam">
             <img src="https://imgur.com/jWbk2Ey.png" class="task-icon" onclick="window.open('https://myanimelist.net/profile/Daigou', '_blank')" title="MyAnimeList">
@@ -299,6 +299,21 @@
 
         function minimizeW(id) {
             document.getElementById('w-' + id).style.display = 'none';
+        }
+
+        // Nova função para abrir a home ao clicar no ícone
+        function openYTHome() {
+            const iframe = document.getElementById('yt-player');
+            const ytWin = document.getElementById('w-yt');
+            
+            // Se a janela estiver fechada ou invisível, carrega a home e abre
+            if (ytWin.style.display !== 'flex') {
+                iframe.src = "https://www.youtube.com";
+                toggleW('yt');
+            } else {
+                // Se já estiver aberta, apenas minimiza/fecha
+                toggleW('yt');
+            }
         }
 
         // DRAGGING SYSTEM
