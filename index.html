@@ -241,8 +241,8 @@
         <div id="w-yt" class="win" style="width: 600px; height: 400px; top: 10%; left: 10%;">
             <div class="win-h">
                 <div class="win-dots">
-                    <div class="dot d-pink" onclick="toggleW('yt')"></div>
-                    <div class="dot d-ylw"></div>
+                    <div class="dot d-pink" onclick="document.getElementById('yt-player').src=''; toggleW('yt')"></div>
+                    <div class="dot d-ylw" onclick="minimizeW('yt')"></div>
                     <div class="dot d-grn"></div>
                 </div>
                 <div class="win-title">YouTube Player</div>
@@ -254,7 +254,7 @@
             <div class="win-h">
                 <div class="win-dots">
                     <div class="dot d-pink" onclick="toggleW('gm')"></div>
-                    <div class="dot d-ylw"></div>
+                    <div class="dot d-ylw" onclick="minimizeW('gm')"></div>
                     <div class="dot d-grn"></div>
                 </div>
                 <div class="win-title">Game Repository</div>
@@ -297,6 +297,10 @@
             w.style.display = (w.style.display === 'flex') ? 'none' : 'flex'; 
         }
 
+        function minimizeW(id) {
+            document.getElementById('w-' + id).style.display = 'none';
+        }
+
         // DRAGGING SYSTEM
         document.querySelectorAll('.win').forEach(w => {
             const h = w.querySelector('.win-h');
@@ -322,6 +326,16 @@
             const url = input.value.trim();
             if (!url) return;
 
+            const iframe = document.getElementById('yt-player');
+            const ytWin = document.getElementById('w-yt');
+
+            if (url.toLowerCase() === 'youtube') {
+                iframe.src = "https://www.youtube.com";
+                if (ytWin.style.display !== 'flex') toggleW('yt');
+                input.value = '';
+                return;
+            }
+
             const info = getYouTubeId(url);
             if (!info) return;
 
@@ -333,22 +347,15 @@
             }
 
             if (embedUrl) {
-                const iframe = document.getElementById('yt-player');
                 iframe.src = embedUrl;
-
-                // Abre a janela automaticamente se estiver fechada
-                const ytWin = document.getElementById('w-yt');
                 if (ytWin.style.display !== 'flex') {
                     toggleW('yt');
                 }
-
-                // Efeito visual de "comando aceito"
                 input.style.background = 'rgba(60,30,40,0.9)';
                 setTimeout(() => {
                     input.style.background = 'rgba(30,30,30,0.8)';
                 }, 400);
             }
-
             input.value = '';
         }
 
@@ -359,25 +366,15 @@
                 /(?:youtube(?:-nocookie)?\.com\/.*[?&]list=)([a-zA-Z0-9_-]+)/i,
                 /(?:youtube(?:-nocookie)?\.com\/playlist\?list=)([a-zA-Z0-9_-]+)/i
             ];
-
             for (const pattern of patterns) {
                 const match = url.match(pattern);
                 if (match) {
-                    if (match[1] && match[1].length === 11) {
-                        return { type: 'video', id: match[1] };
-                    }
-                    if (match[1] && match[1].startsWith('PL')) {
-                        return { type: 'playlist', id: match[1] };
-                    }
+                    if (match[1] && match[1].length === 11) return { type: 'video', id: match[1] };
+                    if (match[1] && match[1].startsWith('PL')) return { type: 'playlist', id: match[1] };
                 }
             }
-
-            // Caso playlist + vídeo juntos (prioriza playlist)
             const playlistMatch = url.match(/[?&]list=([a-zA-Z0-9_-]+)/i);
-            if (playlistMatch) {
-                return { type: 'playlist', id: playlistMatch[1] };
-            }
-
+            if (playlistMatch) return { type: 'playlist', id: playlistMatch[1] };
             return null;
         }
 
