@@ -8,392 +8,135 @@
     <style>
         :root {
             --pink-light: #ffb7c5;
-            --pink-hover: #ffcdd7;
-            --win-bg: rgba(15, 15, 15, 0.9);
+            --win-bg: rgba(15, 15, 15, 0.85);
         }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body, html {
             width: 100%;
             height: 100%;
             font-family: 'Fira Code', monospace;
-            background-color: #000;
+            background: #000 url('https://imgur.com/KsXgcRZ.gif') no-repeat center center/cover;
             overflow: hidden;
         }
-        #boot-screen {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            color: var(--pink-light);
-            z-index: 9999;
-            padding: 20px;
-            font-size: 14px;
-        }
-        #lock-screen {
-            position: fixed;
-            inset: 0;
-            background: #000 url('https://i.imgur.com/O16ESR6.gif') no-repeat center center/cover;
-            z-index: 9000;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        #desktop {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            background: url('https://imgur.com/KsXgcRZ.gif') no-repeat center center/cover;
-        }
-        .lock-content { text-align: center; }
-        .profile-img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 2px solid var(--pink-light);
-            margin-bottom: 15px;
-            background: url('https://imgur.com/ITAsHqz.png') no-repeat center/cover;
-            display: inline-block;
-        }
-        .lock-name {
-            font-size: 28px;
-            color: var(--pink-light);
-            margin-bottom: 20px;
-            font-family: 'Quicksand', sans-serif;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
-        }
-        #pass-display { color: var(--pink-light); font-size: 20px; letter-spacing: 5px; height: 30px; }
-        /* SIDEBAR ORIGINAL */
+
         .sidebar-container {
             position: fixed;
-            right: 25px;
+            left: 30px;
             top: 50%;
             transform: translateY(-50%);
+            width: 300px;
+            z-index: 1000;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-40%); }
+            to { opacity: 1; transform: translateY(-50%); }
+        }
+
+        .side-card {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://imgur.com/9wcKnLi.gif') no-repeat center/cover;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--pink-light);
+            padding: 25px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .avatar { 
+            width: 90px; 
+            height: 90px; 
+            border: 1px solid var(--pink-light); 
+            margin-bottom: 12px; 
+            object-fit: cover; 
+        }
+
+        .bio { 
+            font-family: 'Quicksand', sans-serif; 
+            font-size: 13px; 
+            color: #fff; 
+            line-height: 1.5; 
+            text-shadow: 1px 1px 2px #000;
+            margin-bottom: 20px;
+        }
+
+        /* Lista de Links */
+        .links-list {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            z-index: 1000;
+            text-align: left;
         }
-        .side-card {
-            width: 320px;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://imgur.com/9wcKnLi.gif') no-repeat center/cover;
-            backdrop-filter: blur(2px);
-            border: 1px solid var(--pink-light);
-            padding: 20px;
-            text-align: center;
-            border-radius: 8px 8px 0 0;
-        }
-        .avatar { width: 100px; height: 100px; border: 1px solid var(--pink-light); margin-bottom: 12px; object-fit: cover; }
-        .bio { font-family: 'Quicksand', sans-serif; font-size: 11px; color: #fff; line-height: 1.4; text-shadow: 1px 1px 2px #000; }
-        .pink-terminal {
-            width: 320px;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://i.imgur.com/7h65ggO.gif') no-repeat center/cover;
-            backdrop-filter: blur(2px);
-            border: 1px solid var(--pink-light);
-            border-radius: 0 0 8px 8px;
-            overflow: hidden;
-        }
-        .term-h { background: rgba(51,51,51,0.9); padding: 6px 10px; display: flex; align-items: center; gap: 5px; }
-        .term-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink-light); opacity: 0.6; }
-        .term-body { padding: 12px; display: flex; gap: 12px; color: var(--pink-light); font-size: 10px; line-height: 1.2; }
-        .term-logo img { width: 85px; height: 85px; border: 1px solid var(--pink-light); object-fit: cover; }
-        #cmd-input { 
-            background: rgba(30,30,30,0.8); 
-            border: 1px solid var(--pink-light); 
-            color: var(--pink-light); 
-            padding: 8px; 
-            width: 100%; 
-            outline: none; 
-            font-size: 11px; 
-            text-align: center; 
-            margin-top: 10px; 
-        }
-        #cmd-input:focus {
-            background: rgba(40,25,35,0.9);
-            box-shadow: 0 0 8px var(--pink-light);
-        }
-        /* WINDOWS MODERNA ARCH */
-        .win {
-            position: absolute;
-            background: var(--win-bg);
-            border: 1px solid rgba(255, 183, 197, 0.3);
-            border-radius: 12px;
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            z-index: 2000;
-            backdrop-filter: blur(15px);
-        }
-        .win-h { 
-            background: rgba(30, 30, 30, 0.9); 
-            padding: 12px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            position: relative; 
-            border-bottom: 1px solid rgba(255,183,197,0.1); 
-            cursor: move; 
-        }
-        .win-dots { position: absolute; left: 15px; display: flex; gap: 8px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-        .d-pink { background: var(--pink-light); }
-        .d-ylw { background: #f3f99d; opacity: 0.5; }
-        .d-grn { background: #b2f7ef; opacity: 0.5; }
-        .win-title { font-size: 12px; color: var(--pink-light); font-weight: bold; font-family: 'Quicksand'; letter-spacing: 1px; }
-        /* GAME LIBRARY MODERNA */
-        .game-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            padding: 25px;
-            gap: 20px;
-            background: linear-gradient(to bottom, transparent, rgba(255,183,197,0.05));
-        }
-        .game-item {
-            text-align: center;
-            text-decoration: none;
-            color: #fff;
-            font-size: 11px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 183, 197, 0.1);
-            border-radius: 15px;
-            transition: all 0.3s ease;
-            font-family: 'Quicksand';
-        }
-        .game-item:hover {
-            background: rgba(255, 183, 197, 0.1);
-            border-color: var(--pink-light);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        .game-item img {
-            width: 100px;
-            height: 100px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            object-fit: cover;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-        .game-item span { font-weight: bold; color: var(--pink-light); }
-        .taskbar {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(10, 10, 10, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 183, 197, 0.3);
-            padding: 12px 30px;
-            border-radius: 20px;
+
+        .link-item {
             display: flex;
-            gap: 25px;
-            z-index: 3000;
             align-items: center;
+            gap: 12px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 183, 197, 0.2);
+            transition: 0.3s;
         }
-        .task-icon { 
-            width: 34px; 
-            height: 34px; 
-            cursor: pointer; 
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+
+        .link-item:hover {
+            background: rgba(255, 183, 197, 0.15);
+            border-color: var(--pink-light);
+            transform: translateX(8px);
         }
-        .task-icon:hover { 
-            transform: scale(1.3) translateY(-10px); 
-            filter: drop-shadow(0 0 8px var(--pink-light)); 
+
+        .link-icon {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+        }
+
+        .link-label {
+            color: var(--pink-light);
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div id="boot-screen"></div>
-    <div id="desktop">
-        <div class="sidebar-container">
-            <div class="side-card">
-                <img src="https://imgur.com/joCPvDu.gif" class="avatar">
-                <div class="bio">Jᴇsᴜs Cʜʀɪsᴛ is Lord ♱<br>ʙᴜʏ ʙɪᴛᴄᴏɪɴ ₿</div>
-            </div>
-            <div class="pink-terminal">
-                <div class="term-h">
-                    <div class="dot d-pink"></div>
-                    <div class="dot d-ylw"></div>
-                    <div class="dot d-grn"></div>
-                </div>
-                <div class="term-body">
-                    <div class="term-logo"><img src="https://imgur.com/MHymFHr.gif"></div>
-                    <div>
-                        <p style="font-weight:bold">daigou</p>
-                        <p>--------------</p>
-                        <p>Waifu: Kaguya Shinomiya</p>
-                        <p>Favorite Anime: Steins;gate</p>
-                        <p>Favorite Manga: Berserk</p>
-                        <p>Favorite Game: Minecraft</p>
-                    </div>
-                </div>
-            </div>
-            <input type="text" id="cmd-input" placeholder="[user@arch ~]$" onkeypress="if(event.key==='Enter') handleYouTubeLink()">
-        </div>
 
-        <div class="taskbar">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" class="task-icon" onclick="openYTHome()" title="YouTube">
-            <img src="https://imgur.com/FeRrUbt.png" class="task-icon" onclick="toggleW('gm')" title="Game Library">
-            <img src="https://imgur.com/N92w6JN.png" class="task-icon" onclick="window.open('https://steamcommunity.com/id/Daigou7/', '_blank')" title="Steam">
-            <img src="https://imgur.com/jWbk2Ey.png" class="task-icon" onclick="window.open('https://myanimelist.net/profile/Daigou', '_blank')" title="MyAnimeList">
-        </div>
-
-        <div id="w-yt" class="win" style="width: 600px; height: 400px; top: 10%; left: 10%;">
-            <div class="win-h">
-                <div class="win-dots">
-                    <div class="dot d-pink" onclick="document.getElementById('yt-player').src=''; toggleW('yt')"></div>
-                    <div class="dot d-ylw" onclick="minimizeW('yt')"></div>
-                    <div class="dot d-grn"></div>
-                </div>
-                <div class="win-title">YouTube Player</div>
+    <div class="sidebar-container">
+        <div class="side-card">
+            <img src="https://imgur.com/joCPvDu.gif" class="avatar">
+            
+            <div class="bio">
+                Jᴇsᴜs Cʜʀɪsᴛ is Lord ♱<br>
+                ʙᴜʏ ʙɪᴛᴄᴏɪɴ ₿
             </div>
-            <iframe id="yt-player" width="100%" height="100%" src="https://www.youtube.com/embed/videoseries?list=PLuJXaOWHQNoSb3WlMnObsd-KX6V5MjLaC" frameborder="0" allowfullscreen></iframe>
-        </div>
 
-        <div id="w-gm" class="win" style="width: 480px; top: 15%; left: 30%;">
-            <div class="win-h">
-                <div class="win-dots">
-                    <div class="dot d-pink" onclick="toggleW('gm')"></div>
-                    <div class="dot d-ylw" onclick="minimizeW('gm')"></div>
-                    <div class="dot d-grn"></div>
-                </div>
-                <div class="win-title">Game Repository</div>
-            </div>
-            <div class="game-grid">
-                <a href="https://daigou7.github.io/daigou/lunaticlove.html" target="_blank" class="game-item">
-                    <img src="https://imgur.com/yWGCBpw.png">
-                    <span>Lunatic Love</span>
+            <div class="links-list">
+                <a href="https://www.youtube.com" target="_blank" class="link-item">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" class="link-icon">
+                    <span class="link-label">YouTube</span>
                 </a>
-                <a href="https://daigou.itch.io/daigouanimangamugen" target="_blank" class="game-item">
-                    <img src="https://img.itch.zone/aW1nLzI0ODMwMjkyLnBuZw==/347x500/m6FDvp.png">
-                    <span>Mugen Evolution</span>
+
+                <a href="https://steamcommunity.com/id/Daigou7/" target="_blank" class="link-item">
+                    <img src="https://imgur.com/N92w6JN.png" class="link-icon">
+                    <span class="link-label">Steam</span>
+                </a>
+
+                <a href="https://myanimelist.net/profile/Daigou" target="_blank" class="link-item">
+                    <img src="https://imgur.com/jWbk2Ey.png" class="link-icon">
+                    <span class="link-label">MyAnimeList</span>
+                </a>
+
+                <a href="https://daigou7.github.io/daigou/lunaticlove.html" target="_blank" class="link-item">
+                    <img src="https://imgur.com/FeRrUbt.png" class="link-icon">
+                    <span class="link-label">Lunatic Love</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <script>
-        const logs = ["[ 0.00] Initiating System", "[ 1.10] Loading Assets...", "[ 1.80] System Ready.", "[ 2.40] O Kawaii Koto"];
-        let i = 0;
-
-        function boot() {
-            let b = document.getElementById('boot-screen');
-            if (i < logs.length) {
-                let p = document.createElement('p'); 
-                p.textContent = logs[i]; 
-                b.appendChild(p);
-                i++; 
-                setTimeout(boot, 150);
-            } else {
-                setTimeout(() => {
-                    b.style.display = 'none';
-                    document.getElementById('desktop').style.display = 'block';
-                }, 800);
-            }
-        }
-
-        function toggleW(id) { 
-            let w = document.getElementById('w-' + id); 
-            w.style.display = (w.style.display === 'flex') ? 'none' : 'flex'; 
-        }
-
-        function minimizeW(id) {
-            document.getElementById('w-' + id).style.display = 'none';
-        }
-
-        // Nova função para abrir a home ao clicar no ícone
-        function openYTHome() {
-            const iframe = document.getElementById('yt-player');
-            const ytWin = document.getElementById('w-yt');
-            
-            // Se a janela estiver fechada ou invisível, carrega a home e abre
-            if (ytWin.style.display !== 'flex') {
-                iframe.src = "https://www.youtube.com";
-                toggleW('yt');
-            } else {
-                // Se já estiver aberta, apenas minimiza/fecha
-                toggleW('yt');
-            }
-        }
-
-        // DRAGGING SYSTEM
-        document.querySelectorAll('.win').forEach(w => {
-            const h = w.querySelector('.win-h');
-            let isDragging = false, offset = [0, 0];
-            h.onmousedown = e => {
-                isDragging = true;
-                offset = [w.offsetLeft - e.clientX, w.offsetTop - e.clientY];
-                document.querySelectorAll('.win').forEach(win => win.style.zIndex = 2000);
-                w.style.zIndex = 2001;
-            };
-            document.onmousemove = e => {
-                if (isDragging) {
-                    w.style.left = (e.clientX + offset[0]) + 'px';
-                    w.style.top = (e.clientY + offset[1]) + 'px';
-                }
-            };
-            document.onmouseup = () => isDragging = false;
-        });
-
-        // ── YouTube Link Handler ───────────────────────────────────────────────
-        function handleYouTubeLink() {
-            const input = document.getElementById('cmd-input');
-            const url = input.value.trim();
-            if (!url) return;
-
-            const iframe = document.getElementById('yt-player');
-            const ytWin = document.getElementById('w-yt');
-
-            if (url.toLowerCase() === 'youtube') {
-                iframe.src = "https://www.youtube.com";
-                if (ytWin.style.display !== 'flex') toggleW('yt');
-                input.value = '';
-                return;
-            }
-
-            const info = getYouTubeId(url);
-            if (!info) return;
-
-            let embedUrl = '';
-            if (info.type === 'video') {
-                embedUrl = `https://www.youtube.com/embed/${info.id}?autoplay=1`;
-            } else if (info.type === 'playlist') {
-                embedUrl = `https://www.youtube.com/embed/videoseries?list=${info.id}&autoplay=1`;
-            }
-
-            if (embedUrl) {
-                iframe.src = embedUrl;
-                if (ytWin.style.display !== 'flex') {
-                    toggleW('yt');
-                }
-                input.style.background = 'rgba(60,30,40,0.9)';
-                setTimeout(() => {
-                    input.style.background = 'rgba(30,30,30,0.8)';
-                }, 400);
-            }
-            input.value = '';
-        }
-
-        function getYouTubeId(url) {
-            const patterns = [
-                /(?:youtube(?:-nocookie)?\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?/\s]{11})/i,
-                /youtu\.be\/([^"&?/\s]{11})/i,
-                /(?:youtube(?:-nocookie)?\.com\/.*[?&]list=)([a-zA-Z0-9_-]+)/i,
-                /(?:youtube(?:-nocookie)?\.com\/playlist\?list=)([a-zA-Z0-9_-]+)/i
-            ];
-            for (const pattern of patterns) {
-                const match = url.match(pattern);
-                if (match) {
-                    if (match[1] && match[1].length === 11) return { type: 'video', id: match[1] };
-                    if (match[1] && match[1].startsWith('PL')) return { type: 'playlist', id: match[1] };
-                }
-            }
-            const playlistMatch = url.match(/[?&]list=([a-zA-Z0-9_-]+)/i);
-            if (playlistMatch) return { type: 'playlist', id: playlistMatch[1] };
-            return null;
-        }
-
-        window.onload = boot;
-    </script>
 </body>
 </html>
